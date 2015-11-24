@@ -53,7 +53,7 @@ interface Info{
  	const EXPLODE_PACKET = 0xa1;
  	const LEVEL_EVENT_PACKET = 0xa2;
 	//const TILE_EVENT_PACKET = 0xa3;
-    const BLOCK_EVENT_PACKET = 0xa3;
+        const BLOCK_EVENT_PACKET = 0xa3;
  	const ENTITY_EVENT_PACKET = 0xa4;
  	const MOB_EFFECT_PACKET = 0xa5;
  	const UPDATE_ATTRIBUTES_PACKET = 0xa6;
