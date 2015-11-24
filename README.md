@@ -13,9 +13,9 @@ Advanced server core based on PocketMine.
 
 > = Update packet [3%]
 
-> = Hell [50%]
+> = Nether [50%]
 
-> = Potition [0%]
+> = Potion [0%]
 
 > = New doors [0%]
 
