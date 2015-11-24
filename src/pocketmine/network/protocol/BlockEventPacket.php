@@ -33,8 +33,8 @@ use pocketmine\utils\Binary;
 
 
 
-class TileEventPacket extends DataPacket{
-	const NETWORK_ID = Info::TILE_EVENT_PACKET;
+class BlockEventPacket extends DataPacket{
+	const NETWORK_ID = Info::BLOCK_EVENT_PACKET;
 
 	public $x;
 	public $y;
