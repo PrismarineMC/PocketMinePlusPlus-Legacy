@@ -72,7 +72,7 @@ namespace pocketmine {
 	use pocketmine\utils\Utils;
 	use pocketmine\wizard\Installer;
 
-		const VERSION = '77.7dev-7';
+		const VERSION = '77.7dev-8';
 	const API_VERSION = "1.77.0";
 	const CODENAME = "[PM++ vk.com/pocketmine_plus_plus]";
 	const MINECRAFT_VERSION = "v0.13.0 alpha";
