@@ -8,7 +8,3 @@ Advanced server core based on PocketMine.
 > Reduce Lag
 
 > Skin Bug Fix
-
-> Chest Bug Fix
-
-> Chat.log
