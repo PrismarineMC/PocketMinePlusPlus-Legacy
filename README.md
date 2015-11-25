@@ -89,7 +89,7 @@ Advanced server core based on PocketMine.
 
 > = ラグの解消 [0%]
 
-> = チェストの修正の [0%]
+> = チェストの修正 [0%]
 
 > = インベントリの修正 [0%]
 
