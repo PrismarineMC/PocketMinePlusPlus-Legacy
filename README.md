@@ -9,7 +9,7 @@ Advanced server core based on PocketMine.
 
 > = Chests fix [0%]
 
-> = Inventory fix [0%]
+> = Inventory fix [10%]
 
 > = Update packet [3%]
 
@@ -37,7 +37,7 @@ Advanced server core based on PocketMine.
 
 > = Baú Corrigido [0%]
 
-> = Inventorio Corrigido [0%]
+> = Inventorio Corrigido [10%]
 
 > = Total Atualizado [3%]
 
@@ -48,6 +48,8 @@ Advanced server core based on PocketMine.
 > = Novas Portas [0%]
 
 > = Todos os Blocos [0%]
+
+> = Fornalha corrigida [0%]
 
 > = Fome [0%]
 
@@ -63,7 +65,7 @@ Advanced server core based on PocketMine.
 
 > = Исправление сундуков [0%]
 
-> = Исправление инвентаря [0%]
+> = Исправление инвентаря [10%]
 
 > = Обновить пакеты [3%]
 
@@ -91,7 +93,7 @@ Advanced server core based on PocketMine.
 
 > = チェストの修正 [0%]
 
-> = インベントリの修正 [0%]
+> = インベントリの修正 [10%]
 
 > = パケットのアップデート [3%]
 
