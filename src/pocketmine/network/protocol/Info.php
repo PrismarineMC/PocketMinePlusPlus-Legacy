@@ -32,7 +32,8 @@ interface Info{
 	 */
 	const CURRENT_PROTOCOL = 38;
 
-	 const LOGIN_PACKET = 0x8f;
+	const STRANGE_PACKET = 0x1b;
+	const LOGIN_PACKET = 0x8f;
  	const PLAY_STATUS_PACKET = 0x90;
  	const DISCONNECT_PACKET = 0x91;
  	const BATCH_PACKET = 0x92;
@@ -53,7 +54,7 @@ interface Info{
  	const EXPLODE_PACKET = 0xa1;
  	const LEVEL_EVENT_PACKET = 0xa2;
 	//const TILE_EVENT_PACKET = 0xa3;
-        const BLOCK_EVENT_PACKET = 0xa3;
+  const BLOCK_EVENT_PACKET = 0xa3;
  	const ENTITY_EVENT_PACKET = 0xa4;
  	const MOB_EFFECT_PACKET = 0xa5;
  	const UPDATE_ATTRIBUTES_PACKET = 0xa6;
@@ -81,10 +82,10 @@ interface Info{
  	const ADVENTURE_SETTINGS_PACKET = 0xbc;
 	//const TILE_ENTITY_DATA_PACKET = 0xbd;
 	const BLOCK_ENTITY_DATA_PACKET = 0xbd;
- 	//const PLAYER_INPUT_PACKET = 0xbe;
+ 	const PLAYER_INPUT_PACKET = 0xbe;
  	const FULL_CHUNK_DATA_PACKET = 0xbf;
  	const SET_DIFFICULTY_PACKET = 0xc0;
-	//const CHANGE_DIMENSION_PACKET = 0xc1;
+	const CHANGE_DIMENSION_PACKET = 0xc1;
 	//const SET_PLAYER_GAMETYPE_PACKET = 0xc2;
 	const PLAYER_LIST_PACKET = 0xc3;
 	//const TELEMETRY_EVENT_PACKET = 0xc4;
