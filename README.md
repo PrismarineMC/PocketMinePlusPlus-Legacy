@@ -27,7 +27,7 @@ Advanced server core based on PocketMine.
 
 > = Weather [0%]
 
-> = Mob AI [0%]
+> = Mob AI [5%]
 
 # Lista de do que foi adicionado (Portuguese)
 
@@ -55,7 +55,7 @@ Advanced server core based on PocketMine.
 
 > = Chuva [0%]
 
-> = Inteligência Artificial dos Mobs [0%]
+> = Inteligência Artificial dos Mobs [5%]
 
 # Список того, что нужно сделать (Русский язык)
 
@@ -83,7 +83,7 @@ Advanced server core based on PocketMine.
 
 > = Погода [0%]
 
-> = Интелект мобам [0%]
+> = Интелект мобам [5%]
 
 # 今後することの一覧 (日本語)
 
@@ -111,4 +111,4 @@ Advanced server core based on PocketMine.
 
 > = 天候 [0%]
 
-> = モブAI [0%]
+> = モブAI [5%]
