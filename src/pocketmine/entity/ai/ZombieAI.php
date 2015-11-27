@@ -10,6 +10,7 @@ use pocketmine\entity\Zombie;
 use pocketmine\scheduler\CallbackTask;
 use pocketmine\network\protocol\SetEntityMotionPacket;
 use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\Server;
 
 class ZombieAI extends EntityAI{
     
@@ -25,7 +26,7 @@ class ZombieAI extends EntityAI{
 				$this->ZombieHateWalk();
 				$this->ZombieHateFinder();
 			}
-			if($currentTick % 40 == 40) $this->ZombieFire();
+			if($currentTick % 40 == 0) $this->ZombieFire();
 			$this->ZombieRandomWalk();
 			
 		}
@@ -200,6 +201,7 @@ class ZombieAI extends EntityAI{
      */
     public function ZombieHateWalk() {
                 $zo = $this->entity;
+$level = $zo->getLevel();
                     if (isset($this->data)) {
                         $zom = &$this->data;
                         //$zom['yup'] = $zom['yup'] - 1;
@@ -348,6 +350,7 @@ class ZombieAI extends EntityAI{
      */
     public function ZombieRandomWalk() {
       						$zo = $this->entity;
+$level = $zo->getLevel();
                     if (isset($this->data)) {
                         $zom = &$this->data;
                         if ($zom['canAttack'] != 0) {
@@ -481,6 +484,8 @@ class ZombieAI extends EntityAI{
                                 }
                             }
                         }
+$zo->yaw = $zom['yaw'];
+$zo->pitch = $zom['pitch'];
                     }
                 
             
@@ -493,6 +498,7 @@ class ZombieAI extends EntityAI{
      */
     public function ZombieFire() {
                 $zo = $this->entity;
+$level = $zo->getLevel();
                     //var_dump($p->getLevel()->getTime());
                     if(0 < $level->getTime() and $level->getTime() < 13500){
                         $v3 = new Vector3($zo->getX(), $zo->getY(), $zo->getZ());

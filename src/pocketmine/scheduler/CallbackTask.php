@@ -27,8 +27,6 @@ namespace pocketmine\scheduler;
  *
  * If you want to do a task in a Plugin, consider extending PluginTask to your needs
  *
- * @deprecated
- *
  */
 class CallbackTask extends Task{
 

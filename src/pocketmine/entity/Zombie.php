@@ -22,18 +22,21 @@
 namespace pocketmine\entity;
 
 
- use pocketmine\event\entity\EntityDamageByEntityEvent;
+use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\network\protocol\MovePlayerPacket;
 use pocketmine\network\protocol\MoveEntityPacket;
 use pocketmine\math\AxisAlignedBB;
 
- use pocketmine\item\Item as Dr;
+use pocketmine\item\Item as Dr;
 use pocketmine\Player;
 use pocketmine\entity\Entity;
 use pocketmine\math\Vector3;
 use pocketmine\network\Network;
+use pocketmine\Server;
+
+use pocketmine\entity\ai\ZombieAI;
 
 class Zombie extends Monster{
 	const NETWORK_ID = 32;
@@ -45,12 +48,21 @@ class Zombie extends Monster{
 	public $length = 0.6;
 	public $height = 1.8;
 	public $stepHeight = 0.5;
+	protected $ai;
 
 	public function getName(){
 		return "Zombie";
 	}
 
-	 	 public function spawnTo(Player $player){
+	public function onUpdate($currentTick){
+		if(Server::getInstance()->getMobConfig()->get("living-zombie")=="true"){
+			if(!isset($this->ai)) $this->ai = new ZombieAI($this);
+			$this->ai->onUpdate($currentTick);
+		}
+		parent::onUpdate($currentTick);
+	}
+
+	public function spawnTo(Player $player){
 		$pk = new AddEntityPacket();
 		$pk->eid = $this->getId();
 		$pk->type = Zombie::NETWORK_ID;
