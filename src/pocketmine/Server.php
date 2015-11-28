@@ -275,6 +275,9 @@ class Server{
 	/** @var Config */
 	private $config;
 
+	/** @var Config */
+	private $mobConfig;
+
 	/** @var Player[] */
 	private $players = [];
 
@@ -1243,6 +1246,13 @@ class Server{
 	}
 
 	/**
+	 * @return Config
+	 */
+	public function getMobConfig(){
+	 	 return $this->mobConfig;
+	}
+
+	/**
 	 * @param string $variable
 	 * @param mixed  $defaultValue
 	 *
@@ -1501,6 +1511,13 @@ class Server{
 			@\file_put_contents($this->dataPath . "pocketmine.yml", $content);
 		}
 		$this->config = new Config($this->dataPath . "pocketmine.yml", Config::YAML, []);
+
+		$this->logger->info("Loading mobs.yml...");
+		if(!\file_exists($this->dataPath . "mobs.yml")){
+			$content = \file_get_contents($this->filePath . "src/pocketmine/resources/mobs.yml");
+			@\file_put_contents($this->dataPath . "mobs.yml", $content);
+		}
+		$this->mobConfig = new Config($this->dataPath . "mobs.yml", Config::YAML, []);
 
 		$this->logger->info("Loading server properties...");
 		$this->properties = new Config($this->dataPath . "server.properties", Config::PROPERTIES, [

