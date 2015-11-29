@@ -10,6 +10,7 @@ use pocketmine\entity\Zombie;
 use pocketmine\scheduler\CallbackTask;
 use pocketmine\network\protocol\SetEntityMotionPacket;
 use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\Server;
 
 class ZombieAI extends EntityAI{
@@ -447,6 +448,7 @@ $level = $zo->getLevel();
                                                 $damage = $this->getPlayerDamage($p, $zoDamage);
                                                 //echo $zoDamage."-".$damage."\n";
 												$p->setHealth($p->getHealth() - $damage);
+                                                $p->attack($damage, new EntityDamageByEntityEvent($zo, $p, EntityDamageEvent::CAUSE_ENTITY_ATTACK, 0));
                                             }
                                         }
                                     }
