@@ -6,6 +6,7 @@ use pocketmine\Player;
 use pocketmine\entity\Entity;
 use pocketmine\level\Level;
 use pocketmine\math\Vector3;
+use pocketmine\Server;
 
 class EntityAI{
 	public $data;
@@ -293,7 +294,7 @@ class EntityAI{
 		}
 	}
 	public function getZombieDamage($zoHealth) {
-		$dif = $this->getServer()->getDifficulty();
+		$dif = Server::getInstance()->getDifficulty();
 		switch ($dif) {
 			case 0:
 				return 0;
@@ -336,7 +337,7 @@ class EntityAI{
 	}
 
 	public function getSkeletonDamage($zoHealth) {
-		$dif = $this->getServer()->getDifficulty();
+		$dif = Server::getInstance()->getDifficulty();
 		switch ($dif) {
 			case 0:
 				return 0;
