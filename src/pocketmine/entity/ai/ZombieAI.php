@@ -12,6 +12,7 @@ use pocketmine\network\protocol\SetEntityMotionPacket;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\Server;
+use pocketmine\item\Item;
 
 class ZombieAI extends EntityAI{
     
