@@ -129,9 +129,9 @@ class EntityAI{
 			//return $y;
 			if ($reason) return 'climb';
 			if ($hate) {
-				return $y + 0.7;
+				return $y + 1;
 			}else{
-				return $y + 0.5;
+				return $y + 1;
 			}
 		}
 		else {  //考虑向上
