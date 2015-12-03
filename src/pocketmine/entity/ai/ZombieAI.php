@@ -16,13 +16,14 @@ use pocketmine\item\Item;
 
 class ZombieAI extends EntityAI{
     
-    public $width = 0.4;  //僵尸宽度
+    public $width = 0.4;
     protected $dif = 0;
 
-    public $hatred_r = 16;  //仇恨半径
-    public $zo_hate_v = 1.4; //僵尸仇恨模式下的行走速度
+    public $hatred_r = 16;  //Hate radius
+    public $zo_hate_v = 1.4; //Zombies hate walking speed mode
 
 		public function onUpdate($currentTick){
+		    $config = Server::getInstance()->getMobConfig();
 			if($currentTick % 10 == 0) {
 				$this->ZombieRandomWalkCalc();
 				$this->ZombieHateWalk();
@@ -34,12 +35,12 @@ class ZombieAI extends EntityAI{
 		}
 
     /**
-     * 僵尸初始化，常规化及自由行走模式循环计时器
-     * 循环间隔：20 ticks
+     * Zombie initialization routine and freely walking mode cycle timer
+     * Timer：20 ticks
      */
     public function ZombieRandomWalkCalc() {
         $this->dif = Server::getInstance()->getDifficulty();
-        //$this->getLogger()->info("僵尸数量：".count($this->plugin->zombie));
+        //$this->getLogger()->info(count($this->plugin->zombie));
                 $zo = $this->entity;
                     if ($this->willMove()) {
                         if (!isset($this->data)){
@@ -77,9 +78,9 @@ class ZombieAI extends EntityAI{
                         }
                         $zom = &$this->data;
 
-                        if ($zom['IsChasing'] === false) {  //自由行走模式
+                        if ($zom['IsChasing'] === false) {  //Walk mode
                             if ($zom['gotimer'] == 0 or $zom['gotimer'] == 10) {
-                                //限制转动幅度
+                                //Limit rotation rate
                                 $newmx = mt_rand(-5,5)/10;
                                 while (abs($newmx - $zom['motionx']) >= 0.7) {
                                     $newmx = mt_rand(-5,5)/10;
@@ -95,37 +96,36 @@ class ZombieAI extends EntityAI{
                             elseif ($zom['gotimer'] >= 20 and $zom['gotimer'] <= 24) {
                                 $zom['motionx'] = 0;
                                 $zom['motionz'] = 0;
-                                //僵尸停止
+                                //Zombie stop
                             }
 
                             $zom['gotimer'] += 0.5;
-                            if ($zom['gotimer'] >= 22) $zom['gotimer'] = 0;  //重置走路计时器
+                            if ($zom['gotimer'] >= 22) $zom['gotimer'] = 0;  //Reset timer walk
 
                             //$zom['motionx'] = mt_rand(-10,10)/10;
                             //$zom['motionz'] = mt_rand(-10,10)/10;
                             $zom['yup'] = 0;
                             $zom['up'] = 0;
 
-                            //boybook的y轴判断法
                             //$width = $this->width;
                             $pos = new Vector3 ($zom['x'] + $zom['motionx'], floor($zo->getY()) + 1,$zom['z'] + $zom['motionz']);  //目标坐标
                             $zy = $this->ifjump($zo->getLevel(),$pos);
-                            if ($zy === false) {  //前方不可前进
-                                $pos2 = new Vector3 ($zom['x'], $zom['y'] ,$zom['z']);  //目标坐标
-                                if ($this->ifjump($zo->getLevel(),$pos2) === false) { //原坐标依然是悬空
-                                    $pos2 = new Vector3 ($zom['x'], $zom['y']-1,$zom['z']);  //下降
+                            if ($zy === false) {  //if can not move forward
+                                $pos2 = new Vector3 ($zom['x'], $zom['y'] ,$zom['z']);  //Target coordinates
+                                if ($this->ifjump($zo->getLevel(),$pos2) === false) { //Original coordinate
+                                    $pos2 = new Vector3 ($zom['x'], $zom['y']-1,$zom['z']);  //decline
                                     $zom['up'] = 1;
                                     $zom['yup'] = 0;
                                 }
                                 else {
                                     $zom['motionx'] = - $zom['motionx'];
                                     $zom['motionz'] = - $zom['motionz'];
-                                    //转向180度，向身后走
+                                    //He turned 180 degrees
                                     $zom['up'] = 0;
                                 }
                             }
                             else {
-                                $pos2 = new Vector3 ($zom['x'] + $zom['motionx'], $zy - 1 ,$zom['z'] + $zom['motionz']);  //目标坐标
+                                $pos2 = new Vector3 ($zom['x'] + $zom['motionx'], $zy - 1 ,$zom['z'] + $zom['motionz']);  //Target coordinates
                                 if ($pos2->y - $zom['y'] < 0) {
                                     $zom['up'] = 1;
                                 }
@@ -134,17 +134,17 @@ class ZombieAI extends EntityAI{
                                 }
                             }
 
-                            if ($zom['motionx'] == 0 and $zom['motionz'] == 0) {  //僵尸停止
+                            if ($zom['motionx'] == 0 and $zom['motionz'] == 0) {  //Zombie stop
                             }
                             else {
-                                //转向计算
+                                //Steering computing
                                 $yaw = $this->getyaw($zom['motionx'], $zom['motionz']);
                                 //$zo->setRotation($yaw,0);
                                 $zom['yaw'] = $yaw;
                                 $zom['pitch'] = 0;
                             }
 
-                            //更新僵尸坐标
+                            //Update zombie coordinates
                             if (!$zom['knockBack']) {
                                 $zom['x'] = $pos2->getX();
                                 $zom['z'] = $pos2->getZ();
@@ -164,22 +164,25 @@ class ZombieAI extends EntityAI{
     }
 
     /**
-     * 僵尸仇恨刷新计时器
-     * 循环间隔：10 ticks
+     * Zombies hate refresh timer
+     * Update timer：10 ticks
      */
     public function ZombieHateFinder() {
                 $zo = $this->entity;
                     if (isset($this->data)) {
                         $zom = &$this->data;
-                        $h_r = $this->hatred_r;  //仇恨半径
+                        $h_r = $this->hatred_r;  //Hate radius
                         $pos = new Vector3($zo->getX(), $zo->getY(), $zo->getZ());
                         $hatred = false;
-                        foreach ($zo->getViewers() as $p) {  //获取附近玩家
-                            if ($p->distance($pos) <= $h_r) {  //玩家在仇恨半径内
+                        foreach ($zo->getViewers() as $p) {  //Being close to the players
+                            if ($p->distance($pos) <= $h_r) {  //Players within a radius of hatred
                                 if ($hatred === false) {
-                                    $hatred = $p;
+                                    if ($p instanceof Player)
+                                     {
+                                      if (($p -> getGamemode () == 0) || ($p -> getGamemode () == 2)) $hatred = $p;
+                                     }
                                 } elseif ($hatred instanceof Player) {
-                                    if ($p->distance($pos) <= $hatred->distance($pos)) {  //比上一个更近
+                                    if (($p->distance($pos) <= $hatred->distance($pos)) && (($p -> getGamemode () == 0) || ($p -> getGamemode () == 2))) {  //A more recent than
                                         $hatred = $p;
                                     }
                                 }
@@ -198,8 +201,8 @@ class ZombieAI extends EntityAI{
     }
 
     /**
-     * 僵尸仇恨模式坐标更新计时器
-     * 循环间隔：10 ticks
+     * Hate Zombie coordinates update timer
+     * Timer：10 ticks
      */
     public function ZombieHateWalk() {
                 $zo = $this->entity;
@@ -211,7 +214,7 @@ $level = $zo->getLevel();
                             $zom['oldv3'] = $zo->getLocation();
                             $zom['canjump'] = true;
 
-                            //僵尸碰撞检测 by boybook
+                            //Zombie collision detection
                             foreach ($level->getEntities() as $zo0) {
                                 if ($zo0 instanceof Zombie and !($zo0 == $zo)) {
                                     if ($zo->distance($zo0) <= $this->width * 2) {
@@ -237,12 +240,11 @@ $level = $zo->getLevel();
                             }
 
                             if ($zom['IsChasing'] !== false) {
-                                //echo ("是属于仇恨模式\n");
                                 $p = Server::getInstance()->getPlayer($zom['IsChasing']);
                                 if (($p instanceof Player) === false) {
-                                    $zom['IsChasing'] = false;  //取消仇恨模式
+                                    $zom['IsChasing'] = false;  //Cancel hate mode
                                 } else {
-                                    //真正的行走方向计算
+                                    //The real traveling direction calculation
                                     $xx = $p->getX() - $zo->getX();
                                     $zz = $p->getZ() - $zo->getZ();
                                     $yaw = $this->getyaw($xx,$zz);
@@ -261,7 +263,7 @@ $level = $zo->getLevel();
                                         $bi = 0;
                                     }
 
-                                    //根据wiki：僵尸掉血后走路更快
+                                    //zombie walk faster
                                     if ($zo->getHealth() == $zo->getMaxHealth()) {
                                         $zzz = sqrt(($this->zo_hate_v / 2.5) / ($bi * $bi + 1));
                                     }else{
@@ -281,44 +283,43 @@ $level = $zo->getLevel();
                                     $zom['xxx'] = $xxx;
                                     $zom['zzz'] = $zzz;
 
-                                    //计算y轴
+                                    //Calculating the y axis
                                     //$width = $this->width;
-                                    $pos0 = new Vector3 ($zo->getX(), $zo->getY() + 1, $zo->getZ());  //原坐标
-                                    $pos = new Vector3 ($zo->getX() + $xxx, $zo->getY() + 1, $zo->getZ() + $zzz);  //目标坐标
-                                    //用来写僵尸宽度的
+                                    $pos0 = new Vector3 ($zo->getX(), $zo->getY() + 1, $zo->getZ());  //Original coordinate
+                                    $pos = new Vector3 ($zo->getX() + $xxx, $zo->getY() + 1, $zo->getZ() + $zzz);  //Target coordinates
+                                    //I used to write Zombie width
                                     //$v = $this->zo_hate_v/2;
-                                    //$pos_front = new Vector3 ($zo->getX() + ($xxx/$v*($v+$this->width)), $zo->getY() + 1, $zo->getZ() + ($zzz/$v*($v+$this->width)));  //前方坐标
-                                    //$pos_back = new Vector3 ($zo->getX() + (-$xxx/$v*(-$v-$this->width)), $zo->getY() + 1, $zo->getZ() + (-$zzz/$v*(-$v-$this->width)));  //后方坐标
+                                    //$pos_front = new Vector3 ($zo->getX() + ($xxx/$v*($v+$this->width)), $zo->getY() + 1, $zo->getZ() + ($zzz/$v*($v+$this->width)));  //Front coordinates
+                                    //$pos_back = new Vector3 ($zo->getX() + (-$xxx/$v*(-$v-$this->width)), $zo->getY() + 1, $zo->getZ() + (-$zzz/$v*(-$v-$this->width)));  //Rear coordinates
                                     $zy = $this->ifjump($zo->getLevel(), $pos, true);
 
-                                    if ($zy === false or ($zy !== false and $this->ifjump($zo->getLevel(), $pos0, true, true) == 'fall')) {  //前方不可前进
-                                        //真正的自由落体 by boybook
-                                        if ($this->ifjump($zo->getLevel(), $pos0, false) === false) { //原坐标依然是悬空
+                                    if ($zy === false or ($zy !== false and $this->ifjump($zo->getLevel(), $pos0, true, true) == 'fall')) {  //Front can not move forwar
+                                        if ($this->ifjump($zo->getLevel(), $pos0, false) === false) { //Original coordinate is still vacant
                                             if ($zom['drop'] === false) {
-                                                $zom['drop'] = 0;  //僵尸下落的速度
+                                                $zom['drop'] = 0;  //Zombie falling speed
                                             }
-                                            $pos2 = new Vector3 ($zo->getX(), $zo->getY() - ($zom['drop'] / 2 + 1.25), $zo->getZ());  //下降
+                                            $pos2 = new Vector3 ($zo->getX(), $zo->getY() - ($zom['drop'] / 2 + 1.25), $zo->getZ());  //decline
                                         } else {
                                             $zom['drop'] = false;
-                                            if ($this->whatBlock($level, $pos0) == "climb") {  //梯子
+                                            if ($this->whatBlock($level, $pos0) == "climb") {  //ladder
                                                 $zy = $pos0->y + 0.7;
-                                                $pos2 = new Vector3 ($zo->getX(), $zy - 1, $zo->getZ());  //目标坐标
+                                                $pos2 = new Vector3 ($zo->getX(), $zy - 1, $zo->getZ());  //Target coordinates
                                             }
-                                            elseif ($xxx != 0 and $zzz != 0) {  //走向最近距离
+                                            elseif ($xxx != 0 and $zzz != 0) {  //To the closest distance
                                                 if ($this->ifjump($zo->getLevel(), new Vector3($zo->getX() + $xxx, $zo->getY() + 1, $zo->getZ()), true) !== false) {
-                                                    $pos2 = new Vector3($zo->getX() + $xxx, floor($zo->getY()), $zo->getZ());  //目标坐标
+                                                    $pos2 = new Vector3($zo->getX() + $xxx, floor($zo->getY()), $zo->getZ());  //Target coordinates
                                                 } elseif ($this->ifjump($zo->getLevel(), new Vector3($zo->getX(), $zo->getY() + 1, $zo->getZ() + $zzz), true) !== false) {
-                                                    $pos2 = new Vector3($zo->getX(), floor($zo->getY()), $zo->getZ() + $zzz);  //目标坐标
+                                                    $pos2 = new Vector3($zo->getX(), floor($zo->getY()), $zo->getZ() + $zzz);  //Target coordinates
                                                 } else {
-                                                    $pos2 = new Vector3 ($zo->getX() - $xxx / 5, floor($zo->getY()), $zo->getZ() - $zzz / 5);  //目标坐标
-                                                    //转向180度，向身后走
+                                                    $pos2 = new Vector3 ($zo->getX() - $xxx / 5, floor($zo->getY()), $zo->getZ() - $zzz / 5);  //Target coordinates
+                                                    //He turned 180 degrees, to go
                                                 }
                                             } else {
-                                                $pos2 = new Vector3 ($zo->getX() - $xxx / 5, floor($zo->getY()), $zo->getZ() - $zzz / 5);  //目标坐标
+                                                $pos2 = new Vector3 ($zo->getX() - $xxx / 5, floor($zo->getY()), $zo->getZ() - $zzz / 5);  //Target coordinates
                                             }
                                         }
                                     } else {
-                                        $pos2 = new Vector3 ($zo->getX() + $xxx, $zy - 1, $zo->getZ() + $zzz);  //目标坐标
+                                        $pos2 = new Vector3 ($zo->getX() + $xxx, $zy - 1, $zo->getZ() + $zzz);  //Target coordinates
                                     }
                                     $zo->setPosition($pos2);
 
@@ -345,10 +346,10 @@ $level = $zo->getLevel();
     }
 
     /**
-     * 高密集型发包计时器
-     * - 发送数据包
-     * - 计算自由落体相关数据
-     * 循环间隔：1 tick
+     * High-intensive contracting timer
+     * - Sending packets
+     * - Calculation Freefall related data
+     * Cycle interval: 1 tick
      */
     public function ZombieRandomWalk() {
       						$zo = $this->entity;
@@ -361,7 +362,7 @@ $level = $zo->getLevel();
                         $pos = $zo->getLocation();
                         //echo ($zom['IsChasing']."\n");
 
-                        //真正的自由落体 by boybook
+                        //The real free-fall
                         if ($zom['drop'] !== false) {
                             $olddrop = $zom['drop'];
                             $zom['drop'] += 0.5;
@@ -371,13 +372,13 @@ $level = $zo->getLevel();
                             $posd0 = new Vector3 (floor($zo->getX()), floor($dropy), floor($zo->getZ()));
                             $posd = new Vector3 ($zo->getX(), $dropy, $zo->getZ());
                             if ($this->whatBlock($zo->getLevel(), $posd0) == "air") {
-                                $zo->setPosition($posd);  //下降
+                                $zo->setPosition($posd);  //Decline
                             } else {
                                 for ($i = 1; $i <= $drop; $i++) {
                                     $posd0->y++;
                                     if ($this->whatBlock($zo->getLevel(), $posd0) != "block") {
                                         $posd->y = $posd0->y;
-                                        $zo->setPosition($posd);  //下降完成
+                                        $zo->setPosition($posd);  //Lowering completion
                                         $h = $zom['drop'] * $zom['drop'] / 20;
                                         $damage = $h - 3;
                                         //echo($h . ": " . $damage . "\n");
@@ -404,11 +405,8 @@ $level = $zo->getLevel();
                                 } else {
                                     $zom['swim'] = 0;
                                 }
-                                //echo("目标:".$zo->getY()." ");
-                                //echo("原先:".$zom['oldv3']->y."\n");
 
                                 if(abs($zo->getY() - $zom['oldv3']->y) == 1 and $zom['canjump'] === true){
-                                    //var_dump("跳");
                                     $zom['canjump'] = false;
                                     $zom['jump'] = 0.5;
                                 }
@@ -434,7 +432,7 @@ $level = $zo->getLevel();
                                 $p = Server::getInstance()->getPlayer($zom['IsChasing']);
                                 if ($p instanceof Player) {
                                     if ($p->distance($pos) <= 1.3) {
-                                        //僵尸的火焰点燃人类
+                                        //Fire from the zombies ignites human
                                         if ($zo->fireTicks > 0) {
                                             $p->setOnFire(5);
                                         }
@@ -496,8 +494,7 @@ $zo->pitch = $zom['pitch'];
     }
 
     /**
-     * 僵尸着火计时器
-     * PM时间修复
+     * Zombie fire timer
      */
     public function ZombieFire() {
                 $zo = $this->entity;
