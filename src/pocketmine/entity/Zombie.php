@@ -55,7 +55,8 @@ class Zombie extends Monster{
 	}
 
 	public function onUpdate($currentTick){
-		if(Server::getInstance()->getMobConfig()->get("living-zombie")=="true"){
+	    $config = Server::getInstance()->getMobConfig();
+		if($config->get("living-zombie")=="true"){
 			if(!isset($this->ai)) $this->ai = new ZombieAI($this);
 			$this->ai->onUpdate($currentTick);
 		}
