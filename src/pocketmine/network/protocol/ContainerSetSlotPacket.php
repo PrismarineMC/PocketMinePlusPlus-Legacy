@@ -47,7 +47,6 @@ class ContainerSetSlotPacket extends DataPacket{
 		$this->putShort($this->slot);
 		$this->putShort($this->hotbarSlot);
 		$this->putSlot($this->item);
-		$this->buffer = \pack("n", $this->slot);
 	}
 
 }
