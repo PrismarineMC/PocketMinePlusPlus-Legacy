@@ -86,12 +86,20 @@ class Enchantment{
 
 	public static function init(){
 		self::$enchantments = new \SplFixedArray(256);
-
+		/** Armor itens */
 		self::$enchantments[self::TYPE_ARMOR_PROTECTION] = new Enchantment(self::TYPE_ARMOR_PROTECTION, "%enchantment.protect.all", self::RARITY_COMMON, self::ACTIVATION_EQUIP, self::SLOT_ARMOR);
 		self::$enchantments[self::TYPE_ARMOR_FIRE_PROTECTION] = new Enchantment(self::TYPE_ARMOR_FIRE_PROTECTION, "%enchantment.protect.fire", self::RARITY_UNCOMMON, self::ACTIVATION_EQUIP, self::SLOT_ARMOR);
 		self::$enchantments[self::TYPE_ARMOR_FALL_PROTECTION] = new Enchantment(self::TYPE_ARMOR_FALL_PROTECTION, "%enchantment.protect.fall", self::RARITY_UNCOMMON, self::ACTIVATION_EQUIP, self::SLOT_FEET);
-		//self::$enchantments[self::TYPE_MINING_EFFICIENCY] = new Enchantment(self::TYPE_MINING_EFFICIENCY, "%enchantment.efficiency.all", self::RARITY_COMMON, self::ACTIVATION_ITEM, self::SLOT_HAND);
-    }
+		
+		/** enchants for tools */
+		self::$enchantments[self::TYPE_MINING_EFFICIENCY] = new Enchantment(self::TYPE_MINING_EFFICIENCY, "%enchantment.efficiency.all", self::RARITY_COMMON, self::ACTIVATION_HELD, self::SLOT_TOOL);
+		self::$enchantments[self::TYPE_WEAPON_KNOCKBACK] = new Enchantment(self::TYPE_WEAPON_KNOCKBACK, "%enchantment.knockback.all", self::RARITY_COMMON, self::ACTIVATION_HELD, self::SLOT_ALL);
+		self::$enchantments[self::TYPE_WEAPON_FIRE_ASPECT] = new Enchantment(self::TYPE_WEAPON_FIRE_ASPECT, "%enchantment.fireaspect.all", self::RARITY_COMMON, self::ACTIVATION_HELD, self::SLOT_ALL);
+		self::$enchantments[self::TYPE_MINING_SILK_TOUCH] = new Enchantment(self::TYPE_MINING_SILK_TOUCH, "%enchantment.silktouch.all", self::RARITY_COMMON, self::ACTIVATION_HELD, self::SLOT_TOOL);
+		self::$enchantments[self::TYPE_MINING_DURABILITY] = new Enchantment(self::TYPE_MINING_DURABILITY, "%enchantment.unbreaking.all", self::RARITY_COMMON, self::ACTIVATION_HELD, self::SLOT_ALL);
+		self::$enchantments[self::TYPE_ARMOR_THORNS] = new Enchantment(self::TYPE_ARMOR_THORNS, "%enchantment.thorns.all", self::RARITY_COMMON, self::ACTIVATION_EQUIP, self::SLOT_ARMOR);
+
+	}
 
 	/**
 	 * @param int $id
@@ -105,10 +113,10 @@ class Enchantment{
 	}
 
 	public static function getEffectByName($name){
-		if(\defined(Enchantment::class . "::TYPE_" . \strtoupper($name))){
-			return self::getEnchantment(\constant(Enchantment::class . "::TYPE_" . \strtoupper($name)));
+		if(defined(Enchantment::class . "::TYPE_" . strtoupper($name))){
+			return self::getEnchantment(constant(Enchantment::class . "::TYPE_" . strtoupper($name)));
 		}
-		return \null;
+		return null;
 	}
 
 	private $id;
