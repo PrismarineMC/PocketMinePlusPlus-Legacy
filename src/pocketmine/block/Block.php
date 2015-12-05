@@ -384,6 +384,8 @@ class Block extends Position implements Metadatable{
 			self::$list[self::REDSTONE_ORE] = RedstoneOre::class;
 			self::$list[self::GLOWING_REDSTONE_ORE] = GlowingRedstoneOre::class;
 
+			self::$list[self::REDSTONE_TORCH] = RedstoneTorch::class;
+
 			self::$list[self::SNOW_LAYER] = SnowLayer::class;
 			self::$list[self::ICE] = Ice::class;
 			self::$list[self::SNOW_BLOCK] = Snow::class;
