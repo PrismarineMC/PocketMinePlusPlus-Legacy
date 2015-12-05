@@ -47,7 +47,7 @@ class QuartzOre extends Solid{
 	public function getDrops(Item $item){
 		if($item->isPickaxe() >= Tool::TIER_WOODEN){
 			return [
-				[$this->id, 0, 1],
+				[Item::QUARTZ, 0, 1],
 			];
 		}else{
 			return [];
