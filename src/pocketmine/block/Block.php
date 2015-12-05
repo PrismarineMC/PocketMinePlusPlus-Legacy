@@ -110,7 +110,7 @@ class Block extends Position implements Metadatable{
 	const OAK_WOOD_STAIRS = 53;
 	const OAK_WOODEN_STAIRS = 53;
 	const CHEST = 54;
-
+    const REDSTONE_WIRE = 55;
 	const DIAMOND_ORE = 56;
 	const DIAMOND_BLOCK = 57;
 	const CRAFTING_TABLE = 58;
@@ -189,6 +189,8 @@ class Block extends Position implements Metadatable{
 	const BREWING_STAND = 117;
 	const END_PORTAL_FRAME = 120;
 	const END_STONE = 121;
+
+    const REDSTONE_LAMP = 123;
 
 	const SANDSTONE_STAIRS = 128;
 	const EMERALD_ORE = 129;
@@ -360,7 +362,7 @@ class Block extends Position implements Metadatable{
 			self::$list[self::MONSTER_SPAWNER] = MonsterSpawner::class;
 			self::$list[self::WOOD_STAIRS] = WoodStairs::class;
 			self::$list[self::CHEST] = Chest::class;
-
+            self::$list[self::REDSTONE_WIRE] = RedstoneWire::class;
 			self::$list[self::DIAMOND_ORE] = DiamondOre::class;
 			self::$list[self::DIAMOND_BLOCK] = Diamond::class;
 			self::$list[self::WORKBENCH] = Workbench::class;
@@ -391,7 +393,7 @@ class Block extends Position implements Metadatable{
 			self::$list[self::NETHERRACK] = Netherrack::class;
 			self::$list[self::SOUL_SAND] = SoulSand::class;
 			self::$list[self::GLOWSTONE_BLOCK] = Glowstone::class;
-       self::$list[self::NETHER_PORTAL] = NetherPortal::class;
+            self::$list[self::NETHER_PORTAL] = NetherPortal::class;
 			self::$list[self::LIT_PUMPKIN] = LitPumpkin::class;
 			self::$list[self::CAKE_BLOCK] = Cake::class;
 
@@ -419,6 +421,7 @@ class Block extends Position implements Metadatable{
 			self::$list[self::BREWING_STAND] = BrewingStand::class;
 			self::$list[self::END_PORTAL_FRAME] = EndPortalFrame::class;
 			self::$list[self::END_STONE] = EndStone::class;
+			self::$list[self::REDSTONE_LAMP] = RedstoneLamp::class;
 			self::$list[self::SANDSTONE_STAIRS] = SandstoneStairs::class;
 			self::$list[self::EMERALD_ORE] = EmeraldOre::class;
 
