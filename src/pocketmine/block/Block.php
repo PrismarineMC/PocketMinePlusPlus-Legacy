@@ -136,6 +136,8 @@ class Block extends Position implements Metadatable{
 	const GLOWING_REDSTONE_ORE = 74;
 	const LIT_REDSTONE_ORE = 74;
 
+	const REDSTONE_TORCH = 76;
+
 	const SNOW = 78;
 	const SNOW_LAYER = 78;
 	const ICE = 79;
