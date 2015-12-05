@@ -29,6 +29,8 @@ Advanced server core based on PocketMine.
 
 > = Mob AI [5%]
 
+> = Enchantments [44%]
+
 # Lista de do que foi adicionado (Portuguese)
 
 > = 0.13.0 Suporte [30%]
@@ -56,6 +58,8 @@ Advanced server core based on PocketMine.
 > = Chuva [0%]
 
 > = Inteligência Artificial dos Mobs [5%]
+
+> = Encatamentos [44%]
 
 # Список того, что нужно сделать (Русский язык)
 
