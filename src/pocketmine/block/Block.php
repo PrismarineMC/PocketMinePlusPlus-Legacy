@@ -244,7 +244,7 @@ class Block extends Position implements Metadatable{
 	const CARPET = 171;
 	const HARDENED_CLAY = 172;
 	const COAL_BLOCK = 173;
-
+        const PACKED_ICE = 174;
 	const DOUBLE_PLANT = 175;
 
 	const FENCE_GATE_SPRUCE = 183;
@@ -459,7 +459,7 @@ class Block extends Position implements Metadatable{
 			self::$list[self::CARPET] = Carpet::class;
 			self::$list[self::HARDENED_CLAY] = HardenedClay::class;
 			self::$list[self::COAL_BLOCK] = Coal::class;
-
+                        self::$list[self::PACKED_ICE] = PackedIce::class;
 			self::$list[self::DOUBLE_PLANT] = DoublePlant::class;
 
 			self::$list[self::FENCE_GATE_SPRUCE] = FenceGateSpruce::class;
