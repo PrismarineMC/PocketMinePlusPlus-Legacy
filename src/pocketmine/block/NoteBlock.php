@@ -78,7 +78,7 @@ class NoteBlock extends Solid
      * @param Player|null $player
      * @return bool
      */
-    public function onActivate(Item $item, Player $player){
+    public function onActivate(Item $item, Player $player = \null){
         $this->note++;
         if ($this->note > 24) $this->note = 0;
         $particle = new NoteParticle (new Vector3 ($this->x + 0.5, $this->y + 1, $this->z + 0.5));
