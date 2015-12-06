@@ -285,6 +285,11 @@ class Item{
 	const FENCE_GATE_DARK_OAK = 186;
 	const FENCE_GATE_ACACIA = 187;
 
+        const SPRUCE_DOOR_BLOCK = 193;
+	const BIRCH_DOOR_BLOCK = 194;
+	const JUNGLE_DOOR_BLOCK = 195;
+	const ACACIA_DOOR_BLOCK = 196;
+	const DARK_OAK_DOOR_BLOCK = 197;
 	const GRASS_PATH = 198;
 
 	const PODZOL = 243;
@@ -602,6 +607,12 @@ class Item{
 			self::$list[self::NETHER_BRICK] = NetherBrick::class;
 			self::$list[self::QUARTZ] = Quartz::class;
 			self::$list[self::QUARTZ] = NetherQuartz::class;
+                        self::$list[self::SPRUCE_DOOR] = SpruceDoor::class;
+                        self::$list[self::BIRCH_DOOR] = BirchDoor::class;
+                        self::$list[self::JUNGLE_DOOR] = JungleDoor::class;
+                        self::$list[self::ACACIA_DOOR] = AcaciaDoor::class;
+                        self::$list[self::DARK_OAK_DOOR] = DarkOakDoor::class;
+
 			// self::$list[self::CAMERA] = Camera::class;
 			self::$list[self::BEETROOT] = Beetroot::class;
 			self::$list[self::BEETROOT_SEEDS] = BeetrootSeeds::class;
