@@ -266,6 +266,61 @@ abstract class TextFormat{
 	}
 
 	/**
+	 * Returns a string from JSON
+	 *
+	 * @param string $json
+	 *
+	 * @return string
+	 */
+	public static function fromJSON($json){
+		$json = json_decode($json, \true);
+		$string = "";
+		if(isset($json["color"])){
+			$string .= constant(TextFormat::class . "::" . strtoupper($json["color"]));
+		}
+		if(isset($json["bold"])){
+			if($json["bold"]) $string .= TextFormat::BOLD;
+		}
+		if(isset($json["italic"])){
+			if($json["italic"]) $string .= TextFormat::ITALIC;
+		}
+		if(isset($json["underlined"])){
+			if($json["underlined"]) $string .= TextFormat::UNDERLINE;
+		}
+		if(isset($json["strikethrough"])){
+			if($json["strikethrough"]) $string .= TextFormat::STRIKETHROUGH;
+		}
+		if(isset($json["obfuscated"])){
+			if($json["obfuscated"]) $string .= TextFormat::OBFUSCATED;
+		}
+		$string .= $json["text"];
+		if(isset($json["extra"])){
+			foreach($json["extra"] as $extra){
+				if(isset($extra["color"])){
+					$string .= constant(TextFormat::class . "::" . strtoupper($extra["color"]));
+				}
+				if(isset($extra["bold"])){
+					if($extra["bold"]) $string .= TextFormat::BOLD;
+				}
+				if(isset($extra["italic"])){
+					if($extra["italic"]) $string .= TextFormat::ITALIC;
+				}
+				if(isset($extra["underlined"])){
+					if($extra["underlined"]) $string .= TextFormat::UNDERLINE;
+				}
+				if(isset($extra["strikethrough"])){
+					if($extra["strikethrough"]) $string .= TextFormat::STRIKETHROUGH;
+				}
+				if(isset($extra["obfuscated"])){
+					if($extra["obfuscated"]) $string .= TextFormat::OBFUSCATED;
+				}
+				$string .= $extra["text"];
+			}
+		}
+		return $string;
+	}
+
+	/**
 	 * Returns an HTML-formatted string with colors/markup
 	 *
 	 * @param string|array $string
