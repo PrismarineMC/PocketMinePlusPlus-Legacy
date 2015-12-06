@@ -74,7 +74,7 @@ class Block extends Position implements Metadatable{
 	const LAPIS_BLOCK = 22;
 
 	const SANDSTONE = 24;
-
+        const NOTE_BLOCK = 25;
 	const BED_BLOCK = 26;
 
 
@@ -342,6 +342,7 @@ class Block extends Position implements Metadatable{
 			self::$list[self::LAPIS_ORE] = LapisOre::class;
 			self::$list[self::LAPIS_BLOCK] = Lapis::class;
 			self::$list[self::SANDSTONE] = Sandstone::class;
+			self::$list[self::NOTE_BLOCK] = NoteBlock::class;
 			self::$list[self::BED_BLOCK] = Bed::class;
 			self::$list[self::COBWEB] = Cobweb::class;
 			self::$list[self::TALL_GRASS] = TallGrass::class;
