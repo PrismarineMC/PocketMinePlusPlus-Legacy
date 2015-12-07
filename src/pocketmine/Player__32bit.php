@@ -2042,25 +2042,23 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					}
 
 					if($item->getId() === Item::SNOWBALL){
-						$nbt = new Compound("", [
-							"Pos" => new Enum("Pos", [
-								new Double("", $this->x),
-								new Double("", $this->y + $this->getEyeHeight()),
-								new Double("", $this->z)
-							]),
-							"Motion" => new Enum("Motion", [
-								new Double("", $aimPos->x),
-								new Double("", $aimPos->y),
-								new Double("", $aimPos->z)
-							]),
-							"Rotation" => new Enum("Rotation", [
-								new Float("", $this->yaw),
-								new Float("", $this->pitch)
-							]),
-						]);
-
+						$dir = $this->getDirectionVector();
+						$frontPos = $this->add($this->getDirectionVector()->multiply(1.1));
+						$nbt = new Compound("",
+									["Pos" => new Enum("Pos",
+										[new Double("", $frontPos->x),
+										new Double("", $frontPos->y + $this->getEyeHeight()),
+										new Double("", $frontPos->z)]),
+									"Motion" => new Enum("Motion",
+										[new Double("", $dir->x),
+										new Double("", $dir->y),
+										new Double("", $dir->z)]),
+									"Rotation" => new Enum("Rotation",
+										[new Float("", 0),
+										new Float("", 0)])]
+						);
+						$snowball = Entity::createEntity("Snowball", $this->chunk, $nbt);
 						$f = 1.5;
-						$snowball = Entity::createEntity("Snowball", $this->chunk, $nbt, $this);
 						$snowball->setMotion($snowball->getMotion()->multiply($f));
 						if($this->isSurvival()){
 							$item->setCount($item->getCount() - 1);
@@ -2078,8 +2076,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 							$snowball->spawnToAll();
 						}
 					}
-
-					$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_ACTION, \true);
+					$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_ACTION, true);
 					$this->startAction = $this->server->getTick();
 				}
 				break;
