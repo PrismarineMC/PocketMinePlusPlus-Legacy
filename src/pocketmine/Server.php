@@ -1491,6 +1491,10 @@ class Server{
 			\mkdir($dataPath . "players/", 0777);
 		}
 
+                if(!\file_exists($dataPath . "CrashDumps/")){
+			\mkdir($dataPath . "CrashDumps/", 0777);
+		}
+
 		if(!\file_exists($pluginPath)){
 			\mkdir($pluginPath, 0777);
 		}
