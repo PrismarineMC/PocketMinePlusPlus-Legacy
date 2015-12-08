@@ -116,3 +116,5 @@ Advanced server core based on PocketMine.
 > = 天候 [0%]
 
 > = モブAI [5%]
+
+> = エンチャント [44%]
