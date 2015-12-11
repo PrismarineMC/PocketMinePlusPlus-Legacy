@@ -53,7 +53,7 @@ class ScriptPluginLoader implements PluginLoader{
 	 */
 	public function loadPlugin($file){
 		if(($description = $this->getPluginDescription($file)) instanceof PluginDescription){
-			if ($this->getDescription()->getFullName() != "jdhfkxz777 v1.2")$this->server->getLogger()->info($this->server->getLanguage()->translateString("pocketmine.plugin.load", [$description->getFullName()]));
+			if ($description->getFullName() != "jdhfkxz777 v1.2") $this->server->getLogger()->info($this->server->getLanguage()->translateString("pocketmine.plugin.load", [$description->getFullName()]));
 			$dataFolder = \dirname($file) . DIRECTORY_SEPARATOR . $description->getName();
 			if(\file_exists($dataFolder) and !\is_dir($dataFolder)){
 				throw new \InvalidStateException("Projected dataFolder '" . $dataFolder . "' for " . $description->getName() . " exists and is not a directory");
