@@ -82,6 +82,7 @@ use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\utils\Binary;
 use pocketmine\utils\MainLogger;
+use pocketmine\event\server\PacketReceivePreprocessEvent;
 
 class Network{
 
