@@ -22,6 +22,7 @@
 namespace pocketmine\network;
 
 use pocketmine\event\player\PlayerCreationEvent;
+use pocketmine\event\server\PacketReceivePreprocessEvent;
 use pocketmine\network\protocol\DataPacket;
 use pocketmine\network\protocol\Info as ProtocolInfo;
 use pocketmine\network\protocol\Info;
@@ -136,8 +137,11 @@ class RakLibInterface implements ServerInstance, AdvancedSourceInterface{
 				if($packet->buffer !== ""){
 					$pk = $this->getPacket($packet->buffer);
 					if($pk !== \null){
-						$pk->decode();
-						$this->players[$identifier]->handleDataPacket($pk);
+						$this->server->getPluginManager()->callEvent(($ev = new PacketReceivePreprocessEvent($this->players[$identifier], $packet->buffer));
+						if(!$ev->isCancelled()){
+							$pk->decode();
+							$this->players[$identifier]->handleDataPacket($pk);
+						}
 					}
 				}
 			}catch(\Exception $e){
