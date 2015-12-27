@@ -1,39 +1,37 @@
 <?php
 
-/*
- *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
+/*                                                                             __
+ *                                                                           _|  |_
+ *  ____            _        _   __  __ _                  __  __ ____      |_    _|
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \    __ |__|  
+ * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) | _|  |_  
+ * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ |_    _|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|      |__|   
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- * 
- *
+ * @author PocketMine++ Team
+ * @link http://pm-plus-plus.tk/
 */
 
 namespace pocketmine\level\generator\normal;
 
 use pocketmine\block\Block;
 use pocketmine\block\CoalOre;
-use pocketmine\block\Air; 
+use pocketmine\block\Air;
 use pocketmine\block\DiamondOre;
 use pocketmine\block\Dirt;
 use pocketmine\block\GoldOre;
 use pocketmine\block\Gravel;
 use pocketmine\block\IronOre;
 use pocketmine\block\LapisOre;
-use pocketmine\block\RedstoneOre;
 use pocketmine\block\Granite; 
 use pocketmine\block\Diorite; 
 use pocketmine\block\Andesite; 
+use pocketmine\block\RedstoneOre;
 use pocketmine\level\ChunkManager;
 use pocketmine\level\generator\biome\Biome;
 use pocketmine\level\generator\biome\BiomeSelector;
@@ -180,16 +178,18 @@ class Normal extends Generator{
 
 		$ores = new Ore();
 		$ores->setOreTypes([
-			new OreType(new CoalOre(), 20, 16, 0, 128),
-			new OreType(New IronOre(), 20, 8, 0, 64),
-			new OreType(new RedstoneOre(), 8, 7, 0, 16),
-			new OreType(new LapisOre(), 1, 6, 0, 32),
+			new OreType(new CoalOre(), 10, 16, 0, 128),
+			new OreType(new IronOre(), 10, 8, 0, 64),
+			new OreType(new RedstoneOre(), 4, 7, 0, 16),
+			new OreType(new LapisOre(), 3, 6, 0, 32),
 			new OreType(new GoldOre(), 2, 8, 0, 32),
 			new OreType(new DiamondOre(), 1, 7, 0, 16),
 			new OreType(new Dirt(), 20, 32, 0, 128),
 			new OreType(new Gravel(), 10, 16, 0, 128),
-      	 new OreType(new Air (), 2, 60, 0, 140) ,
-        new OreType(new Stone ()::meta = 1, 20, 16, 0, 128) 
+            new OreType(new Air (), 2, 60, 0, 140) ,
+            new OreType(new Granite (), 20, 16, 0, 128),
+			new OreType(new Andesite (), 20, 16, 0, 128),
+			new OreType(new Diorite (), 20, 16, 0, 128)
 		]);
 		$this->populators[] = $ores;
 	}

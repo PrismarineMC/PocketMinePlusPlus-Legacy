@@ -1,22 +1,20 @@
 <?php
 
-/*
- *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
+/*                                                                             __
+ *                                                                           _|  |_
+ *  ____            _        _   __  __ _                  __  __ ____      |_    _|
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \    __ |__|  
+ * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) | _|  |_  
+ * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ |_    _|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|      |__|   
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- * 
- *
+ * @author PocketMine++ Team
+ * @link http://pm-plus-plus.tk/
 */
 
 namespace pocketmine\network\rcon;
@@ -31,6 +29,11 @@ class RCONInstance extends Thread{
 	private $socket;
 	private $password;
 	private $maxClients;
+	private $waiting;
+
+	public function isWaiting(){
+		return $this->waiting === \true;
+	}
 
 
 	public function __construct($socket, $password, $maxClients = 50){
@@ -85,7 +88,9 @@ class RCONInstance extends Thread{
 	public function run(){
 
 		while($this->stop !== \true){
-			\usleep(2000);
+			$this->synchronized(function(){
+				$this->wait(2000);
+			});
 			$r = [$socket = $this->socket];
 			$w = \null;
 			$e = \null;
@@ -135,8 +140,10 @@ class RCONInstance extends Thread{
 									\socket_getpeername($client, $addr, $port);
 									$this->response = "[INFO] Successful Rcon connection from: /$addr:$port";
 									$this->synchronized(function (){
+										$this->waiting = \true;
 										$this->wait();
 									});
+									$this->waiting = \false;
 									$this->response = "";
 									$this->writePacket($client, $requestID, 2, "");
 									$this->{"status" . $n} = 1;
@@ -154,15 +161,17 @@ class RCONInstance extends Thread{
 								if(\strlen($payload) > 0){
 									$this->cmd = \ltrim($payload);
 									$this->synchronized(function (){
+										$this->waiting = \true;
 										$this->wait();
 									});
+									$this->waiting = \false;
 									$this->writePacket($client, $requestID, 0, \str_replace("\n", "\r\n", \trim($this->response)));
 									$this->response = "";
 									$this->cmd = "";
 								}
 								break;
 						}
-						\usleep(1);
+
 					}else{
 						@\socket_set_option($client, SOL_SOCKET, SO_LINGER, ["l_onoff" => 1, "l_linger" => 1]);
 						@\socket_shutdown($client, 2);
@@ -177,6 +186,10 @@ class RCONInstance extends Thread{
 		}
 		unset($this->socket, $this->cmd, $this->response, $this->stop);
 		exit(0);
+	}
+
+   public function kill(){
+		return true;//DO NOT WORKING
 	}
 
 	public function getThreadName(){

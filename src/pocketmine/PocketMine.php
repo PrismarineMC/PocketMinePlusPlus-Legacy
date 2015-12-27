@@ -1,22 +1,20 @@
 <?php
 
-/*
- *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
+/*                                                                             __
+ *                                                                           _|  |_
+ *  ____            _        _   __  __ _                  __  __ ____      |_    _|
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \    __ |__|  
+ * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) | _|  |_  
+ * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ |_    _|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|      |__|   
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- * 
- *
+ * @author PocketMine++ Team
+ * @link http://pm-plus-plus.tk/
 */
 
 namespace {
@@ -72,11 +70,11 @@ namespace pocketmine {
 	use pocketmine\utils\Utils;
 	use pocketmine\wizard\Installer;
 
-	const VERSION = '77.7dev-10';
+	const VERSION = '77.7dev-14';
 	const API_VERSION = "1.77.7";
 	const CODENAME = "[PM++ vk.com/pocketmine_plus_plus]";
-	const MINECRAFT_VERSION = "v0.13.0 alpha";
-	const MINECRAFT_VERSION_NETWORK = "0.13.0";
+	const MINECRAFT_VERSION = "v0.13.1 alpha";
+	const MINECRAFT_VERSION_NETWORK = "0.13.1";
 
 	/*
 	 * Startup code. Do not look at it, it may harm you.
@@ -86,9 +84,15 @@ namespace pocketmine {
 	 */
 
 	if(\Phar::running(\true) !== ""){
-		@\define("pocketmine\\PATH", \Phar::running(\true) . "/");
+		@\define('pocketmine\PATH', \Phar::running(\true) . "/");
 	}else{
-		@\define("pocketmine\\PATH", \getcwd() . DIRECTORY_SEPARATOR);
+		@\define('pocketmine\PATH', \getcwd() . DIRECTORY_SEPARATOR);
+	}
+
+	if(\version_compare("7.0", PHP_VERSION) > 0){
+		echo "[CRITICAL] You must use PHP >= 7.0" . \PHP_EOL;
+		echo "[CRITICAL] Please use the installer provided on the homepage." . \PHP_EOL;
+		exit(1);
 	}
 
 	if(!\extension_loaded("pthreads")){
@@ -98,7 +102,6 @@ namespace pocketmine {
 	}
 
 	if(!\class_exists("ClassLoader", \false)){
-		require_once(\pocketmine\PATH . "src/spl/ThreadedFactory.php");
 		require_once(\pocketmine\PATH . "src/spl/ClassLoader.php");
 		require_once(\pocketmine\PATH . "src/spl/BaseClassLoader.php");
 		require_once(\pocketmine\PATH . "src/pocketmine/CompatibleClassLoader.php");
@@ -120,16 +123,16 @@ namespace pocketmine {
 	\ini_set("default_charset", "utf-8");
 
 	\ini_set("memory_limit", -1);
-	\define("pocketmine\\START_TIME", \microtime(\true));
+	\define('pocketmine\START_TIME', \microtime(\true));
 
 	$opts = \getopt("", ["data:", "plugins:", "no-wizard", "enable-profiler"]);
 
-	\define("pocketmine\\DATA", isset($opts["data"]) ? $opts["data"] . DIRECTORY_SEPARATOR : \getcwd() . DIRECTORY_SEPARATOR);
-	\define("pocketmine\\PLUGIN_PATH", isset($opts["plugins"]) ? $opts["plugins"] . DIRECTORY_SEPARATOR : \getcwd() . DIRECTORY_SEPARATOR . "plugins" . DIRECTORY_SEPARATOR);
+	\define('pocketmine\DATA', isset($opts["data"]) ? $opts["data"] . DIRECTORY_SEPARATOR : \getcwd() . DIRECTORY_SEPARATOR);
+	\define('pocketmine\PLUGIN_PATH', isset($opts["plugins"]) ? $opts["plugins"] . DIRECTORY_SEPARATOR : \getcwd() . DIRECTORY_SEPARATOR . "plugins" . DIRECTORY_SEPARATOR);
 
 	Terminal::init();
 
-	\define("pocketmine\\ANSI", Terminal::hasFormattingCodes());
+	\define('pocketmine\ANSI', Terminal::hasFormattingCodes());
 
 	if(!\file_exists(\pocketmine\DATA)){
 		\mkdir(\pocketmine\DATA, 0777, \true);
@@ -137,6 +140,7 @@ namespace pocketmine {
 
 	//Logger has a dependency on timezone, so we'll set it to UTC until we can get the actual timezone.
 	\date_default_timezone_set("UTC");
+
 	$logger = new MainLogger(\pocketmine\DATA . "server.log", \pocketmine\ANSI);
 
 	if(!\ini_get("date.timezone")){
@@ -312,7 +316,11 @@ namespace pocketmine {
 			case "mac":
 			case "linux":
 			default:
-				\exec("kill -9 " . ((int) $pid) . " > /dev/null 2>&1");
+				if(\function_exists("posix_kill")){
+					\posix_kill($pid, SIGKILL);
+				}else{
+					\exec("kill -9 " . ((int)$pid) . " > /dev/null 2>&1");
+				}
 		}
 	}
 
@@ -368,14 +376,7 @@ namespace pocketmine {
 		return \rtrim(\str_replace(["\\", ".php", "phar://", \rtrim(\str_replace(["\\", "phar://"], ["/", ""], \pocketmine\PATH), "/"), \rtrim(\str_replace(["\\", "phar://"], ["/", ""], \pocketmine\PLUGIN_PATH), "/")], ["/", "", "", "", ""], $path), "/");
 	}
 
-	\set_error_handler([\ExceptionHandler::class, "handler"], -1);
-
 	$errors = 0;
-
-	if(\version_compare("5.6.0", PHP_VERSION) > 0){
-		$logger->critical("You must use PHP >= 5.6");
-		++$errors;
-	}
 
 	if(\php_sapi_name() !== "cli"){
 		$logger->critical("You must run PocketMine-MP using the CLI.");
@@ -391,8 +392,8 @@ namespace pocketmine {
 	if(\substr_count($pthreads_version, ".") < 2){
 		$pthreads_version = "0.$pthreads_version";
 	}
-	if(\version_compare($pthreads_version, "2.0.9") < 0){
-		$logger->critical("pthreads >= 2.0.9 is required, while you have $pthreads_version.");
+	if(\version_compare($pthreads_version, "3.0.7") < 0){
+		$logger->critical("pthreads >= 3.0.7 is required, while you have $pthreads_version.");
 		++$errors;
 	}
 
@@ -410,23 +411,18 @@ namespace pocketmine {
 		}
 	}
 
-	if(!\extension_loaded("Weakref") and !\extension_loaded("weakref")){
-		$logger->critical("Unable to find the Weakref extension.");
-		++$errors;
-	}
-
 	if(!\extension_loaded("curl")){
 		$logger->critical("Unable to find the cURL extension.");
 		++$errors;
 	}
 
-	if(!\extension_loaded("sqlite3")){
-		$logger->critical("Unable to find the SQLite3 extension.");
+	if(!\extension_loaded("yaml")){
+		$logger->critical("Unable to find the YAML extension.");
 		++$errors;
 	}
 
-	if(!\extension_loaded("yaml")){
-		$logger->critical("Unable to find the YAML extension.");
+	if(!\extension_loaded("sqlite3")){
+		$logger->critical("Unable to find the SQLite3 extension.");
 		++$errors;
 	}
 
@@ -443,9 +439,9 @@ namespace pocketmine {
 	}
 
 	if(\file_exists(\pocketmine\PATH . ".git/refs/heads/master")){ //Found Git information!
-		\define("pocketmine\\GIT_COMMIT", \strtolower(\trim(\file_get_contents(\pocketmine\PATH . ".git/refs/heads/master"))));
+		\define('pocketmine\GIT_COMMIT', \strtolower(\trim(\file_get_contents(\pocketmine\PATH . ".git/refs/heads/master"))));
 	}else{ //Unknown :(
-		\define("pocketmine\\GIT_COMMIT", \str_repeat("00", 20));
+		\define('pocketmine\GIT_COMMIT', \str_repeat("00", 20));
 	}
 
 	@\define("ENDIANNESS", (\pack("d", 1) === "\77\360\0\0\0\0\0\0" ? Binary::BIG_ENDIAN : Binary::LITTLE_ENDIAN));
@@ -462,7 +458,6 @@ namespace pocketmine {
 
 	ThreadManager::init();
 	$server = new Server($autoloader, $logger, \pocketmine\PATH, \pocketmine\DATA, \pocketmine\PLUGIN_PATH);
-	\define("\\pocketmine\\SERVER", $server);
 
 	$logger->info("Stopping other threads");
 
@@ -473,7 +468,6 @@ namespace pocketmine {
 
 	$killer = new ServerKiller(8);
 	$killer->start();
-	$killer->detach();
 
 	$logger->shutdown();
 	$logger->join();
