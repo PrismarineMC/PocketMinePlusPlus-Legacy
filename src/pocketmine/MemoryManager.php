@@ -1,22 +1,20 @@
 <?php
 
-/*
- *
- *  ____            _        _   __  __ _                  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
+/*                                                                             __
+ *                                                                           _|  |_
+ *  ____            _        _   __  __ _                  __  __ ____      |_    _|
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \    __ |__|  
+ * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) | _|  |_  
+ * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ |_    _|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|      |__|   
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- *
- *
+ * @author PocketMine++ Team
+ * @link http://pm-plus-plus.tk/
 */
 
 namespace pocketmine;
@@ -54,13 +52,6 @@ class MemoryManager{
 
 	private $chunkCache;
 	private $cacheTrigger;
-
-	/** @var \WeakRef[] */
-	private $leakWatch = [];
-
-	private $leakInfo = [];
-
-	private $leakSeed = 0;
 
 	public function __construct(Server $server){
 		$this->server = $server;
@@ -212,87 +203,6 @@ class MemoryManager{
 		Timings::$garbageCollectorTimer->stopTiming();
 
 		return $cycles;
-	}
-
-	/**
-	 * @param object $object
-	 *
-	 * @return string Object identifier for future checks
-	 */
-	public function addObjectWatcher($object){
-		if(!\is_object($object)){
-			throw new \InvalidArgumentException("Not an object!");
-		}
-
-
-		$identifier = \spl_object_hash($object) . ":" . \get_class($object);
-
-		if(isset($this->leakInfo[$identifier])){
-			return $this->leakInfo["id"];
-		}
-
-		$this->leakInfo[$identifier] = [
-			"id" => $id = \md5($identifier . ":" . $this->leakSeed++),
-			"class" => \get_class($object),
-			"hash" => $identifier
-		];
-		$this->leakInfo[$id] = $this->leakInfo[$identifier];
-
-		$this->leakWatch[$id] = new \WeakRef($object);
-
-		return $id;
-	}
-
-	public function isObjectAlive($id){
-		if(isset($this->leakWatch[$id])){
-			return $this->leakWatch[$id]->valid();
-		}
-
-		return \false;
-	}
-
-	public function removeObjectWatch($id){
-		if(!isset($this->leakWatch[$id])){
-			return;
-		}
-		unset($this->leakInfo[$this->leakInfo[$id]["hash"]]);
-		unset($this->leakInfo[$id]);
-		unset($this->leakWatch[$id]);
-	}
-
-	public function doObjectCleanup(){
-		foreach($this->leakWatch as $id => $w){
-			if(!$w->valid()){
-				$this->removeObjectWatch($id);
-			}
-		}
-	}
-
-	public function getObjectInformation($id, $includeObject = \false){
-		if(!isset($this->leakWatch[$id])){
-			return \null;
-		}
-
-		$valid = \false;
-		$references = 0;
-		$object = \null;
-
-		if($this->leakWatch[$id]->acquire()){
-			$object = $this->leakWatch[$id]->get();
-			$this->leakWatch[$id]->release();
-
-			$valid = \true;
-			$references = getReferenceCount($object, \false);
-		}
-
-		return [
-			"id" => $id,
-			"class" => $this->leakInfo[$id]["class"],
-			"hash" => $this->leakInfo[$id]["hash"],
-			"valid" => $valid,
-			"references" => $references,
-			"object" => $includeObject ? $object : \null
-		];
 	}
 
 	public function dumpServerMemory($outputFolder, $maxNesting, $maxStringSize){

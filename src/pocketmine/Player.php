@@ -1,22 +1,20 @@
 <?php
 
-/*
- *
- *  ____            _        _   __  __ _                  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
+/*                                                                             __
+ *                                                                           _|  |_
+ *  ____            _        _   __  __ _                  __  __ ____      |_    _|
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \    __ |__|  
+ * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) | _|  |_  
+ * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ |_    _|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|      |__|   
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- *
- *
+ * @author PocketMine++ Team
+ * @link http://pm-plus-plus.tk/
 */
 
 namespace pocketmine;
@@ -90,15 +88,15 @@ use pocketmine\math\Vector2;
 use pocketmine\math\Vector3;
 use pocketmine\metadata\MetadataValue;
 use pocketmine\nbt\NBT;
-use pocketmine\nbt\tag\Byte;
-use pocketmine\nbt\tag\Compound;
-use pocketmine\nbt\tag\Double;
-use pocketmine\nbt\tag\Enum;
-use pocketmine\nbt\tag\Float;
-use pocketmine\nbt\tag\Int;
-use pocketmine\nbt\tag\Long;
-use pocketmine\nbt\tag\Short;
-use pocketmine\nbt\tag\String;
+use pocketmine\nbt\tag\ByteTag;
+use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\DoubleTag;
+use pocketmine\nbt\tag\ListTag;
+use pocketmine\nbt\tag\FloatTag;
+use pocketmine\nbt\tag\IntTag;
+use pocketmine\nbt\tag\LongTag;
+use pocketmine\nbt\tag\ShortTag;
+use pocketmine\nbt\tag\StringTag;
 use pocketmine\network\Network;
 use pocketmine\network\protocol\AdventureSettingsPacket;
 use pocketmine\network\protocol\AnimatePacket;
@@ -113,6 +111,7 @@ use pocketmine\network\protocol\Info as ProtocolInfo;
 use pocketmine\network\protocol\PlayerActionPacket;
 use pocketmine\network\protocol\PlayStatusPacket;
 use pocketmine\network\protocol\RespawnPacket;
+use pocketmine\network\protocol\SetPlayerGameTypePacket;
 use pocketmine\network\protocol\TextPacket;
 
 use pocketmine\network\protocol\MovePlayerPacket;
@@ -181,12 +180,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	public $craftingType = 0; //0 = 2x2 crafting, 1 = 3x3 crafting, 2 = stonecutter
 
 	protected $isCrafting = \false;
-
-	/**
-	 * @deprecated
-	 * @var array
-	 */
-	public $loginData = [];
 
 	public $creationTime = 0;
 
@@ -295,15 +288,15 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	}
 
 	public function getFirstPlayed(){
-		return $this->namedtag instanceof Compound ? $this->namedtag["firstPlayed"] : \null;
+		return $this->namedtag instanceof CompoundTag ? $this->namedtag["firstPlayed"] : \null;
 	}
 
 	public function getLastPlayed(){
-		return $this->namedtag instanceof Compound ? $this->namedtag["lastPlayed"] : \null;
+		return $this->namedtag instanceof CompoundTag ? $this->namedtag["lastPlayed"] : \null;
 	}
 
 	public function hasPlayedBefore(){
-		return $this->namedtag instanceof Compound;
+		return $this->namedtag instanceof CompoundTag;
 	}
 
 	public function setAllowFlight($value){
@@ -436,7 +429,11 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	 * @return bool
 	 */
 	public function isPermissionSet($name){
-		return $this->perm->isPermissionSet($name);
+	    if ($this->perm != \null){
+	        return $this->perm->isPermissionSet($name);
+	    } else{
+	        return \false;
+	    }
 	}
 
 	/**
@@ -445,12 +442,10 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	 * @return bool
 	 */
 	public function hasPermission($name){
-		if ($this->perm != null)
-			{
-	  	 return $this->perm->hasPermission($name);
-		 } else
-			{
-			 return false;
+		if ($this->perm != \null){
+		    return $this->perm->hasPermission($name);
+		    } else{
+		        return \false;
 			}
 	}
 
@@ -508,7 +503,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		$this->interface = $interface;
 		$this->windows = new \SplObjectStorage();
 		$this->perm = new PermissibleBase($this);
-		$this->namedtag = new Compound();
+		$this->namedtag = new CompoundTag();
 		$this->server = Server::getInstance();
 		$this->lastBreak = \PHP_INT_MAX;
 		$this->ip = $ip;
@@ -576,14 +571,14 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	public function setDisplayName($name){
 		$this->displayName = $name;
 		if($this->spawned){
-			$this->server->updatePlayerListData($this->getUniqueId(), $this->getId(), $this->getDisplayName(), $this->isSkinSlim(), $this->getSkinFlag(), $this->getSkinData());
+			$this->server->sendFullPlayerListData($this);
 		}
 	}
 
-	public function setSkin($str, $skinflag, $isSlim = false){
-+		parent::setSkin($str, $skinflag, $isSlim);
+public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \false, $isTransparent = \null){
+		parent::setSkin($str, $skinname, $isOldClient, $isSlim, $isTransparent);
 		if($this->spawned){
-			$this->server->updatePlayerListData($this->getUniqueId(), $this->getId(), $this->getDisplayName(), $isSlim, $skinflag, $str);
+			$this->server->sendFullPlayerListData($this);
 		}
 	}
 
@@ -757,6 +752,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		$pk = new PlayStatusPacket();
 		$pk->status = PlayStatusPacket::PLAYER_SPAWN;
 		$this->dataPacket($pk);
+
         $this->server->sendFullPlayerListData($this);
 
 		$this->server->getPluginManager()->callEvent($ev = new PlayerJoinEvent($this,
@@ -891,11 +887,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			return \false;
 		}
 
-		if(!isset($this->batchedPackets[$packet->getChannel()])){
-			$this->batchedPackets[$packet->getChannel()] = [];
-		}
-
-		$this->batchedPackets[$packet->getChannel()][] = clone $packet;
+		$this->batchedPackets[] = clone $packet;
 		$timings->stopTiming();
 		return \true;
 	}
@@ -1103,23 +1095,15 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			$this->spawnToAll();
 		}
 
-		$this->namedtag->playerGameType = new Int("playerGameType", $this->gamemode);
+		$this->namedtag->playerGameType = new IntTag("playerGameType", $this->gamemode);
 
 		$spawnPosition = $this->getSpawn();
 
-		$pk = new StartGamePacket();
-		$pk->seed = -1;
-		$pk->x = $this->x;
-		$pk->y = $this->y;
-		$pk->z = $this->z;
-		$pk->spawnX = (int) $spawnPosition->x;
-		$pk->spawnY = (int) $spawnPosition->y;
-		$pk->spawnZ = (int) $spawnPosition->z;
-		$pk->generator = 1; //0 old, 1 infinite, 2 flat
+		$pk = new SetPlayerGameTypePacket();
 		$pk->gamemode = $this->gamemode & 0x01;
-		$pk->eid = 0;
 		$this->dataPacket($pk);
 		$this->sendSettings();
+        $this->inventory->clearAll();
 
 		if($this->gamemode === Player::SPECTATOR){
 			$pk = new ContainerSetContentPacket();
@@ -1228,20 +1212,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		}
 
 		return [];
-	}
-
-	/**
-	 * @deprecated
-	 */
-	public function addEntityMotion($entityId, $x, $y, $z){
-
-	}
-
-	/**
-	 * @deprecated
-	 */
-	public function addEntityMovement($entityId, $x, $y, $z, $yaw, $pitch, $headYaw = \null){
-
 	}
 
 	public function setDataProperty($id, $type, $value){
@@ -1392,7 +1362,10 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 			if($this->isSurvival()){
 				if(!$revert and !$this->isSleeping()){
-					if($diff > 0.0625){}
+					if($diff > 0.0625){
+						//$revert = \true;
+						//$this->server->getLogger()->warning($this->getServer()->getLanguage()->translateString("pocketmine.player.invalidMove", [$this->getName()]));
+					}
 				}
 			}
 
@@ -1565,9 +1538,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		}
 
 		if(\count($this->batchedPackets) > 0){
-			foreach($this->batchedPackets as $channel => $list){
-				$this->server->batchPackets([$this], $list, \false, $channel);
-			}
+			$this->server->batchPackets([$this], $this->batchedPackets, \false);
 			$this->batchedPackets = [];
 		}
 
@@ -1639,14 +1610,14 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 		$nbt = $this->server->getOfflinePlayerData($this->username);
 		if(!isset($nbt->NameTag)){
-			$nbt->NameTag = new String("NameTag", $this->username);
+			$nbt->NameTag = new StringTag("NameTag", $this->username);
 		}else{
 			$nbt["NameTag"] = $this->username;
 		}
 		$this->gamemode = $nbt["playerGameType"] & 0x03;
 		if($this->server->getForceGamemode()){
 			$this->gamemode = $this->server->getGamemode();
-			$nbt->playerGameType = new Int("playerGameType", $this->gamemode);
+			$nbt->playerGameType = new IntTag("playerGameType", $this->gamemode);
 		}
 
 		$this->allowFlight = $this->isCreative();
@@ -1662,7 +1633,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			$this->setLevel($level);
 		}
 
-		if(!($nbt instanceof Compound)){
+		if(!($nbt instanceof CompoundTag)){
 			$this->close($this->getLeaveMessage(), "Invalid data");
 
 			return;
@@ -1675,7 +1646,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			$this->achievements[$achievement->getName()] = $achievement->getValue() > 0 ? \true : \false;
 		}
 
-		$nbt->lastPlayed = new Long("lastPlayed", \floor(\microtime(\true) * 1000));
+		$nbt->lastPlayed = new LongTag("lastPlayed", \floor(\microtime(\true) * 1000));
 		if($this->server->getAutoSave()){
 			$this->server->saveOfflinePlayerData($this->username, $nbt, \true);
 		}
@@ -1872,7 +1843,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					break;
 				}
 
-				$this->setSkin($packet->skin, $packet->skinflag, $packet->slim);
+				$this->setSkin($packet->skin, $packet->skinname, $packet->oldclient, $packet->slim, $packet->transparent);
 
 				$this->server->getPluginManager()->callEvent($ev = new PlayerPreLoginEvent($this, "Plugin reason"));
 				if($ev->isCancelled()){
@@ -2043,23 +2014,26 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					}
 
 					if($item->getId() === Item::SNOWBALL){
-						$dir = $this->getDirectionVector();
-						$frontPos = $this->add($this->getDirectionVector()->multiply(1.1));
-						$nbt = new Compound("",
-									["Pos" => new Enum("Pos",
-										[new Double("", $frontPos->x),
-										new Double("", $frontPos->y + $this->getEyeHeight()),
-										new Double("", $frontPos->z)]),
-									"Motion" => new Enum("Motion",
-										[new Double("", $dir->x),
-										new Double("", $dir->y),
-										new Double("", $dir->z)]),
-									"Rotation" => new Enum("Rotation",
-										[new Float("", 0),
-										new Float("", 0)])]
-						);
-						$snowball = Entity::createEntity("Snowball", $this->chunk, $nbt);
+					    $dir = $this->getDirectionVector();
+						$nbt = new CompoundTag("", [
+							"Pos" => new ListTag("Pos", [
+								new DoubleTag("", $this->x),
+								new DoubleTag("", $this->y + $this->getEyeHeight()),
+								new DoubleTag("", $this->z)
+							]),
+							"Motion" => new ListTag("Motion", [
+								new DoubleTag("", $dir->x),
+								new DoubleTag("", $dir->y),
+								new DoubleTag("", $dir->z)
+							]),
+							"Rotation" => new ListTag("Rotation", [
+								new FloatTag("", 0),
+								new FloatTag("", 0)
+							]),
+						]);
+
 						$f = 1.5;
+						$snowball = Entity::createEntity("Snowball", $this->chunk, $nbt, $this);
 						$snowball->setMotion($snowball->getMotion()->multiply($f));
 						if($this->isSurvival()){
 							$item->setCount($item->getCount() - 1);
@@ -2077,7 +2051,8 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 							$snowball->spawnToAll();
 						}
 					}
-					$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_ACTION, true);
+
+					$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_ACTION, \true);
 					$this->startAction = $this->server->getTick();
 				}
 				break;
@@ -2116,22 +2091,22 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 								}
 
 
-								$nbt = new Compound("", [
-									"Pos" => new Enum("Pos", [
-										new Double("", $this->x),
-										new Double("", $this->y + $this->getEyeHeight()),
-										new Double("", $this->z)
+								$nbt = new CompoundTag("", [
+									"Pos" => new ListTag("Pos", [
+										new DoubleTag("", $this->x),
+										new DoubleTag("", $this->y + $this->getEyeHeight()),
+										new DoubleTag("", $this->z)
 									]),
-									"Motion" => new Enum("Motion", [
-										new Double("", -\sin($this->yaw / 180 * M_PI) * \cos($this->pitch / 180 * M_PI)),
-										new Double("", -\sin($this->pitch / 180 * M_PI)),
-										new Double("", \cos($this->yaw / 180 * M_PI) * \cos($this->pitch / 180 * M_PI))
+									"Motion" => new ListTag("Motion", [
+										new DoubleTag("", -\sin($this->yaw / 180 * M_PI) * \cos($this->pitch / 180 * M_PI)),
+										new DoubleTag("", -\sin($this->pitch / 180 * M_PI)),
+										new DoubleTag("", \cos($this->yaw / 180 * M_PI) * \cos($this->pitch / 180 * M_PI))
 									]),
-									"Rotation" => new Enum("Rotation", [
-										new Float("", $this->yaw),
-										new Float("", $this->pitch)
+									"Rotation" => new ListTag("Rotation", [
+										new FloatTag("", $this->yaw),
+										new FloatTag("", $this->pitch)
 									]),
-									"Fire" => new Short("Fire", $this->isOnFire() ? 45 * 60 : 0)
+									"Fire" => new ShortTag("Fire", $this->isOnFire() ? 45 * 60 : 0)
 								]);
 
 								$diff = ($this->server->getTick() - $this->startAction);
@@ -2529,7 +2504,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 								$this->inventory->addItem(Item::get(Item::BOWL, 0, 1));
 							}elseif($slot->getId() === Item::RAW_FISH and $slot->getDamage() === 3){ //Pufferfish
 								//$this->addEffect(Effect::getEffect(Effect::HUNGER)->setAmplifier(2)->setDuration(15 * 20));
-								$this->addEffect(Effect::getEffect(Effect::NAUSEA)->setAmplifier(1)->setDuration(15 * 20));
+								//$this->addEffect(Effect::getEffect(Effect::NAUSEA)->setAmplifier(1)->setDuration(15 * 20));
 								$this->addEffect(Effect::getEffect(Effect::POISON)->setAmplifier(3)->setDuration(60 * 20));
 							}
 						}
@@ -2860,7 +2835,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				}
 
 				break;
-			case ProtocolInfo::BLOCK_ENTITY_DATA_PACKET:
+			case ProtocolInfo::TILE_ENTITY_DATA_PACKET:
 				if($this->spawned === \false or $this->blocked === \true or !$this->isAlive()){
 					break;
 				}
@@ -3097,7 +3072,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 		parent::saveNBT();
 		if($this->level instanceof Level){
-			$this->namedtag->Level = new String("Level", $this->level->getName());
+			$this->namedtag->Level = new StringTag("Level", $this->level->getName());
 			if($this->spawnPosition instanceof Position and $this->spawnPosition->getLevel() instanceof Level){
 				$this->namedtag["SpawnLevel"] = $this->spawnPosition->getLevel()->getName();
 				$this->namedtag["SpawnX"] = (int) $this->spawnPosition->x;
@@ -3106,13 +3081,13 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			}
 
 			foreach($this->achievements as $achievement => $status){
-				$this->namedtag->Achievements[$achievement] = new Byte($achievement, $status === \true ? 1 : 0);
+				$this->namedtag->Achievements[$achievement] = new ByteTag($achievement, $status === \true ? 1 : 0);
 			}
 
 			$this->namedtag["playerGameType"] = $this->gamemode;
-			$this->namedtag["lastPlayed"] = new Long("lastPlayed", \floor(\microtime(\true) * 1000));
+			$this->namedtag["lastPlayed"] = new LongTag("lastPlayed", \floor(\microtime(\true) * 1000));
 
-			if($this->username != "" and $this->namedtag instanceof Compound){
+			if($this->username != "" and $this->namedtag instanceof CompoundTag){
 				$this->server->saveOfflinePlayerData($this->username, $this->namedtag, $async);
 			}
 		}

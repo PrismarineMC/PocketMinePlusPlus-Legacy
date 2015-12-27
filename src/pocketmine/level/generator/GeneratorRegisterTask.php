@@ -1,22 +1,20 @@
 <?php
 
-/*
- *
- *  ____            _        _   __  __ _                  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
+/*                                                                             __
+ *                                                                           _|  |_
+ *  ____            _        _   __  __ _                  __  __ ____      |_    _|
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \    __ |__|  
+ * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) | _|  |_  
+ * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ |_    _|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|      |__|   
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- *
- *
+ * @author PocketMine++ Team
+ * @link http://pm-plus-plus.tk/
 */
 
 namespace pocketmine\level\generator;
@@ -39,7 +37,7 @@ class GeneratorRegisterTask extends AsyncTask{
 
 	public function __construct(Level $level, Generator $generator){
 		$this->generator = \get_class($generator);
-		$this->settings = $generator->getSettings();
+		$this->settings = \serialize($generator->getSettings());
 		$this->seed = $level->getSeed();
 		$this->levelId = $level->getId();
 	}
@@ -51,7 +49,7 @@ class GeneratorRegisterTask extends AsyncTask{
 		$this->saveToThreadStore("generation.level{$this->levelId}.manager", $manager);
 		/** @var Generator $generator */
 		$generator = $this->generator;
-		$generator = new $generator($this->settings);
+		$generator = new $generator(\unserialize($this->settings));
 		$generator->init($manager, new Random($manager->getSeed()));
 		$this->saveToThreadStore("generation.level{$this->levelId}.generator", $generator);
 	}

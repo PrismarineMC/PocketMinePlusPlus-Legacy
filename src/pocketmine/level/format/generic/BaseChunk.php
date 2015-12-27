@@ -1,22 +1,20 @@
 <?php
 
-/*
- *
- *  ____            _        _   __  __ _                  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
+/*                                                                             __
+ *                                                                           _|  |_
+ *  ____            _        _   __  __ _                  __  __ ____      |_    _|
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \    __ |__|  
+ * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) | _|  |_  
+ * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ |_    _|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|      |__|   
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- *
- *
+ * @author PocketMine++ Team
+ * @link http://pm-plus-plus.tk/
 */
 
 namespace pocketmine\level\format\generic;
@@ -24,7 +22,7 @@ namespace pocketmine\level\format\generic;
 use pocketmine\level\format\Chunk;
 use pocketmine\level\format\ChunkSection;
 use pocketmine\level\format\LevelProvider;
-use pocketmine\nbt\tag\Compound;
+use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\utils\Binary;
 use pocketmine\utils\ChunkException;
 
@@ -40,8 +38,8 @@ abstract class BaseChunk extends BaseFullChunk implements Chunk{
 	 * @param ChunkSection[] $sections
 	 * @param int[]          $biomeColors
 	 * @param int[]          $heightMap
-	 * @param Compound[]     $entities
-	 * @param Compound[]     $tiles
+	 * @param CompoundTag[]     $entities
+	 * @param CompoundTag[]     $tiles
 	 *
 	 * @throws ChunkException
 	 */
@@ -77,12 +75,6 @@ abstract class BaseChunk extends BaseFullChunk implements Chunk{
 		$this->NBTentities = $entities;
 	}
 
-	public function getBlock($x, $y, $z, &$blockId, &$meta = \null){
-		$full = $this->sections[$y >> 4]->getFullBlock($x, $y & 0x0f, $z);
-		$blockId = $full >> 4;
-		$meta = $full & 0x0f;
-	}
-
 	public function getFullBlock($x, $y, $z){
 		return $this->sections[$y >> 4]->getFullBlock($x, $y & 0x0f, $z);
 	}
@@ -98,12 +90,7 @@ abstract class BaseChunk extends BaseFullChunk implements Chunk{
 		}
 	}
 
-	public function getBlockId($x, $y, $z){
-		if ($this->sections[$y >> 4]->getBlockId($x, $y & 0x0f, $z) == null)
-		 {
-		  return 0;
-		 } else
-		 {
+	public function getBlockData($x, $y, $z){
 		  return $this->sections[$y >> 4]->getBlockId($x, $y & 0x0f, $z);
 		 }
 	}

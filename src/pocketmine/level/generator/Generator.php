@@ -1,22 +1,20 @@
 <?php
 
-/*
- *
- *  ____            _        _   __  __ _                  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
+/*                                                                             __
+ *                                                                           _|  |_
+ *  ____            _        _   __  __ _                  __  __ ____      |_    _|
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \    __ |__|  
+ * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) | _|  |_  
+ * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ |_    _|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|      |__|   
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- *
- *
+ * @author PocketMine++ Team
+ * @link http://pm-plus-plus.tk/
 */
 
 /**
@@ -118,15 +116,10 @@ abstract class Generator{
 	 * @return \SplFixedArray
 	 */
 	public static function getFastNoise2D(Noise $noise, $xSize, $zSize, $samplingRate, $x, $y, $z){
-		if($samplingRate === 0){
-			throw new \InvalidArgumentException("samplingRate cannot be 0");
-		}
-		if ($xSize % $samplingRate !== 0) {
-			throw new \InvalidArgumentCountException("xSize % samplingRate must return 0");
-		}
-		if ($zSize % $samplingRate !== 0) {
-			throw new \InvalidArgumentCountException("zSize % samplingRate must return 0");
-		}
+		\assert($samplingRate !== 0, new \InvalidArgumentException("samplingRate cannot be 0"));
+
+		\assert($xSize % $samplingRate === 0, new \InvalidArgumentCountException("xSize % samplingRate must return 0"));
+		\assert($zSize % $samplingRate === 0, new \InvalidArgumentCountException("zSize % samplingRate must return 0"));
 
 		$noiseArray = new \SplFixedArray($xSize + 1);
 
@@ -173,24 +166,14 @@ abstract class Generator{
 	 * @return \SplFixedArray
 	 */
 	public static function getFastNoise3D(Noise $noise, $xSize, $ySize, $zSize, $xSamplingRate, $ySamplingRate, $zSamplingRate, $x, $y, $z){
-		if($xSamplingRate === 0){
-			throw new \InvalidArgumentException("xSamplingRate cannot be 0");
-		}
-		if($zSamplingRate === 0){
-			throw new \InvalidArgumentException("zSamplingRate cannot be 0");
-		}
-		if($ySamplingRate === 0){
-			throw new \InvalidArgumentException("ySamplingRate cannot be 0");
-		}
-		if ($xSize % $xSamplingRate !== 0) {
-			throw new \InvalidArgumentCountException("xSize % xSamplingRate must return 0");
-		}
-		if ($zSize % $zSamplingRate !== 0) {
-			throw new \InvalidArgumentCountException("zSize % zSamplingRate must return 0");
-		}
-		if ($ySize % $ySamplingRate !== 0) {
-			throw new \InvalidArgumentCountException("ySize % ySamplingRate must return 0");
-		}
+
+		\assert($xSamplingRate !== 0, new \InvalidArgumentException("xSamplingRate cannot be 0"));
+		\assert($zSamplingRate !== 0, new \InvalidArgumentException("zSamplingRate cannot be 0"));
+		\assert($ySamplingRate !== 0, new \InvalidArgumentException("ySamplingRate cannot be 0"));
+
+		\assert($xSize % $xSamplingRate === 0, new \InvalidArgumentCountException("xSize % xSamplingRate must return 0"));
+		\assert($zSize % $zSamplingRate === 0, new \InvalidArgumentCountException("zSize % zSamplingRate must return 0"));
+		\assert($ySize % $ySamplingRate === 0, new \InvalidArgumentCountException("ySize % ySamplingRate must return 0"));
 
 		$noiseArray = \array_fill(0, $xSize + 1, \array_fill(0, $zSize + 1, []));
 

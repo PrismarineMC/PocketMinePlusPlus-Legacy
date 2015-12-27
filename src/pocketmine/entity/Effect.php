@@ -1,22 +1,20 @@
 <?php
 
-/*
- *
- *  ____            _        _   __  __ _                  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
+/*                                                                             __
+ *                                                                           _|  |_
+ *  ____            _        _   __  __ _                  __  __ ____      |_    _|
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \    __ |__|  
+ * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) | _|  |_  
+ * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ |_    _|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|      |__|   
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- *
- *
+ * @author PocketMine++ Team
+ * @link http://pm-plus-plus.tk/
 */
 
 namespace pocketmine\entity;
@@ -27,6 +25,7 @@ use pocketmine\network\Network;
 use pocketmine\network\protocol\MobEffectPacket;
 use pocketmine\Player;
 use pocketmine\Server;
+
 
 class Effect{
 	const SPEED = 1;
@@ -55,10 +54,10 @@ class Effect{
 	const HEALTH_BOOST = 21;
 	const ABSORPTION = 22;
 	const SATURATION = 23;
+
 	/** @var Effect[] */
-	
 	protected static $effects;
-	
+
 	public static function init(){
 		self::$effects = new \SplFixedArray(256);
 		self::$effects[Effect::SPEED] = new Effect(Effect::SPEED, "%potion.moveSpeed", 124, 175, 198);
@@ -85,35 +84,43 @@ class Effect{
 		self::$effects[Effect::BLINDNESS] = new Effect(Effect::BLINDNESS, "%potion.blindness", 31, 31, 35);
 		self::$effects[Effect::NIGHT_VISION] = new Effect(Effect::NIGHT_VISION, "%potion.nightVision", 31, 31, 163);
 	}
+
 	/**
 	 * @param int $id
 	 * @return $this
 	 */
-
 	public static function getEffect($id){
 		if(isset(self::$effects[$id])){
 			return clone self::$effects[(int) $id];
 		}
-		return null;
+		return \null;
 	}
 
 	public static function getEffectByName($name){
-		if(defined(Effect::class . "::" . strtoupper($name))){
-			return self::getEffect(constant(Effect::class . "::" . strtoupper($name)));
+		if(\defined(Effect::class . "::" . \strtoupper($name))){
+			return self::getEffect(\constant(Effect::class . "::" . \strtoupper($name)));
 		}
-		return null;
+		return \null;
 	}
 
 	/** @var int */
 	protected $id;
+
 	protected $name;
+
 	protected $duration;
+
 	protected $amplifier;
+
 	protected $color;
-	protected $show = true;
-	protected $ambient = false;
+
+	protected $show = \true;
+
+	protected $ambient = \false;
+
 	protected $bad;
-	public function __construct($id, $name, $r, $g, $b, $isBad = false){
+
+	public function __construct($id, $name, $r, $g, $b, $isBad = \false){
 		$this->id = $id;
 		$this->name = $name;
 		$this->bad = (bool) $isBad;
@@ -152,12 +159,12 @@ class Effect{
 	public function getAmplifier(){
 		return $this->amplifier;
 	}
+
 	/**
 	 * @param int $amplifier
 	 *
 	 * @return $this
 	 */
-	
 	public function setAmplifier($amplifier){
 		$this->amplifier = (int) $amplifier;
 		return $this;
@@ -167,7 +174,7 @@ class Effect{
 		return $this->ambient;
 	}
 
-	public function setAmbient($ambient = true){
+	public function setAmbient($ambient = \true){
 		$this->ambient = (bool) $ambient;
 		return $this;
 	}
@@ -182,19 +189,19 @@ class Effect{
 				if(($interval = (25 >> $this->amplifier)) > 0){
 					return ($this->duration % $interval) === 0;
 				}
-				return true;
+				return \true;
 			case Effect::WITHER:
 				if(($interval = (50 >> $this->amplifier)) > 0){
 					return ($this->duration % $interval) === 0;
 				}
-				return true;
+				return \true;
 			case Effect::REGENERATION:
 				if(($interval = (40 >> $this->amplifier)) > 0){
 					return ($this->duration % $interval) === 0;
 				}
-				return true;
+				return \true;
 		}
-		return false;
+		return \false;
 	}
 
 	public function applyEffect(Entity $entity){
@@ -205,10 +212,12 @@ class Effect{
 					$entity->attack($ev->getFinalDamage(), $ev);
 				}
 				break;
+
 			case Effect::WITHER:
 				$ev = new EntityDamageEvent($entity, EntityDamageEvent::CAUSE_MAGIC, 1);
 				$entity->attack($ev->getFinalDamage(), $ev);
 				break;
+
 			case Effect::REGENERATION:
 				if($entity->getHealth() < $entity->getMaxHealth()){
 					$ev = new EntityRegainHealthEvent($entity, 1, EntityRegainHealthEvent::CAUSE_MAGIC);
@@ -226,7 +235,7 @@ class Effect{
 		$this->color = (($r & 0xff) << 16) + (($g & 0xff) << 8) + ($b & 0xff);
 	}
 
-	public function add(Entity $entity, $modify = false){
+	public function add(Entity $entity, $modify = \false){
 		if($entity instanceof Player){
 			$pk = new MobEffectPacket();
 			$pk->eid = 0;
@@ -239,10 +248,12 @@ class Effect{
 			}else{
 				$pk->eventId = MobEffectPacket::EVENT_ADD;
 			}
-			$entity->dataPacket($pk->setChannel(Network::CHANNEL_WORLD_EVENTS));
+
+			$entity->dataPacket($pk);
 		}
+
 		if($this->id === Effect::INVISIBILITY){
-			$entity->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, true);
+			$entity->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, \true);
 			$entity->setDataProperty(Entity::DATA_SHOW_NAMETAG, Entity::DATA_TYPE_BYTE, 0);
 		}
 	}
@@ -253,10 +264,12 @@ class Effect{
 			$pk->eid = 0;
 			$pk->eventId = MobEffectPacket::EVENT_REMOVE;
 			$pk->effectId = $this->getId();
-			$entity->dataPacket($pk->setChannel(Network::CHANNEL_WORLD_EVENTS));
+
+			$entity->dataPacket($pk);
 		}
+
 		if($this->id === Effect::INVISIBILITY){
-			$entity->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, false);
+			$entity->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, \false);
 			$entity->setDataProperty(Entity::DATA_SHOW_NAMETAG, Entity::DATA_TYPE_BYTE, 1);
 		}
 	}

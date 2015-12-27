@@ -1,22 +1,20 @@
 <?php
 
-/*
- *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
+/*                                                                             __
+ *                                                                           _|  |_
+ *  ____            _        _   __  __ _                  __  __ ____      |_    _|
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \    __ |__|  
+ * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) | _|  |_  
+ * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ |_    _|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|      |__|   
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- * 
- *
+ * @author PocketMine++ Team
+ * @link http://pm-plus-plus.tk/
 */
 
 namespace pocketmine\utils;
@@ -263,61 +261,6 @@ abstract class TextFormat{
 		}
 
 		return \json_encode($newString, JSON_UNESCAPED_SLASHES);
-	}
-
-	/**
-	 * Returns a string from JSON
-	 *
-	 * @param string $json
-	 *
-	 * @return string
-	 */
-	public static function fromJSON($json){
-		$json = json_decode($json, \true);
-		$string = "";
-		if(isset($json["color"])){
-			$string .= constant(TextFormat::class . "::" . strtoupper($json["color"]));
-		}
-		if(isset($json["bold"])){
-			if($json["bold"]) $string .= TextFormat::BOLD;
-		}
-		if(isset($json["italic"])){
-			if($json["italic"]) $string .= TextFormat::ITALIC;
-		}
-		if(isset($json["underlined"])){
-			if($json["underlined"]) $string .= TextFormat::UNDERLINE;
-		}
-		if(isset($json["strikethrough"])){
-			if($json["strikethrough"]) $string .= TextFormat::STRIKETHROUGH;
-		}
-		if(isset($json["obfuscated"])){
-			if($json["obfuscated"]) $string .= TextFormat::OBFUSCATED;
-		}
-		$string .= $json["text"];
-		if(isset($json["extra"])){
-			foreach($json["extra"] as $extra){
-				if(isset($extra["color"])){
-					$string .= constant(TextFormat::class . "::" . strtoupper($extra["color"]));
-				}
-				if(isset($extra["bold"])){
-					if($extra["bold"]) $string .= TextFormat::BOLD;
-				}
-				if(isset($extra["italic"])){
-					if($extra["italic"]) $string .= TextFormat::ITALIC;
-				}
-				if(isset($extra["underlined"])){
-					if($extra["underlined"]) $string .= TextFormat::UNDERLINE;
-				}
-				if(isset($extra["strikethrough"])){
-					if($extra["strikethrough"]) $string .= TextFormat::STRIKETHROUGH;
-				}
-				if(isset($extra["obfuscated"])){
-					if($extra["obfuscated"]) $string .= TextFormat::OBFUSCATED;
-				}
-				$string .= $extra["text"];
-			}
-		}
-		return $string;
 	}
 
 	/**

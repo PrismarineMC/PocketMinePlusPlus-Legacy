@@ -27,6 +27,7 @@ use pocketmine\network\protocol\DataPacket;
 use pocketmine\Player;
 
 class PacketReceivePreprocessEvent extends ServerEvent implements Cancellable{
+    public static $handlerList = \null;
 
 	private $buffer;
 	private $player;
