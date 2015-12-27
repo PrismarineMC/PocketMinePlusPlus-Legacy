@@ -1,66 +1,40 @@
 <?php
 
-/*
- *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
+/*                                                                             __
+ *                                                                           _|  |_
+ *  ____            _        _   __  __ _                  __  __ ____      |_    _|
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \    __ |__|  
+ * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) | _|  |_  
+ * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ |_    _|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|      |__|   
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- * 
- *
+ * @author PocketMine++ Team
+ * @link http://pm-plus-plus.tk/
 */
 
 namespace pocketmine\entity;
 
 
 use pocketmine\event\entity\EntityDamageByEntityEvent;
-use pocketmine\event\entity\EntityDamageEvent;
-use pocketmine\network\protocol\AddEntityPacket;
-use pocketmine\network\protocol\MovePlayerPacket;
-use pocketmine\network\protocol\MoveEntityPacket;
-use pocketmine\math\AxisAlignedBB;
-
-use pocketmine\item\Item as Dr;
-use pocketmine\Player;
-use pocketmine\entity\Entity;
-use pocketmine\math\Vector3;
+use pocketmine\item\Item as ItemItem;
 use pocketmine\network\Network;
-use pocketmine\Server;
-
-use pocketmine\entity\ai\ZombieAI;
+use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\Player;
 
 class Zombie extends Monster{
 	const NETWORK_ID = 32;
-	public static $range = 32;
-	public static $speed = 0.2;
-	public static $jump = 2.5;
-	public static $attack = 1.5;
+
 	public $width = 0.6;
 	public $length = 0.6;
 	public $height = 1.8;
-	public $stepHeight = 0.5;
-	protected $ai;
 
 	public function getName(){
 		return "Zombie";
-	}
-
-	public function onUpdate($currentTick){
-	    $config = Server::getInstance()->getMobConfig();
-		if($config->get("living-zombie")=="true"){
-			if(!isset($this->ai)) $this->ai = new ZombieAI($this);
-			$this->ai->onUpdate($currentTick);
-		}
-		parent::onUpdate($currentTick);
 	}
 
 	public function spawnTo(Player $player){
@@ -68,7 +42,7 @@ class Zombie extends Monster{
 		$pk->eid = $this->getId();
 		$pk->type = Zombie::NETWORK_ID;
 		$pk->x = $this->x;
-		$pk->y = $this->y+2;
+		$pk->y = $this->y;
 		$pk->z = $this->z;
 		$pk->speedX = $this->motionX;
 		$pk->speedY = $this->motionY;
@@ -76,28 +50,26 @@ class Zombie extends Monster{
 		$pk->yaw = $this->yaw;
 		$pk->pitch = $this->pitch;
 		$pk->metadata = $this->dataProperties;
-		$player->dataPacket($pk->setChannel(Network::CHANNEL_ENTITY_SPAWNING));
-		$player->addEntityMotion($this->getId(), $this->motionX, $this->motionY, $this->motionZ);
+		$player->dataPacket($pk);
+
 		parent::spawnTo($player);
 	}
 
 	public function getDrops(){
-		$drops = [];
-		$rnd = mt_rand(0,1);
-		if ($rnd) {
-			$drops[] = Dr::get(Dr::FEATHER, 0, $rnd);
-		}
+		$drops = [
+			ItemItem::get(ItemItem::FEATHER, 0, 1)
+		];
 		if($this->lastDamageCause instanceof EntityDamageByEntityEvent and $this->lastDamageCause->getEntity() instanceof Player){
-			if(mt_rand(0, 199) < 5){
-				switch(mt_rand(0, 2)){
+			if(\mt_rand(0, 199) < 5){
+				switch(\mt_rand(0, 2)){
 					case 0:
-						$drops[] = Dr::get(Dr::IRON_INGOT, 0, 1);
+						$drops[] = ItemItem::get(ItemItem::IRON_INGOT, 0, 1);
 						break;
 					case 1:
-						$drops[] = Dr::get(Dr::CARROT, 0, 1);
+						$drops[] = ItemItem::get(ItemItem::CARROT, 0, 1);
 						break;
 					case 2:
-						$drops[] = Dr::get(Dr::POTATO, 0, 1);
+						$drops[] = ItemItem::get(ItemItem::POTATO, 0, 1);
 						break;
 				}
 			}
@@ -105,5 +77,4 @@ class Zombie extends Monster{
 
 		return $drops;
 	}
-
 }

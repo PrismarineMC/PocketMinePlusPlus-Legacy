@@ -1,22 +1,20 @@
 <?php
 
-/*
- *
- *  ____            _        _   __  __ _                  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
+/*                                                                             __
+ *                                                                           _|  |_
+ *  ____            _        _   __  __ _                  __  __ ____      |_    _|
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \    __ |__|  
+ * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) | _|  |_  
+ * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ |_    _|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|      |__|   
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- *
- *
+ * @author PocketMine++ Team
+ * @link http://pm-plus-plus.tk/
 */
 
 namespace pocketmine\level\format\leveldb;
@@ -63,14 +61,12 @@ class Chunk extends BaseFullChunk{
 		parent::__construct($level, $chunkX, $chunkZ, $blocks, $data, $skyLight, $blockLight, $biomeColors, $heightMap, $entityData === \null ? [] : $entityData, $tileData === \null ? [] : $tileData);
 	}
 
-	 	public function getBlockId($x, $y, $z){
-		if (isset ($this->blocks{($x << 11) | ($z << 7) | $y}))
-			{
-	   	return \ord($this->blocks{($x << 11) | ($z << 7) | $y});
-	  	} else
-			{
-				return 0;
-			}
+	public function getBlockId($x, $y, $z){
+	    if (isset ($this->blocks{($x << 11) | ($z << 7) | $y})){
+	        return \ord($this->blocks{($x << 11) | ($z << 7) | $y});
+	    } else{
+	        return 0;
+	    }
 	}
 
 	public function setBlockId($x, $y, $z, $id){
@@ -105,12 +101,6 @@ class Chunk extends BaseFullChunk{
 		}else{
 			return (\ord($this->blocks{$i}) << 4) | (\ord($this->data{$i >> 1}) >> 4);
 		}
-	}
-
-	public function getBlock($x, $y, $z, &$blockId, &$meta = \null){
-		$full = $this->getFullBlock($x, $y, $z);
-		$blockId = $full >> 4;
-		$meta = $full & 0x0f;
 	}
 
 	public function setBlock($x, $y, $z, $blockId = \null, $meta = \null){
@@ -311,7 +301,7 @@ class Chunk extends BaseFullChunk{
 				$chunk->setLightPopulated();
 			}
 			return $chunk;
-		}catch(\Exception $e){
+		}catch(\Throwable $e){
 			return \null;
 		}
 	}
@@ -399,7 +389,7 @@ class Chunk extends BaseFullChunk{
 			$chunk = new Chunk($provider instanceof LevelProvider ? $provider : LevelDB::class, $chunkX, $chunkZ, \str_repeat("\x00", self::DATA_LENGTH));
 			$chunk->skyLight = \str_repeat("\xff", 16384);
 			return $chunk;
-		}catch(\Exception $e){
+		}catch(\Throwable $e){
 			return \null;
 		}
 	}

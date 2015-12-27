@@ -1,22 +1,20 @@
 <?php
 
-/*
- *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
+/*                                                                             __
+ *                                                                           _|  |_
+ *  ____            _        _   __  __ _                  __  __ ____      |_    _|
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \    __ |__|  
+ * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) | _|  |_  
+ * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ |_    _|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|      |__|   
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- * 
- *
+ * @author PocketMine++ Team
+ * @link http://pm-plus-plus.tk/
 */
 
 namespace pocketmine\block;
@@ -25,10 +23,6 @@ use pocketmine\item\Item;
 use pocketmine\item\Tool;
 
 class Sandstone extends Solid{
-
-	const NORMAL = 0;
-	const CHISELED = 1;
-	const SMOOTH = 2;
 
 	protected $id = self::SANDSTONE;
 
@@ -42,9 +36,9 @@ class Sandstone extends Solid{
 
 	public function getName(){
 		static $names = [
-			self::NORMAL => "Sandstone",
-			self::CHISELED => "Chiseled Sandstone",
-			self::SMOOTH => "Smooth Sandstone",
+			0 => "Sandstone",
+			1 => "Chiseled Sandstone",
+			2 => "Smooth Sandstone",
 			3 => "",
 		];
 		return $names[$this->meta & 0x03];
@@ -55,7 +49,7 @@ class Sandstone extends Solid{
 	}
 
 	public function getDrops(Item $item){
-		if($item->isPickaxe() >= Tool::TIER_WOODEN){
+		if($item->isPickaxe() >= 1){
 			return [
 				[Item::SANDSTONE, $this->meta & 0x03, 1],
 			];

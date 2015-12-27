@@ -1,22 +1,20 @@
 <?php
 
-/*
- *
- *  ____            _        _   __  __ _                  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
+/*                                                                             __
+ *                                                                           _|  |_
+ *  ____            _        _   __  __ _                  __  __ ____      |_    _|
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \    __ |__|  
+ * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) | _|  |_  
+ * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ |_    _|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|      |__|   
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- *
- *
+ * @author PocketMine++ Team
+ * @link http://pm-plus-plus.tk/
 */
 
 namespace pocketmine\inventory;
@@ -31,9 +29,9 @@ use pocketmine\Server;
  */
 class SimpleTransactionGroup implements TransactionGroup{
 	private $creationTime;
-	protected $hasExecuted = false;
+	protected $hasExecuted = \false;
 	/** @var Player */
-	protected $source = null;
+	protected $source = \null;
 
 	/** @var Inventory[] */
 	protected $inventories = [];
@@ -44,8 +42,8 @@ class SimpleTransactionGroup implements TransactionGroup{
 	/**
 	 * @param Player $source
 	 */
-	public function __construct(Player $source = null){
-		$this->creationTime = microtime(true);
+	public function __construct(Player $source = \null){
+		$this->creationTime = \microtime(\true);
 		$this->source = $source;
 	}
 
@@ -69,7 +67,7 @@ class SimpleTransactionGroup implements TransactionGroup{
 	}
 
 	public function addTransaction(Transaction $transaction){
-		if(isset($this->transactions[spl_object_hash($transaction)])){
+		if(isset($this->transactions[\spl_object_hash($transaction)])){
 			return;
 		}
 		foreach($this->transactions as $hash => $tx){
@@ -81,8 +79,8 @@ class SimpleTransactionGroup implements TransactionGroup{
 				}
 			}
 		}
-		$this->transactions[spl_object_hash($transaction)] = $transaction;
-		$this->inventories[spl_object_hash($transaction->getInventory())] = $transaction->getInventory();
+		$this->transactions[\spl_object_hash($transaction)] = $transaction;
+		$this->inventories[\spl_object_hash($transaction->getInventory())] = $transaction->getInventory();
 	}
 
 	/**
@@ -99,7 +97,7 @@ class SimpleTransactionGroup implements TransactionGroup{
 			$checkSourceItem = $ts->getInventory()->getItem($ts->getSlot());
 			$sourceItem = $ts->getSourceItem();
 			if(!$checkSourceItem->deepEquals($sourceItem) or $sourceItem->getCount() !== $checkSourceItem->getCount()){
-				return false;
+				return \false;
 			}
 			if($sourceItem->getId() !== Item::AIR){
 				$haveItems[] = $sourceItem;
@@ -109,7 +107,7 @@ class SimpleTransactionGroup implements TransactionGroup{
 		foreach($needItems as $i => $needItem){
 			foreach($haveItems as $j => $haveItem){
 				if($needItem->deepEquals($haveItem)){
-					$amount = min($needItem->getCount(), $haveItem->getCount());
+					$amount = \min($needItem->getCount(), $haveItem->getCount());
 					$needItem->setCount($needItem->getCount() - $amount);
 					$haveItem->setCount($haveItem->getCount() - $amount);
 					if($haveItem->getCount() === 0){
@@ -123,19 +121,19 @@ class SimpleTransactionGroup implements TransactionGroup{
 			}
 		}
 
-		return true;
+		return \true;
 	}
 
 	public function canExecute(){
 		$haveItems = [];
 		$needItems = [];
 
-		return $this->matchItems($haveItems, $needItems) and count($haveItems) === 0 and count($needItems) === 0 and count($this->transactions) > 0;
+		return $this->matchItems($haveItems, $needItems) and \count($haveItems) === 0 and \count($needItems) === 0 and \count($this->transactions) > 0;
 	}
 
 	public function execute(){
 		if($this->hasExecuted() or !$this->canExecute()){
-			return false;
+			return \false;
 		}
 
 		Server::getInstance()->getPluginManager()->callEvent($ev = new InventoryTransactionEvent($this));
@@ -147,16 +145,16 @@ class SimpleTransactionGroup implements TransactionGroup{
 				$inventory->sendContents($this->getSource());
 			}
 
-			return false;
+			return \false;
 		}
 
 		foreach($this->transactions as $transaction){
 			$transaction->getInventory()->setItem($transaction->getSlot(), $transaction->getTargetItem());
 		}
 
-		$this->hasExecuted = true;
+		$this->hasExecuted = \true;
 
-		return true;
+		return \true;
 	}
 
 	public function hasExecuted(){

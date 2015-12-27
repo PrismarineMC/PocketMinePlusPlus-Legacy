@@ -1,22 +1,20 @@
 <?php
 
-/*
- *
- *  ____            _        _   __  __ _                  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
+/*                                                                             __
+ *                                                                           _|  |_
+ *  ____            _        _   __  __ _                  __  __ ____      |_    _|
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \    __ |__|  
+ * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) | _|  |_  
+ * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ |_    _|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|      |__|   
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- *
- *
+ * @author PocketMine++ Team
+ * @link http://pm-plus-plus.tk/
 */
 
 namespace pocketmine\plugin;
@@ -136,7 +134,6 @@ class PluginManager{
 	 */
 	public function getPlugins(){
 		return $this->plugins;
-		echo (array_pop ($this->plugins));
 	}
 
 	/**
@@ -250,12 +247,9 @@ class PluginManager{
 								}
 							}
 						}
-					}catch(\Exception $e){
+					}catch(\Throwable $e){
 						$this->server->getLogger()->error($this->server->getLanguage()->translateString("pocketmine.plugin.fileError", [$file, $directory, $e->getMessage()]));
-						$logger = $this->server->getLogger();
-						if($logger instanceof MainLogger){
-							$logger->logException($e);
-						}
+						$this->server->getLogger()->logException($e);
 					}
 				}
 			}
@@ -434,7 +428,7 @@ class PluginManager{
 		if(!isset($this->permSubs[$permission])){
 			$this->permSubs[$permission] = [];
 		}
-		$this->permSubs[$permission][\spl_object_hash($permissible)] = new \WeakRef($permissible);
+		$this->permSubs[$permission][\spl_object_hash($permissible)] = $permissible;
 	}
 
 	/**
@@ -457,6 +451,7 @@ class PluginManager{
 	 */
 	public function getPermissionSubscriptions($permission){
 		if(isset($this->permSubs[$permission])){
+			return $this->permSubs[$permission];
 			$subs = [];
 			foreach($this->permSubs[$permission] as $k => $perm){
 				/** @var \WeakRef $perm */
@@ -480,9 +475,9 @@ class PluginManager{
 	 */
 	public function subscribeToDefaultPerms($op, Permissible $permissible){
 		if($op === \true){
-			$this->defSubsOp[\spl_object_hash($permissible)] = new \WeakRef($permissible);
+			$this->defSubsOp[\spl_object_hash($permissible)] = $permissible;
 		}else{
-			$this->defSubs[\spl_object_hash($permissible)] = new \WeakRef($permissible);
+			$this->defSubs[\spl_object_hash($permissible)] = $permissible;
 		}
 	}
 
@@ -507,6 +502,7 @@ class PluginManager{
 		$subs = [];
 
 		if($op === \true){
+			return $this->defSubsOp;
 			foreach($this->defSubsOp as $k => $perm){
 				/** @var \WeakRef $perm */
 				if($perm->acquire()){
@@ -517,6 +513,7 @@ class PluginManager{
 				}
 			}
 		}else{
+			return $this->defSubs;
 			foreach($this->defSubs as $k => $perm){
 				/** @var \WeakRef $perm */
 				if($perm->acquire()){
@@ -561,11 +558,8 @@ class PluginManager{
 					$this->addPermission($perm);
 				}
 				$plugin->getPluginLoader()->enablePlugin($plugin);
-			}catch(\Exception $e){
-				$logger = Server::getInstance()->getLogger();
-				if($logger instanceof MainLogger){
-					$logger->logException($e);
-				}
+			}catch(\Throwable $e){
+				$this->server->getLogger()->logException($e);
 				$this->disablePlugin($plugin);
 			}
 		}
@@ -635,11 +629,8 @@ class PluginManager{
 		if($plugin->isEnabled()){
 			try{
 				$plugin->getPluginLoader()->disablePlugin($plugin);
-			}catch(\Exception $e){
-				$logger = Server::getInstance()->getLogger();
-				if($logger instanceof MainLogger){
-					$logger->logException($e);
-				}
+			}catch(\Throwable $e){
+				$this->server->getLogger()->logException($e);
 			}
 
 			$this->server->getScheduler()->cancelTasks($plugin);
@@ -672,7 +663,7 @@ class PluginManager{
 
 			try{
 				$registration->callEvent($event);
-			}catch(\Exception $e){
+			}catch(\Throwable $e){
 				$this->server->getLogger()->critical(
 					$this->server->getLanguage()->translateString("pocketmine.plugin.eventError", [
 						$event->getEventName(),
@@ -680,10 +671,7 @@ class PluginManager{
 						$e->getMessage(),
 						\get_class($registration->getListener())
 					]));
-				$logger = $this->server->getLogger();
-				if($logger instanceof MainLogger){
-					$logger->logException($e);
-				}
+				$this->server->getLogger()->logException($e);
 			}
 		}
 	}

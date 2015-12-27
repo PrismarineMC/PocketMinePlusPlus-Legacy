@@ -1,34 +1,33 @@
 <?php
 
-/*
- *
- *  ____            _        _   __  __ _                  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
+/*                                                                             __
+ *                                                                           _|  |_
+ *  ____            _        _   __  __ _                  __  __ ____      |_    _|
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \    __ |__|  
+ * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) | _|  |_  
+ * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ |_    _|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|      |__|   
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- *
- *
+ * @author PocketMine++ Team
+ * @link http://pm-plus-plus.tk/
 */
 
 namespace pocketmine\scheduler;
 
 use pocketmine\Server;
+use spl\stubs\pthreads; 
 
 /**
  * Class used to run async tasks in other threads.
  *
  * WARNING: Do not call PocketMine-MP API methods, or save objects from/on other Threads!!
  */
-abstract class AsyncTask extends \Collectable{
+abstract class AsyncTask extends  \Collectable{
 
 	/** @var AsyncWorker $worker */
 	public $worker = \null;
@@ -39,23 +38,25 @@ abstract class AsyncTask extends \Collectable{
 	/** @var int */
 	private $taskId = \null;
 
+	private $crashed = \false;
+
 	public function run(){
 		$this->result = \null;
 
 		if($this->cancelRun !== \true){
-			$this->onRun();
+			try{
+				$this->onRun();
+			}catch(\Throwable $e){
+				$this->crashed = \true;
+				$this->worker->handleException($e);
+			}
 		}
 
 		$this->setGarbage();
 	}
 
-	/**
-	 * @deprecated
-	 *
-	 * @return bool
-	 */
-	public function isFinished(){
-		return $this->isGarbage();
+	public function isCrashed(){
+		return $this->crashed;
 	}
 
 	/**
@@ -144,7 +145,9 @@ abstract class AsyncTask extends \Collectable{
 
 	public function cleanObject(){
 		foreach($this as $p => $v){
-			$this->{$p} = \null;
+			if(!($v instanceof \Threaded)){
+				$this->{$p} = \null;
+			}
 		}
 	}
 
