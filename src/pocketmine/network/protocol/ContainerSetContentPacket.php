@@ -21,16 +21,6 @@ namespace pocketmine\network\protocol;
 
 use pocketmine\utils\Binary;
 
-
-
-
-
-
-
-
-
-
-
 class ContainerSetContentPacket extends DataPacket{
 	const NETWORK_ID = Info::CONTAINER_SET_CONTENT_PACKET;
 

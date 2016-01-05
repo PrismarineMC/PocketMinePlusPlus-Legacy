@@ -21,16 +21,6 @@ namespace pocketmine\network\protocol;
 
 use pocketmine\utils\Binary;
 
-
-
-
-
-
-
-
-
-
-
 use pocketmine\level\Level;
 
 class SetTimePacket extends DataPacket{

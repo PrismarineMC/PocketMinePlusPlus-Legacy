@@ -21,16 +21,6 @@ namespace pocketmine\network\protocol;
 
 use pocketmine\utils\Binary;
 
-
-
-
-
-
-
-
-
-
-
 class HurtArmorPacket extends DataPacket{
 	const NETWORK_ID = Info::HURT_ARMOR_PACKET;
 

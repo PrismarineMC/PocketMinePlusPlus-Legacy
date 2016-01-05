@@ -87,14 +87,3 @@ interface Info{
 	//const TELEMETRY_EVENT_PACKET = 0xc4;
 
 }
-
-
-
-
-
-
-
-
-
-
-

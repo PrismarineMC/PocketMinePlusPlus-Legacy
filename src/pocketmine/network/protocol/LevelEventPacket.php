@@ -21,16 +21,6 @@ namespace pocketmine\network\protocol;
 
 use pocketmine\utils\Binary;
 
-
-
-
-
-
-
-
-
-
-
 class LevelEventPacket extends DataPacket{
 	const NETWORK_ID = Info::LEVEL_EVENT_PACKET;
 

@@ -21,16 +21,6 @@ namespace pocketmine\network\protocol;
 
 use pocketmine\utils\Binary;
 
-
-
-
-
-
-
-
-
-
-
 class MoveEntityPacket extends DataPacket{
 	const NETWORK_ID = Info::MOVE_ENTITY_PACKET;
 

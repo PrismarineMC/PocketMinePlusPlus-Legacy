@@ -21,16 +21,6 @@ namespace pocketmine\network\protocol;
 
 use pocketmine\utils\Binary;
 
-
-
-
-
-
-
-
-
-
-
 class TakeItemEntityPacket extends DataPacket{
 	const NETWORK_ID = Info::TAKE_ITEM_ENTITY_PACKET;
 

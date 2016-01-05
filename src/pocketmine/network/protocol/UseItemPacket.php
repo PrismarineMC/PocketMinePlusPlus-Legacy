@@ -21,16 +21,6 @@ namespace pocketmine\network\protocol;
 
 use pocketmine\utils\Binary;
 
-
-
-
-
-
-
-
-
-
-
 class UseItemPacket extends DataPacket{
 	const NETWORK_ID = Info::USE_ITEM_PACKET;
 

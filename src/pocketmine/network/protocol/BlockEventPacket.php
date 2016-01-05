@@ -21,16 +21,6 @@ namespace pocketmine\network\protocol;
 
 use pocketmine\utils\Binary;
 
-
-
-
-
-
-
-
-
-
-
 class BlockEventPacket extends DataPacket{
 	const NETWORK_ID = Info::BLOCK_EVENT_PACKET;
 

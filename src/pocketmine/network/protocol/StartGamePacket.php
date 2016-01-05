@@ -21,16 +21,6 @@ namespace pocketmine\network\protocol;
 
 use pocketmine\utils\Binary;
 
-
-
-
-
-
-
-
-
-
-
 class StartGamePacket extends DataPacket{
 	const NETWORK_ID = Info::START_GAME_PACKET;
 

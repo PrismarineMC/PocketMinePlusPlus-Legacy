@@ -21,15 +21,6 @@ namespace pocketmine\network\protocol;
 
 use pocketmine\utils\Binary;
 
-
-
-
-
-
-
-
-
-
 use pocketmine\item\Item;
 
 class ContainerSetSlotPacket extends DataPacket{

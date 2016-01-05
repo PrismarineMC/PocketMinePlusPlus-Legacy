@@ -21,16 +21,6 @@ namespace pocketmine\network\protocol;
 
 use pocketmine\utils\Binary;
 
-
-
-
-
-
-
-
-
-
-
 class AnimatePacket extends DataPacket{
 	const NETWORK_ID = Info::ANIMATE_PACKET;
 

@@ -21,16 +21,6 @@ namespace pocketmine\network\protocol;
 
 use pocketmine\utils\Binary;
 
-
-
-
-
-
-
-
-
-
-
 class MobArmorEquipmentPacket extends DataPacket{
 	const NETWORK_ID = Info::MOB_ARMOR_EQUIPMENT_PACKET;
 

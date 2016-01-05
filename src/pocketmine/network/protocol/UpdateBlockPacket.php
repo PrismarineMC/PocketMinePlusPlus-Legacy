@@ -21,16 +21,6 @@ namespace pocketmine\network\protocol;
 
 use pocketmine\utils\Binary;
 
-
-
-
-
-
-
-
-
-
-
 class UpdateBlockPacket extends DataPacket{
 	const NETWORK_ID = Info::UPDATE_BLOCK_PACKET;
 

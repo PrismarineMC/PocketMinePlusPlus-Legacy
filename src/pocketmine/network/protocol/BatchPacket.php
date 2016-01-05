@@ -21,16 +21,6 @@ namespace pocketmine\network\protocol;
 
 use pocketmine\utils\Binary;
 
-
-
-
-
-
-
-
-
-
-
 class BatchPacket extends DataPacket{
 	const NETWORK_ID = Info::BATCH_PACKET;
 

@@ -21,16 +21,6 @@ namespace pocketmine\network\protocol;
 
 use pocketmine\utils\Binary;
 
-
-
-
-
-
-
-
-
-
-
 class CraftingEventPacket extends DataPacket{
 	const NETWORK_ID = Info::CRAFTING_EVENT_PACKET;
 

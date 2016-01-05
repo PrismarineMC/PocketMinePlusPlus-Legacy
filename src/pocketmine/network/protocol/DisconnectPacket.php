@@ -21,16 +21,6 @@ namespace pocketmine\network\protocol;
 
 use pocketmine\utils\Binary;
 
-
-
-
-
-
-
-
-
-
-
 class DisconnectPacket extends DataPacket{
 	const NETWORK_ID = Info::DISCONNECT_PACKET;
 
