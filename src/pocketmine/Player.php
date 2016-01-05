@@ -8,7 +8,7 @@
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ |_    _|
  * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|      |__|   
  *
- * This program is free software: you can redistribute it and/or modify 
+ * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -1461,31 +1461,15 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 
 	}
 
-	protected $foodTick = 0;
-
-	protected $starvationTick = 0;
-
-	protected $foodUsageTime = 0;
-
-	protected $moving = false;
-
-	public function setMoving($moving) {
-		$this->moving = $moving;
-	}
-
-	public function isMoving(){
-		return $this->moving;
-	}
-
 	public function onUpdate($currentTick){
 		if(!$this->loggedIn){
-			return false;
+			return \false;
 		}
 
 		$tickDiff = $currentTick - $this->lastUpdate;
 
 		if($tickDiff <= 0){
-			return true;
+			return \true;
 		}
 
 		$this->messageCounter = 2;
@@ -1497,7 +1481,7 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 			if($this->deadTicks >= 10){
 				$this->despawnFromAll();
 			}
-			return true;
+			return \true;
 		}
 
 		$this->timings->startTiming();
@@ -1507,7 +1491,7 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 
 			$this->entityBaseTick($tickDiff);
 
-			if(!$this->isSpectator() and $this->speed !== null){
+			if(!$this->isSpectator() and $this->speed !== \null){
 				if($this->onGround){
 					if($this->inAirTicks !== 0){
 						$this->startAirTicks = 5;
@@ -1515,62 +1499,21 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 					$this->inAirTicks = 0;
 				}else{
 					if(!$this->allowFlight and $this->inAirTicks > 10 and !$this->isSleeping() and $this->getDataProperty(self::DATA_NO_AI) !== 1){
-						$expectedVelocity = (-$this->gravity) / $this->drag - ((-$this->gravity) / $this->drag) * exp(-$this->drag * ($this->inAirTicks - $this->startAirTicks));
+						$expectedVelocity = (-$this->gravity) / $this->drag - ((-$this->gravity) / $this->drag) * \exp(-$this->drag * ($this->inAirTicks - $this->startAirTicks));
 						$diff = ($this->speed->y - $expectedVelocity) ** 2;
 
-						/*
 						if(!$this->hasEffect(Effect::JUMP) and $diff > 0.6 and $expectedVelocity < $this->speed->y and !$this->server->getAllowFlight()){
 							if($this->inAirTicks < 100){
 								$this->setMotion(new Vector3(0, $expectedVelocity, 0));
 							}elseif($this->kick("Flying is not enabled on this server")){
 								$this->timings->stopTiming();
-								return false;
+								return \false;
 							}
 						}
-						*/
 					}
 
 					++$this->inAirTicks;
 				}
-			}
-
-			if($this->starvationTick >= 20) {
-				$ev = new EntityDamageEvent($this, EntityDamageEvent::CAUSE_CUSTOM, 1);
-				$this->attack(1, $ev);
-				$this->starvationTick = 0;
-			}
-			if($this->getFood() <= 0) {
-				$this->starvationTick++;
-			}
-
-			if($this->isMoving() && $this->isSurvival()) {
-				if($this->isSprinting()) {
-					$this->foodUsageTime += 500;
-				} else {
-					$this->foodUsageTime += 250;
-				}
-			}
-
-			if($this->foodUsageTime >= 100000 && $this->foodEnabled) {
-				$this->foodUsageTime -= 100000;
-				$this->subtractFood(1);
-			}
-
-			if($this->foodTick >= 80) {
-				if($this->getHealth() < $this->getMaxHealth() && $this->getFood() >= 18) {
-					$ev = new EntityRegainHealthEvent($this, 1, EntityRegainHealthEvent::CAUSE_EATING);
-					$this->heal(1, $ev);
-					if($this->foodDepletion >=2) {
-						$this->subtractFood(1);
-						$this->foodDepletion = 0;
-					} else {
-						$this->foodDepletion++;
-					}
-				}
-				$this->foodTick = 0;
-			}
-			if($this->getHealth() < $this->getMaxHealth()) {
-				$this->foodTick++;
 			}
 		}
 
@@ -1578,78 +1521,7 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 
 		$this->timings->stopTiming();
 
-		return true;
-	}
-
-	protected $eatCoolDown = 0;
-
-	public function eatFoodInHand() {
-		if($this->eatCoolDown + 2000 >= time() || !$this->spawned) {
-			return;
-		}
-
-		$items = [ //TODO: move this to item classes
-			Item::APPLE => 4,
-			Item::MUSHROOM_STEW => 6,
-			Item::BEETROOT_SOUP => 5,
-			Item::BREAD => 5,
-			Item::RAW_PORKCHOP => 2,
-			Item::COOKED_PORKCHOP => 8,
-			Item::RAW_BEEF => 3,
-			Item::STEAK => 8,
-			Item::COOKED_CHICKEN => 6,
-			Item::RAW_CHICKEN => 2,
-			Item::MELON_SLICE => 2,
-			Item::GOLDEN_APPLE => 4,
-			Item::PUMPKIN_PIE => 8,
-			Item::CARROT => 3,
-			Item::POTATO => 1,
-			Item::BAKED_POTATO => 5,
-			Item::COOKIE => 2,
-			Item::COOKED_FISH => [
-				0 => 5,
-				1 => 6
-			],
-			Item::RAW_FISH => [
-				0 => 2,
-				1 => 2,
-				2 => 1,
-				3 => 1
-			],
-		];
-
-		$slot = $this->inventory->getItemInHand();
-		if(isset($items[$slot->getId()])) {
-			if($this->getFood() < 20 and isset($items[$slot->getId()])){
-				$this->server->getPluginManager()->callEvent($ev = new PlayerItemConsumeEvent($this, $slot));
-				if($ev->isCancelled()){
-					$this->inventory->sendContents($this);
-					return;
-				}
-
-				$pk = new EntityEventPacket();
-				$pk->eid = $this->getId();
-				$pk->event = EntityEventPacket::USE_ITEM;
-				$this->dataPacket($pk);
-				Server::broadcastPacket($this->getViewers(), $pk);
-
-				$amount = $items[$slot->getId()];
-				if(is_array($amount)){
-					$amount = isset($amount[$slot->getDamage()]) ? $amount[$slot->getDamage()] : 0;
-				}
-				$this->setFood($this->getFood() + $amount);
-
-				--$slot->count;
-				$this->inventory->setItemInHand($slot);
-				if($slot->getId() === Item::MUSHROOM_STEW or $slot->getId() === Item::BEETROOT_SOUP){
-					$this->inventory->addItem(Item::get(Item::BOWL, 0, 1));
-				}elseif($slot->getId() === Item::RAW_FISH and $slot->getDamage() === 3){ //Pufferfish
-					$this->addEffect(Effect::getEffect(Effect::HUNGER)->setAmplifier(2)->setDuration(15 * 20));
-					//$this->addEffect(Effect::getEffect(Effect::NAUSEA)->setAmplifier(1)->setDuration(15 * 20));
-					$this->addEffect(Effect::getEffect(Effect::POISON)->setAmplifier(3)->setDuration(60 * 20));
-				}
-			}
-		}
+		return \true;
 	}
 
 	public function checkNetwork(){
@@ -1870,7 +1742,6 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 		$this->server->onPlayerLogin($this);
 	}
 
-
 	/**
 	 * Handles a Minecraft packet
 	 * TODO: Separate all of this in handlers
@@ -1881,7 +1752,7 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 	 * @param DataPacket $packet
 	 */
 	public function handleDataPacket(DataPacket $packet){
-		if($this->connected === false){
+		if($this->connected === \false){
 			return;
 		}
 
@@ -1911,18 +1782,9 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 				$this->username = TextFormat::clean($packet->username);
 				$this->displayName = $this->username;
 				$this->setNameTag($this->username);
-				$this->iusername = strtolower($this->username);
+				$this->iusername = \strtolower($this->username);
 
-				if(count($this->server->getOnlinePlayers()) >= $this->server->getMaxPlayers()){
-					if($this->getServer()->redirectOnFull && $this->getServer()->redirectEnabled) {
-						$pk = new StrangePacket();
-						$pk->address = $this->getServer()->redirectDestination;
-						$pk->port = $this->getServer()->redirectDestinationPort;
-						$pk->encode();
-						$this->dataPacket($pk);
-					} else {
-						$this->kick("disconnectionScreen.serverFull", false);
-					}
+				if(\count($this->server->getOnlinePlayers()) >= $this->server->getMaxPlayers() and $this->kick("disconnectionScreen.serverFull", \false)){
 					break;
 				}
 
@@ -1940,33 +1802,33 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 						$pk->status = PlayStatusPacket::LOGIN_FAILED_SERVER;
 						$this->directDataPacket($pk);
 					}
-					$this->close("", $message, false);
+					$this->close("", $message, \false);
 
 					break;
 				}
 
 				$this->randomClientId = $packet->clientId;
-				$this->loginData = ["clientId" => $packet->clientId, "loginData" => null];
+				$this->loginData = ["clientId" => $packet->clientId, "loginData" => \null];
 
 				$this->uuid = $packet->clientUUID;
 				$this->rawUUID = $this->uuid->toBinary();
 				$this->clientSecret = $packet->clientSecret;
 
-				$valid = true;
-				$len = strlen($packet->username);
+				$valid = \true;
+				$len = \strlen($packet->username);
 				if($len > 16 or $len < 3){
-					$valid = false;
+					$valid = \false;
 				}
 				for($i = 0; $i < $len and $valid; ++$i){
-					$c = ord($packet->username{$i});
-					if(($c >= ord("a") and $c <= ord("z")) or
-						($c >= ord("A") and $c <= ord("Z")) or
-						($c >= ord("0") and $c <= ord("9")) or $c === ord("_")
+					$c = \ord($packet->username{$i});
+					if(($c >= \ord("a") and $c <= \ord("z")) or
+						($c >= \ord("A") and $c <= \ord("Z")) or
+						($c >= \ord("0") and $c <= \ord("9")) or $c === \ord("_")
 					){
 						continue;
 					}
 
-					$valid = false;
+					$valid = \false;
 					break;
 				}
 
@@ -1975,13 +1837,13 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 
 					break;
 				}
-				
-				if(strlen($packet->skin) !== 64 * 32 * 4 and strlen($packet->skin) !== 64 * 64 * 4){
+
+				if(\strlen($packet->skin) !== 64 * 32 * 4 and \strlen($packet->skin) !== 64 * 64 * 4){
 					$this->close("", "disconnectionScreen.invalidSkin");
 					break;
 				}
 
-				$this->setSkin($packet->skin, $packet->slim);
+				$this->setSkin($packet->skin, $packet->skinname, $packet->oldclient, $packet->slim, $packet->transparent);
 
 				$this->server->getPluginManager()->callEvent($ev = new PlayerPreLoginEvent($this, "Plugin reason"));
 				if($ev->isCancelled()){
@@ -1997,13 +1859,13 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 
 				$newPos = new Vector3($packet->x, $packet->y - $this->getEyeHeight(), $packet->z);
 
-				$revert = false;
-				if(!$this->isAlive() or $this->spawned !== true){
-					$revert = true;
+				$revert = \false;
+				if(!$this->isAlive() or $this->spawned !== \true){
+					$revert = \true;
 					$this->forceMovement = new Vector3($this->x, $this->y, $this->z);
 				}
 
-				if($this->teleportPosition !== null or ($this->forceMovement instanceof Vector3 and (($dist = $newPos->distanceSquared($this->forceMovement)) > 0.1 or $revert))){
+				if($this->teleportPosition !== \null or ($this->forceMovement instanceof Vector3 and (($dist = $newPos->distanceSquared($this->forceMovement)) > 0.1 or $revert))){
 					$this->sendPosition($this->forceMovement, $packet->yaw, $packet->pitch);
 				}else{
 					$packet->yaw %= 360;
@@ -2015,12 +1877,12 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 
 					$this->setRotation($packet->yaw, $packet->pitch);
 					$this->newPosition = $newPos;
-					$this->forceMovement = null;
+					$this->forceMovement = \null;
 				}
 
 				break;
 			case ProtocolInfo::MOB_EQUIPMENT_PACKET:
-				if($this->spawned === false or !$this->isAlive()){
+				if($this->spawned === \false or !$this->isAlive()){
 					break;
 				}
 
@@ -2031,7 +1893,7 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 				}
 
 				/** @var Item $item */
-				$item = null;
+				$item = \null;
 
 				if($this->isCreative()){ //Creative mode match
 					$item = $packet->item;
@@ -2043,11 +1905,11 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 
 				if($packet->slot === -1){ //Air
 					if($this->isCreative()){
-						$found = false;
+						$found = \false;
 						for($i = 0; $i < $this->inventory->getHotbarSize(); ++$i){
 							if($this->inventory->getHotbarSlotIndex($i) === -1){
 								$this->inventory->setHeldItemIndex($i);
-								$found = true;
+								$found = \true;
 								break;
 							}
 						}
@@ -2057,15 +1919,15 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 							break;
 						}
 					}else{
-						if($packet->selectedSlot >= 0 and $packet->selectedSlot < 9){
-							$this->inventory->setHeldItemIndex($packet->selectedSlot);
-							$this->inventory->setHeldItemSlot($packet->slot);
-						}else{
-							$this->inventory->sendContents($this);
-							break;
-						}
+                        if($packet->selectedSlot >= 0 and $packet->selectedSlot < 9){
+                            $this->inventory->setHeldItemIndex($packet->selectedSlot);
+                            $this->inventory->setHeldItemSlot($packet->slot);
+                        }else{
+                            $this->inventory->sendContents($this);
+                            break;
+                        }
 					}
-				}elseif($item === null or $slot === -1 or !$item->deepEquals($packet->item)){ // packet error or not implemented
+				}elseif($item === \null or $slot === -1 or !$item->deepEquals($packet->item)){ // packet error or not implemented
 					$this->inventory->sendContents($this);
 					break;
 				}elseif($this->isCreative()){
@@ -2073,21 +1935,21 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 					$this->inventory->setItem($packet->selectedSlot, $item);
 					$this->inventory->setHeldItemSlot($packet->selectedSlot);
 				}else{
-					if($packet->selectedSlot >= 0 and $packet->selectedSlot < $this->inventory->getHotbarSize()){
-						$this->inventory->setHeldItemIndex($packet->selectedSlot);
-						$this->inventory->setHeldItemSlot($slot);
-					}else{
-						$this->inventory->sendContents($this);
-						break;
-					}
+                    if($packet->selectedSlot >= 0 and $packet->selectedSlot < $this->inventory->getHotbarSize()){
+                        $this->inventory->setHeldItemIndex($packet->selectedSlot);
+                        $this->inventory->setHeldItemSlot($slot);
+                    }else{
+                        $this->inventory->sendContents($this);
+                        break;
+                    }
 				}
 
 				$this->inventory->sendHeldItem($this->hasSpawned);
 
-				$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_ACTION, false);
+				$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_ACTION, \false);
 				break;
 			case ProtocolInfo::USE_ITEM_PACKET:
-				if($this->spawned === false or !$this->isAlive() or $this->blocked){
+				if($this->spawned === \false or !$this->isAlive() or $this->blocked){
 					break;
 				}
 
@@ -2096,13 +1958,13 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 				$this->craftingType = 0;
 
 				if($packet->face >= 0 and $packet->face <= 5){ //Use Block, place
-					$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_ACTION, false);
+					$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_ACTION, \false);
 
 					if(!$this->canInteract($blockVector->add(0.5, 0.5, 0.5), 13) or $this->isSpectator()){
 
 					}elseif($this->isCreative()){
 						$item = $this->inventory->getItemInHand();
-						if($this->level->useItemOn($blockVector, $item, $packet->face, $packet->fx, $packet->fy, $packet->fz, $this) === true){
+						if($this->level->useItemOn($blockVector, $item, $packet->face, $packet->fx, $packet->fy, $packet->fz, $this) === \true){
 							break;
 						}
 					}elseif(!$this->inventory->getItemInHand()->deepEquals($packet->item)){
@@ -2113,7 +1975,7 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 						//TODO: Implement adventure mode checks
 						if($this->level->useItemOn($blockVector, $item, $packet->face, $packet->fx, $packet->fy, $packet->fz, $this)){
 							if(!$item->deepEquals($oldItem) or $item->getCount() !== $oldItem->getCount()){
-								$this->inventory->setItemInHand($item, $this);
+								$this->inventory->setItemInHand($item);
 								$this->inventory->sendHeldItem($this->hasSpawned);
 							}
 							break;
@@ -2152,20 +2014,21 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 					}
 
 					if($item->getId() === Item::SNOWBALL){
-						$nbt = new Compound("", [
-							"Pos" => new Enum("Pos", [
-								new Double("", $this->x),
-								new Double("", $this->y + $this->getEyeHeight()),
-								new Double("", $this->z)
+					    $dir = $this->getDirectionVector();
+						$nbt = new CompoundTag("", [
+							"Pos" => new ListTag("Pos", [
+								new DoubleTag("", $this->x),
+								new DoubleTag("", $this->y + $this->getEyeHeight()),
+								new DoubleTag("", $this->z)
 							]),
-							"Motion" => new Enum("Motion", [
-								new Double("", $aimPos->x),
-								new Double("", $aimPos->y),
-								new Double("", $aimPos->z)
+							"Motion" => new ListTag("Motion", [
+								new DoubleTag("", $dir->x),
+								new DoubleTag("", $dir->y),
+								new DoubleTag("", $dir->z)
 							]),
-							"Rotation" => new Enum("Rotation", [
-								new Float("", $this->yaw),
-								new Float("", $this->pitch)
+							"Rotation" => new ListTag("Rotation", [
+								new FloatTag("", 0),
+								new FloatTag("", 0)
 							]),
 						]);
 
@@ -2189,12 +2052,12 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 						}
 					}
 
-					$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_ACTION, true);
+					$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_ACTION, \true);
 					$this->startAction = $this->server->getTick();
 				}
 				break;
 			case ProtocolInfo::PLAYER_ACTION_PACKET:
-				if($this->spawned === false or $this->blocked === true or (!$this->isAlive() and $packet->action !== PlayerActionPacket::ACTION_RESPAWN and $packet->action !== PlayerActionPacket::ACTION_DIMENSION_CHANGE)){
+				if($this->spawned === \false or $this->blocked === \true or (!$this->isAlive() and $packet->action !== PlayerActionPacket::ACTION_RESPAWN and $packet->action !== PlayerActionPacket::ACTION_DIMENSION_CHANGE)){
 					break;
 				}
 
@@ -2203,7 +2066,7 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 
 				switch($packet->action){
 					case PlayerActionPacket::ACTION_START_BREAK:
-						if($this->lastBreak !== PHP_INT_MAX or $pos->distanceSquared($this) > 10000){
+						if($this->lastBreak !== \PHP_INT_MAX or $pos->distanceSquared($this) > 10000){
 							break;
 						}
 						$target = $this->level->getBlock($pos);
@@ -2213,10 +2076,10 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 							$this->inventory->sendHeldItem($this);
 							break;
 						}
-						$this->lastBreak = microtime(true);
+						$this->lastBreak = \microtime(\true);
 						break;
 					case PlayerActionPacket::ACTION_ABORT_BREAK:
-						$this->lastBreak = PHP_INT_MAX;
+						$this->lastBreak = \PHP_INT_MAX;
 						break;
 					case PlayerActionPacket::ACTION_RELEASE_ITEM:
 						if($this->startAction > -1 and $this->getDataFlag(self::DATA_FLAGS, self::DATA_FLAG_ACTION)){
@@ -2228,28 +2091,28 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 								}
 
 
-								$nbt = new Compound("", [
-									"Pos" => new Enum("Pos", [
-										new Double("", $this->x),
-										new Double("", $this->y + $this->getEyeHeight()),
-										new Double("", $this->z)
+								$nbt = new CompoundTag("", [
+									"Pos" => new ListTag("Pos", [
+										new DoubleTag("", $this->x),
+										new DoubleTag("", $this->y + $this->getEyeHeight()),
+										new DoubleTag("", $this->z)
 									]),
-									"Motion" => new Enum("Motion", [
-										new Double("", -sin($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI)),
-										new Double("", -sin($this->pitch / 180 * M_PI)),
-										new Double("", cos($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI))
+									"Motion" => new ListTag("Motion", [
+										new DoubleTag("", -\sin($this->yaw / 180 * M_PI) * \cos($this->pitch / 180 * M_PI)),
+										new DoubleTag("", -\sin($this->pitch / 180 * M_PI)),
+										new DoubleTag("", \cos($this->yaw / 180 * M_PI) * \cos($this->pitch / 180 * M_PI))
 									]),
-									"Rotation" => new Enum("Rotation", [
-										new Float("", $this->yaw),
-										new Float("", $this->pitch)
+									"Rotation" => new ListTag("Rotation", [
+										new FloatTag("", $this->yaw),
+										new FloatTag("", $this->pitch)
 									]),
-									"Fire" => new Short("Fire", $this->isOnFire() ? 45 * 60 : 0)
+									"Fire" => new ShortTag("Fire", $this->isOnFire() ? 45 * 60 : 0)
 								]);
 
 								$diff = ($this->server->getTick() - $this->startAction);
 								$p = $diff / 20;
-								$f = min((($p ** 2) + $p * 2) / 3, 1) * 2;
-								$ev = new EntityShootBowEvent($this, $bow, Entity::createEntity("Arrow", $this->chunk, $nbt, $this, $f == 2 ? true : false), $f);
+								$f = \min((($p ** 2) + $p * 2) / 3, 1) * 2;
+								$ev = new EntityShootBowEvent($this, $bow, Entity::createEntity("Arrow", $this->chunk, $nbt, $this, $f == 2 ? \true : \false), $f);
 
 								if ($f < 0.1 or $diff < 5) {
 									$ev->setCancelled();
@@ -2313,12 +2176,12 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 						$this->stopSleep();
 						break;
 					case PlayerActionPacket::ACTION_RESPAWN:
-						if($this->spawned === false or $this->isAlive() or !$this->isOnline()){
+						if($this->spawned === \false or $this->isAlive() or !$this->isOnline()){
 							break;
 						}
 
 						if($this->server->isHardcore()){
-							$this->setBanned(true);
+							$this->setBanned(\true);
 							break;
 						}
 
@@ -2328,8 +2191,8 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 
 						$this->teleport($ev->getRespawnPosition());
 
-						$this->setSprinting(false);
-						$this->setSneaking(false);
+						$this->setSprinting(\false);
+						$this->setSneaking(\false);
 
 						$this->extinguish();
 						$this->setDataProperty(self::DATA_AIR, self::DATA_TYPE_SHORT, 300);
@@ -2337,12 +2200,6 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 						$this->noDamageTicks = 60;
 
 						$this->setHealth($this->getMaxHealth());
-						$this->setFood(20);
-						$this->getAttribute()->resetAll();
-						$this->starvationTick = 0;
-						$this->foodTick = 0;
-						$this->lastSentVitals = 10;
-						$this->foodUsageTime = 0;
 
 						$this->removeAllEffects();
 						$this->sendData($this);
@@ -2351,55 +2208,55 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 						$this->inventory->sendContents($this);
 						$this->inventory->sendArmorContents($this);
 
-						$this->blocked = false;
+						$this->blocked = \false;
 
 						$this->spawnToAll();
 						$this->scheduleUpdate();
 						break;
 					case PlayerActionPacket::ACTION_START_SPRINT:
-						$ev = new PlayerToggleSprintEvent($this, true);
+						$ev = new PlayerToggleSprintEvent($this, \true);
 						$this->server->getPluginManager()->callEvent($ev);
 						if($ev->isCancelled()){
 							$this->sendData($this);
 						}else{
-							$this->setSprinting(true);
+							$this->setSprinting(\true);
 						}
 						break;
 					case PlayerActionPacket::ACTION_STOP_SPRINT:
-						$ev = new PlayerToggleSprintEvent($this, false);
+						$ev = new PlayerToggleSprintEvent($this, \false);
 						$this->server->getPluginManager()->callEvent($ev);
 						if($ev->isCancelled()){
 							$this->sendData($this);
 						}else{
-							$this->setSprinting(false);
+							$this->setSprinting(\false);
 						}
 						break;
 					case PlayerActionPacket::ACTION_START_SNEAK:
-						$ev = new PlayerToggleSneakEvent($this, true);
+						$ev = new PlayerToggleSneakEvent($this, \true);
 						$this->server->getPluginManager()->callEvent($ev);
 						if($ev->isCancelled()){
 							$this->sendData($this);
 						}else{
-							$this->setSneaking(true);
+							$this->setSneaking(\true);
 						}
 						break;
 					case PlayerActionPacket::ACTION_STOP_SNEAK:
-						$ev = new PlayerToggleSneakEvent($this, false);
+						$ev = new PlayerToggleSneakEvent($this, \false);
 						$this->server->getPluginManager()->callEvent($ev);
 						if($ev->isCancelled()){
 							$this->sendData($this);
 						}else{
-							$this->setSneaking(false);
+							$this->setSneaking(\false);
 						}
 						break;
 				}
 
 				$this->startAction = -1;
-				$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_ACTION, false);
+				$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_ACTION, \false);
 				break;
 
 			case ProtocolInfo::REMOVE_BLOCK_PACKET:
-				if($this->spawned === false or $this->blocked === true or !$this->isAlive()){
+				if($this->spawned === \false or $this->blocked === \true or !$this->isAlive()){
 					break;
 				}
 				$this->craftingType = 0;
@@ -2418,7 +2275,7 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 				if($this->canInteract($vector->add(0.5, 0.5, 0.5), $this->isCreative() ? 13 : 6) and $this->level->useBreakOn($vector, $item, $this)){
 					if($this->isSurvival()){
 						if(!$item->deepEquals($oldItem) or $item->getCount() !== $oldItem->getCount()){
-							$this->inventory->setItemInHand($item, $this);
+							$this->inventory->setItemInHand($item);
 							$this->inventory->sendHeldItem($this->hasSpawned);
 						}
 					}
@@ -2431,7 +2288,7 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 
 				$this->level->sendBlocks([$this], [$target], UpdateBlockPacket::FLAG_ALL_PRIORITY);
 
-				$this->inventory->sendHeldItem($this);
+                $this->inventory->sendHeldItem($this);
 
 				if($tile instanceof Spawnable){
 					$tile->spawnTo($this);
@@ -2442,7 +2299,7 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 				break;
 
 			case ProtocolInfo::INTERACT_PACKET:
-				if($this->spawned === false or !$this->isAlive() or $this->blocked){
+				if($this->spawned === \false or !$this->isAlive() or $this->blocked){
 					break;
 				}
 
@@ -2450,14 +2307,14 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 
 				$target = $this->level->getEntity($packet->target);
 
-				$cancelled = false;
+				$cancelled = \false;
 
 				if(
 					$target instanceof Player and
-					$this->server->getConfigBoolean("pvp", true) === false
+					$this->server->getConfigBoolean("pvp", \true) === \false
 
 				){
-					$cancelled = true;
+					$cancelled = \true;
 				}
 
 				if($target instanceof Entity and $this->getGamemode() !== Player::VIEW and $this->isAlive() and $target->isAlive()){
@@ -2499,12 +2356,12 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 					];
 
 					if(!$this->canInteract($target, 8)){
-						$cancelled = true;
+						$cancelled = \true;
 					}elseif($target instanceof Player){
 						if(($target->getGamemode() & 0x01) > 0){
 							break;
-						}elseif($this->server->getConfigBoolean("pvp") !== true or $this->server->getDifficulty() === 0){
-							$cancelled = true;
+						}elseif($this->server->getConfigBoolean("pvp") !== \true or $this->server->getDifficulty() === 0){
+							$cancelled = \true;
 						}
 
 						$armorValues = [
@@ -2536,7 +2393,7 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 							}
 						}
 
-						$damage[EntityDamageEvent::MODIFIER_ARMOR] = -floor($damage[EntityDamageEvent::MODIFIER_BASE] * $points * 0.04);
+						$damage[EntityDamageEvent::MODIFIER_ARMOR] = -\floor($damage[EntityDamageEvent::MODIFIER_BASE] * $points * 0.04);
 					}
 
 					$ev = new EntityDamageByEntityEvent($this, $target, EntityDamageEvent::CAUSE_ENTITY_ATTACK, $damage);
@@ -2565,7 +2422,7 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 
 				break;
 			case ProtocolInfo::ANIMATE_PACKET:
-				if($this->spawned === false or !$this->isAlive()){
+				if($this->spawned === \false or !$this->isAlive()){
 					break;
 				}
 
@@ -2582,21 +2439,80 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 			case ProtocolInfo::SET_HEALTH_PACKET: //Not used
 				break;
 			case ProtocolInfo::ENTITY_EVENT_PACKET:
-				if($this->spawned === false or $this->blocked === true or !$this->isAlive()){
+				if($this->spawned === \false or $this->blocked === \true or !$this->isAlive()){
 					break;
 				}
 				$this->craftingType = 0;
 
-				$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_ACTION, false); //TODO: check if this should be true
+				$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_ACTION, \false); //TODO: check if this should be true
 
 				switch($packet->event){
 					case 9: //Eating
-						$this->eatFoodInHand();
+						$items = [ //TODO: move this to item classes
+							Item::APPLE => 4,
+							Item::MUSHROOM_STEW => 10,
+							Item::BEETROOT_SOUP => 10,
+							Item::BREAD => 5,
+							Item::RAW_PORKCHOP => 3,
+							Item::COOKED_PORKCHOP => 8,
+							Item::RAW_BEEF => 3,
+							Item::STEAK => 8,
+							Item::COOKED_CHICKEN => 6,
+							Item::RAW_CHICKEN => 2,
+							Item::MELON_SLICE => 2,
+							Item::GOLDEN_APPLE => 10,
+							Item::PUMPKIN_PIE => 8,
+							Item::CARROT => 4,
+							Item::POTATO => 1,
+							Item::BAKED_POTATO => 6,
+							Item::COOKIE => 2,
+							Item::COOKED_FISH => [
+								0 => 5,
+								1 => 6
+							],
+							Item::RAW_FISH => [
+								0 => 2,
+								1 => 2,
+								2 => 1,
+								3 => 1
+							],
+						];
+						$slot = $this->inventory->getItemInHand();
+						if($this->getHealth() < $this->getMaxHealth() and isset($items[$slot->getId()])){
+							$this->server->getPluginManager()->callEvent($ev = new PlayerItemConsumeEvent($this, $slot));
+							if($ev->isCancelled()){
+								$this->inventory->sendContents($this);
+								break;
+							}
+
+							$pk = new EntityEventPacket();
+							$pk->eid = $this->getId();
+							$pk->event = EntityEventPacket::USE_ITEM;
+							$this->dataPacket($pk);
+							Server::broadcastPacket($this->getViewers(), $pk);
+
+							$amount = $items[$slot->getId()];
+							if(\is_array($amount)){
+								$amount = isset($amount[$slot->getDamage()]) ? $amount[$slot->getDamage()] : 0;
+							}
+                            $ev = new EntityRegainHealthEvent($this, $amount, EntityRegainHealthEvent::CAUSE_EATING);
+							$this->heal($ev->getAmount(), $ev);
+
+							--$slot->count;
+							$this->inventory->setItemInHand($slot);
+							if($slot->getId() === Item::MUSHROOM_STEW or $slot->getId() === Item::BEETROOT_SOUP){
+								$this->inventory->addItem(Item::get(Item::BOWL, 0, 1));
+							}elseif($slot->getId() === Item::RAW_FISH and $slot->getDamage() === 3){ //Pufferfish
+								//$this->addEffect(Effect::getEffect(Effect::HUNGER)->setAmplifier(2)->setDuration(15 * 20));
+								//$this->addEffect(Effect::getEffect(Effect::NAUSEA)->setAmplifier(1)->setDuration(15 * 20));
+								$this->addEffect(Effect::getEffect(Effect::POISON)->setAmplifier(3)->setDuration(60 * 20));
+							}
+						}
 						break;
 				}
 				break;
 			case ProtocolInfo::DROP_ITEM_PACKET:
-				if($this->spawned === false or $this->blocked === true or !$this->isAlive()){
+				if($this->spawned === \false or $this->blocked === \true or !$this->isAlive()){
 					break;
 				}
 				$item = $this->inventory->getItemInHand();
@@ -2607,25 +2523,25 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 					break;
 				}
 
-				$this->inventory->setItemInHand(Item::get(Item::AIR, 0, 1), $this);
+				$this->inventory->setItemInHand(Item::get(Item::AIR, 0, 1));
 				$motion = $this->getDirectionVector()->multiply(0.4);
 
 				$this->level->dropItem($this->add(0, 1.3, 0), $item, $motion, 40);
 
-				$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_ACTION, false);
+				$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_ACTION, \false);
 				break;
 			case ProtocolInfo::TEXT_PACKET:
-				if($this->spawned === false or !$this->isAlive()){
+				if($this->spawned === \false or !$this->isAlive()){
 					break;
 				}
 				$this->craftingType = 0;
 				if($packet->type === TextPacket::TYPE_CHAT){
 					$packet->message = TextFormat::clean($packet->message, $this->removeFormat);
-					foreach(explode("\n", $packet->message) as $message){
-						if(trim($message) != "" and strlen($message) <= 255 and $this->messageCounter-- > 0){
+					foreach(\explode("\n", $packet->message) as $message){
+						if(\trim($message) != "" and \strlen($message) <= 255 and $this->messageCounter-- > 0){
 							$ev = new PlayerCommandPreprocessEvent($this, $message);
 
-							if(mb_strlen($ev->getMessage(), "UTF-8") > 320){
+							if(\mb_strlen($ev->getMessage(), "UTF-8") > 320){
 								$ev->setCancelled();
 							}
 							$this->server->getPluginManager()->callEvent($ev);
@@ -2633,9 +2549,9 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 							if($ev->isCancelled()){
 								break;
 							}
-							if(substr($ev->getMessage(), 0, 1) === "/"){ //Command
+							if(\substr($ev->getMessage(), 0, 1) === "/"){ //Command
 								Timings::$playerCommandTimer->startTiming();
-								$this->server->dispatchCommand($ev->getPlayer(), substr($ev->getMessage(), 1));
+								$this->server->dispatchCommand($ev->getPlayer(), \substr($ev->getMessage(), 1));
 								Timings::$playerCommandTimer->stopTiming();
 							}else{
 								$this->server->getPluginManager()->callEvent($ev = new PlayerChatEvent($this, $ev->getMessage()));
@@ -2648,11 +2564,11 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 				}
 				break;
 			case ProtocolInfo::CONTAINER_CLOSE_PACKET:
-				if($this->spawned === false or $packet->windowid === 0){
+				if($this->spawned === \false or $packet->windowid === 0){
 					break;
 				}
 				$this->craftingType = 0;
-				$this->currentTransaction = null;
+				$this->currentTransaction = \null;
 				if(isset($this->windowIndex[$packet->windowid])){
 					$this->server->getPluginManager()->callEvent(new InventoryCloseEvent($this->windowIndex[$packet->windowid], $this));
 					$this->removeWindow($this->windowIndex[$packet->windowid]);
@@ -2841,7 +2757,7 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 				break;
 
 			case ProtocolInfo::CONTAINER_SET_SLOT_PACKET:
-				if($this->spawned === false or $this->blocked === true or !$this->isAlive()){
+				if($this->spawned === \false or $this->blocked === \true or !$this->isAlive()){
 					break;
 				}
 
@@ -2880,8 +2796,8 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 				}
 
 
-				if($this->currentTransaction === null or $this->currentTransaction->getCreationTime() < (microtime(true) - 8)){
-					if($this->currentTransaction !== null){
+				if($this->currentTransaction === \null or $this->currentTransaction->getCreationTime() < (\microtime(\true) - 8)){
+					if($this->currentTransaction !== \null){
 						foreach($this->currentTransaction->getInventories() as $inventory){
 							if($inventory instanceof PlayerInventory){
 								$inventory->sendArmorContents($this);
@@ -2915,12 +2831,12 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 						}
 					}
 
-					$this->currentTransaction = null;
+					$this->currentTransaction = \null;
 				}
 
 				break;
 			case ProtocolInfo::TILE_ENTITY_DATA_PACKET:
-				if($this->spawned === false or $this->blocked === true or !$this->isAlive()){
+				if($this->spawned === \false or $this->blocked === \true or !$this->isAlive()){
 					break;
 				}
 				$this->craftingType = 0;
@@ -2946,7 +2862,7 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 							$ev->setCancelled();
 						}else{
 							foreach($ev->getLines() as $line){
-								if(mb_strlen($line, "UTF-8") > 16){
+								if(\mb_strlen($line, "UTF-8") > 16){
 									$ev->setCancelled();
 								}
 							}
@@ -3337,52 +3253,6 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 			$pk->health = $this->getHealth();
 			$this->dataPacket($pk);
 		}
-	}
-
-	protected $food = 20;
-
-	protected $foodDepletion = 0;
-
-	protected $foodEnabled = true;
-
-	public function setFoodEnabled($enabled) {
-		$this->foodEnabled = $enabled;
-	}
-
-	public function getFoodEnabled() {
-		return $this->foodEnabled;
-	}
-
-	public function setFood($amount){
-		if($amount <= 6 && !($this->getFood() <= 6)) {
-			$this->setDataProperty(self::DATA_FLAG_SPRINTING, self::DATA_TYPE_BYTE, false);
-		} elseif($amount > 6 && !($this->getFood() > 6)) {
-			$this->setDataProperty(self::DATA_FLAG_SPRINTING, self::DATA_TYPE_BYTE, true);
-		}
-		if($amount < 0) $amount = 0;
-		if($amount > 20) $amount = 20;
-		$this->food = $amount;
-		$this->getAttribute()->getAttribute(AttributeManager::MAX_HUNGER)->setValue($amount);
-	}
-
-	public function getFood() {
-		return $this->food;
-	}
-
-	public function subtractFood($amount){
-		if($this->getFood()-$amount <= 6 && !($this->getFood() <= 6)) {
-			$this->setDataProperty(self::DATA_FLAG_SPRINTING, self::DATA_TYPE_BYTE, false);
-			//$this->removeEffect(Effect::SLOWNESS);
-		} elseif($this->getFood()-$amount < 6 && !($this->getFood() > 6)) {
-			$this->setDataProperty(self::DATA_FLAG_SPRINTING, self::DATA_TYPE_BYTE, true);
-			/*$effect = Effect::getEffect(Effect::SLOWNESS);
-			$effect->setDuration(0x7fffffff);
-			$effect->setAmplifier(2);
-			$effect->setVisible(false);
-			$this->addEffect($effect);*/
-		}
-		if($this->food - $amount < 0) return;
-		$this->setFood($this->getFood() - $amount);
 	}
 
 	public function attack($damage, EntityDamageEvent $source){
