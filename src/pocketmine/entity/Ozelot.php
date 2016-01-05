@@ -37,7 +37,7 @@ class Ozelot extends Animal implements Tameable{
 	public $width = 0.625;
 	public $length = 1.4375;
 	public $height = 1.25;
-	public $owner = null;
+	public $owner = \null;
 
 	public function getName(){
 		return "Ozelot";

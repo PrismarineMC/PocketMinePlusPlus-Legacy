@@ -81,7 +81,7 @@ abstract class Living extends Entity implements Damageable{
 	public function hasLineOfSight(Entity $entity){
 		//TODO: head height
 		return \true;
-		//return $this->getLevel()->rayTraceBlocks(Vector3::createVector($this->x, $this->y + $this->height, $this->z), Vector3::createVector($entity->x, $entity->y + $entity->height, $entity->z)) === null;
+		//return $this->getLevel()->rayTraceBlocks(Vector3::createVector($this->x, $this->y + $this->height, $this->z), Vector3::createVector($entity->x, $entity->y + $entity->height, $entity->z)) === \null;
 	}
 
 	public function heal($amount, EntityRegainHealthEvent $source){

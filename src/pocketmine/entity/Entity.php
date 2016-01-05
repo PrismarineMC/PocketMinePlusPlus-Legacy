@@ -1136,7 +1136,7 @@ abstract class Entity extends Location implements Metadatable{
 
 			/*
 			if($this->isColliding){ //With cobweb?
-				$this->isColliding = false;
+				$this->isColliding = \false;
 				$dx *= 0.25;
 				$dy *= 0.05;
 				$dz *= 0.25;

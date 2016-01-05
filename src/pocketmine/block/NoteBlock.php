@@ -82,7 +82,7 @@ class NoteBlock extends Solid
         $particle = new NoteParticle (new Vector3 ($this->x + 0.5, $this->y + 1, $this->z + 0.5));
         $player->getLevel()->addParticle($particle);
         //$this->PlaySound(200 + ($this->note * 60), $player);
-        return true;
+        return \true;
     }
 
     public function getName(){

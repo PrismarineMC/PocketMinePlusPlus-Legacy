@@ -77,8 +77,8 @@ class FlowerPot extends Flowable{
 		return \false;
 	}
 	/*public function onBreak(Item $item){
-		$this->getLevel()->setBlock($this, new Air(), true, true, true);
-		return true;
+		$this->getLevel()->setBlock($this, new Air(), \true, \true, \true);
+		return \true;
 	}*/
 	public function onActivate(Item $item, Player $player = \null){
 		$tile = $this->getLevel()->getTile($this);

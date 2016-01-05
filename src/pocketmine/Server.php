@@ -1154,11 +1154,11 @@ class Server{
 			}
 			/*if(file_exists($path)){
 				$level = new LevelImport($path);
-				if($level->import() === false){ //Try importing a world
-					return false;
+				if($level->import() === \false){ //Try importing a world
+					return \false;
 				}
 			}else{
-				return false;
+				return \false;
 			}*/
 		}
 

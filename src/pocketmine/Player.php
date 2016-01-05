@@ -1169,7 +1169,7 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 			$flags |= 0x01; //Do not allow placing/breaking blocks, adventure mode
 		}
 
-		/*if($nametags !== false){
+		/*if($nametags !== \false){
 			$flags |= 0x20; //Show Nametags
 		}*/
 

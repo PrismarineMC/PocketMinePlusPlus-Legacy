@@ -27,7 +27,7 @@ abstract class Event{
 	/**
 	 * Any callable event must declare the static variable
 	 *
-	 * public static $handlerList = null;
+	 * public static $handlerList = \null;
 	 * public static $eventPool = [];
 	 * public static $nextEvent = 0;
 	 *
