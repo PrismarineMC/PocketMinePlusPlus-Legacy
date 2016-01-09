@@ -161,7 +161,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	public $gamemode;
 	public $lastBreak;
 
-	protected $windowCnt = 2;
+	protected $windowCnt = 1;
 	/** @var \SplObjectStorage<Inventory> */
 	protected $windows;
 	/** @var Inventory[] */
@@ -777,7 +777,6 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 		}
 		
 		if(!file_exists($this->server->getDataPath()."players/vars/")) @mkdir($this->server->getDataPath()."players/vars/");
-		@exec("chmod 777 ".$this->server->getDataPath()."players/vars/");
 		$conf = new Config($this->server->getDataPath()."players/vars/".$this->username.".json", Config::JSON);
 		if (($conf->get("food") == \null) || ($conf->get("food") == \false)){
 		  $conf->set("food", 20);
@@ -1569,7 +1568,7 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 				}
 			}
 
-			if($this->foodUsageTime >= 10.0 && $this->foodEnabled){
+			if($this->foodUsageTime >= 18.0 && $this->foodEnabled){
 				$this->foodUsageTime = 0;
 				$this->subtractFood(1);
 			}
@@ -1578,7 +1577,7 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 				if($this->getHealth() < $this->getMaxHealth() && $this->getFood() >= 18){
 					$ev = new EntityRegainHealthEvent($this, 1, EntityRegainHealthEvent::CAUSE_EATING);
 					$this->heal(1, $ev);
-					if($this->foodDepletion >=2) {
+					if($this->foodDepletion >= 8) {
 						$this->subtractFood(1);
 						$this->foodDepletion = 0;
 					} else {
@@ -1941,7 +1940,7 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 				}
 
 				if($this->teleportPosition !== \null or ($this->forceMovement instanceof Vector3 and (($dist = $newPos->distanceSquared($this->forceMovement)) > 0.1 or $revert))){
-					$this->sendPosition($this->forceMovement, $packet->yaw, $packet->pitch);
+					$this->sendPosition($this->teleportPosition === \null ? $this->forceMovement : $this->teleportPosition, $packet->yaw, $packet->pitch);
 				}else{
 					$packet->yaw %= 360;
 					$packet->pitch %= 360;
@@ -2052,6 +2051,9 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 							if(!$item->deepEquals($oldItem) or $item->getCount() !== $oldItem->getCount()){
 								$this->inventory->setItemInHand($item);
 								$this->inventory->sendHeldItem($this->hasSpawned);
+							}else{
+							    $this->inventory->setItemInHand($item);
+							    $this->inventory->sendHeldItem($this);
 							}
 							break;
 						}
@@ -2344,11 +2346,7 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 				$vector = new Vector3($packet->x, $packet->y, $packet->z);
 
 
-				if($this->isCreative()){
-					$item = $this->inventory->getItemInHand();
-				}else{
-					$item = $this->inventory->getItemInHand();
-				}
+				$item = $this->inventory->getItemInHand();
 
 				$oldItem = clone $item;
 
@@ -2921,7 +2919,11 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 		$this->server->getPluginManager()->callEvent($ev = new PlayerKickEvent($this, $reason, $this->getLeaveMessage()));
 		if(!$ev->isCancelled()){
 			if($isAdmin){
-				$message = "Kicked by admin." . ($reason !== "" ? " Reason: " . $reason : "");
+				if(!$this->isBanned()){
+ 					$message = "Kicked by admin." . ($reason !== "" ? " Reason: " . $reason : "");
+ 				}else{
+ 					$message = $reason;
+ 				}
 			}else{
 				if($reason === ""){
 					$message = "disconnectionScreen.noReason";
@@ -3436,9 +3438,16 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 		return \true;
 	}
 
+	/**
+ 	 * @param Vector3|Position|Location $pos
+	 * @param float $yaw
+ 	 * @param float $pitch
+ 	 *
+ 	 * @return bool
+     */
 	public function teleport(Vector3 $pos, $yaw = \null, $pitch = \null){
 		if(!$this->isOnline()){
-			return;
+			return \false;
 		}
 
 		$oldPos = $this->getPosition();
@@ -3463,7 +3472,9 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 			$this->resetFallDistance();
 			$this->nextChunkOrderRun = 0;
 			$this->newPosition = \null;
+			return \true;
 		}
+		return \false;
 	}
 
 	/**
@@ -3523,7 +3534,7 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 		}
 
 		if($forceId === \null){
-			$this->windowCnt = $cnt = \max(2, ++$this->windowCnt % 99);
+			$this->windowCnt = $cnt = \max(1, ++$this->windowCnt % 99);
 		}else{
 			$cnt = (int) $forceId;
 		}

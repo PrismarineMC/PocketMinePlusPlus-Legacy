@@ -2211,11 +2211,18 @@ class Server{
 		}
 	}
 
-	public function updatePlayerListData(UUID $uuid, $entityId, $name, $isSlim, $skinData, array $players = \null, $isTransparent = \false, $oldclient = \false, $skinname = ""){
-		$pk = new PlayerListPacket();
-		$pk->type = PlayerListPacket::TYPE_ADD;
-		$pk->entries[] = [$uuid, $entityId, $name, $isSlim, $isTransparent, $skinData, $oldclient, $skinname];
-		Server::broadcastPacket($players === \null ? $this->playerList : $players, $pk);
+	public function updatePlayerListData(UUID $uuid, $entityId, $name, $isSlim, $skinData, array $players = \null, $isTransparent = \false, $skinname = ""){
+		if($players === \null){
+			$players = $this->playerList;
+		}
+
+		foreach($players as $player){
+			$pk = new PlayerListPacket();
+			$pk->type = PlayerListPacket::TYPE_ADD;
+			$pk->entries[] = [$uuid, $entityId, $name, $isSlim, $isTransparent, $skinData, $player->isOldClient(), $skinname];
+
+			Server::broadcastPacket([$player], $pk);
+		}
 	}
 
 	public function removePlayerListData(UUID $uuid, array $players = \null){

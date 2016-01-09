@@ -8,7 +8,7 @@
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ |_    _|
  * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|      |__|   
  *
- * This program is free software: you can redistribute it and/or modify
+ * This program is free software: you can redistribute it and/or modify 
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -117,21 +117,25 @@ class Trapdoor extends Transparent{
 
 	public function place(Item $item, Block $block, Block $target, $face, $fx, $fy, $fz, Player $player = \null){
 		if(($target->isTransparent() === \false or $target->getId() === self::SLAB) and $face !== 0 and $face !== 1){
-			$faces = [
-				2 => 0,
-				3 => 1,
-				4 => 2,
-				5 => 3,
-			];
-			$this->meta = $faces[$face] & 0x03;
+			switch($face){
+				case 2:
+					$this->meta |= 0b00000011;
+				break;
+				case 3:
+					$this->meta |= 0b00000010;
+				break;
+				case 4:
+					$this->meta |= 0b00000001;
+				break;
+				case 5:
+				break;
+			}
 			if($fy > 0.5){
-				$this->meta |= 0x08;
+				$this->meta |= 0b00000100;
 			}
 			$this->getLevel()->setBlock($block, $this, \true, \true);
-
 			return \true;
 		}
-
 		return \false;
 	}
 
@@ -142,7 +146,7 @@ class Trapdoor extends Transparent{
 	}
 
 	public function onActivate(Item $item, Player $player = \null){
-		$this->meta ^= 0x04;
+		$this->meta ^= 0b00001000;
 		$this->getLevel()->setBlock($this, $this, \true);
 		$this->level->addSound(new DoorSound($this));
 		return \true;
