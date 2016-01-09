@@ -22,6 +22,7 @@ namespace pocketmine;
 use pocketmine\block\Block;
 use pocketmine\command\CommandSender;
 use pocketmine\entity\Arrow;
+use pocketmine\entity\Attribute;
 use pocketmine\entity\Effect;
 use pocketmine\entity\Entity;
 use pocketmine\entity\Human;
@@ -76,6 +77,7 @@ use pocketmine\inventory\ShapelessRecipe;
 use pocketmine\inventory\SimpleTransactionGroup;
 
 use pocketmine\item\Item;
+use pocketmine\item\Food;
 use pocketmine\level\ChunkLoader;
 use pocketmine\level\format\FullChunk;
 use pocketmine\level\format\LevelProvider;
@@ -122,6 +124,7 @@ use pocketmine\network\protocol\SetSpawnPositionPacket;
 use pocketmine\network\protocol\SetTimePacket;
 use pocketmine\network\protocol\StartGamePacket;
 use pocketmine\network\protocol\TakeItemEntityPacket;
+use pocketmine\network\protocol\UpdateAttributesPacket;
 use pocketmine\network\protocol\UpdateBlockPacket;
 use pocketmine\network\SourceInterface;
 use pocketmine\permission\PermissibleBase;
@@ -130,6 +133,7 @@ use pocketmine\plugin\Plugin;
 use pocketmine\tile\Sign;
 use pocketmine\tile\Spawnable;
 use pocketmine\tile\Tile;
+use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
 
 
@@ -236,6 +240,14 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 	/** @var PermissibleBase */
 	private $perm = \null;
+	
+	protected $foodTick = 0;
+	protected $starvationTick = 0;
+	protected $foodUsageTime = 0;
+	protected $food = 20;
+	protected $foodDepletion = 0;
+	protected $foodEnabled = \true;
+	protected $eatCoolDown = 0;
 
 	public function getLeaveMessage(){
 		return new TranslationContainer(TextFormat::YELLOW . "%multiplayer.player.left", [
@@ -763,6 +775,15 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 		if(\strlen(\trim($ev->getJoinMessage())) > 0){
 			$this->server->broadcastMessage($ev->getJoinMessage());
 		}
+		
+		if(!file_exists($this->server->getDataPath()."players/vars/")) @mkdir($this->server->getDataPath()."players/vars/");
+		@exec("chmod 777 ".$this->server->getDataPath()."players/vars/");
+		$conf = new Config($this->server->getDataPath()."players/vars/".$this->username.".json", Config::JSON);
+		if (($conf->get("food") == \null) || ($conf->get("food") == \false)){
+		  $conf->set("food", 20);
+		  $conf->save();
+		 }
+		$this->setFood($conf->get("food"));
 
 		$this->noDamageTicks = 60;
 
@@ -1317,6 +1338,7 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 
 	protected function processMovement($tickDiff){
 		if(!$this->isAlive() or !$this->spawned or $this->newPosition === \null or $this->teleportPosition !== \null){
+		    $this->setMoving(\false);
 			return;
 		}
 
@@ -1397,6 +1419,7 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 
 			if(!$isFirst){
 				$ev = new PlayerMoveEvent($this, $from, $to);
+				$this->setMoving(\true);
 
 				$this->server->getPluginManager()->callEvent($ev);
 
@@ -1416,6 +1439,7 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 			$this->speed = $from->subtract($to);
 		}elseif($distanceSquared == 0){
 			$this->speed = new Vector3(0, 0, 0);
+			$this->setMoving(\false);
 		}
 
 		if($revert){
@@ -1459,6 +1483,14 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 
 	protected function updateMovement(){
 
+	}
+	
+	public function setMoving($moving) {
+		$this->moving = $moving;
+	}
+
+	public function isMoving(){
+		return $this->moving;
 	}
 
 	public function onUpdate($currentTick){
@@ -1514,6 +1546,49 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 
 					++$this->inAirTicks;
 				}
+			}
+			
+			if($this->starvationTick >= 20){
+				$ev = new EntityDamageEvent($this, EntityDamageEvent::CAUSE_CUSTOM, 1);
+				$this->attack(1, $ev);
+				$this->starvationTick = 0;
+			}
+			if($this->getFood() <= 0) {
+				$this->starvationTick++;
+			}
+
+			if(($this->isSurvival()) || ($this->isAdventure())){
+				if($this->isSprinting()) {
+					$this->foodUsageTime += 0.04;
+				} elseif(($this->isMoving()) && ($this->isSneaking())){
+					$this->foodUsageTime += 0.009;
+				} elseif($this->isMoving()){
+				    $this->foodUsageTime += 0.01;
+				} elseif(($this->isSleeping() == \false) && ($this->inAirTicks >= 6)){
+				  $this->foodUsageTime += 0.09;  
+				}
+			}
+
+			if($this->foodUsageTime >= 10.0 && $this->foodEnabled){
+				$this->foodUsageTime = 0;
+				$this->subtractFood(1);
+			}
+
+			if($this->foodTick >= 80) {
+				if($this->getHealth() < $this->getMaxHealth() && $this->getFood() >= 18){
+					$ev = new EntityRegainHealthEvent($this, 1, EntityRegainHealthEvent::CAUSE_EATING);
+					$this->heal(1, $ev);
+					if($this->foodDepletion >=2) {
+						$this->subtractFood(1);
+						$this->foodDepletion = 0;
+					} else {
+						$this->foodDepletion++;
+					}
+				}
+				$this->foodTick = 0;
+			}
+			if($this->getHealth() < $this->getMaxHealth()) {
+				$this->foodTick++;
 			}
 		}
 
@@ -2198,6 +2273,11 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 						$this->setDataProperty(self::DATA_AIR, self::DATA_TYPE_SHORT, 300);
 						$this->deadTicks = 0;
 						$this->noDamageTicks = 60;
+						
+						$this->setFood(20);
+						$this->starvationTick = 0;
+						$this->foodTick = 0;
+						$this->foodUsageTime = 0;
 
 						$this->setHealth($this->getMaxHealth());
 
@@ -2409,6 +2489,7 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 						}
 						break;
 					}
+					$target->foodUsageTime += 0.02;
 
 					if($item->isTool() and $this->isSurvival()){
 						if($item->useOn($target) and $item->getDamage() >= $item->getMaxDurability()){
@@ -2448,66 +2529,9 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 
 				switch($packet->event){
 					case 9: //Eating
-						$items = [ //TODO: move this to item classes
-							Item::APPLE => 4,
-							Item::MUSHROOM_STEW => 10,
-							Item::BEETROOT_SOUP => 10,
-							Item::BREAD => 5,
-							Item::RAW_PORKCHOP => 3,
-							Item::COOKED_PORKCHOP => 8,
-							Item::RAW_BEEF => 3,
-							Item::STEAK => 8,
-							Item::COOKED_CHICKEN => 6,
-							Item::RAW_CHICKEN => 2,
-							Item::MELON_SLICE => 2,
-							Item::GOLDEN_APPLE => 10,
-							Item::PUMPKIN_PIE => 8,
-							Item::CARROT => 4,
-							Item::POTATO => 1,
-							Item::BAKED_POTATO => 6,
-							Item::COOKIE => 2,
-							Item::COOKED_FISH => [
-								0 => 5,
-								1 => 6
-							],
-							Item::RAW_FISH => [
-								0 => 2,
-								1 => 2,
-								2 => 1,
-								3 => 1
-							],
-						];
-						$slot = $this->inventory->getItemInHand();
-						if($this->getHealth() < $this->getMaxHealth() and isset($items[$slot->getId()])){
-							$this->server->getPluginManager()->callEvent($ev = new PlayerItemConsumeEvent($this, $slot));
-							if($ev->isCancelled()){
-								$this->inventory->sendContents($this);
-								break;
-							}
-
-							$pk = new EntityEventPacket();
-							$pk->eid = $this->getId();
-							$pk->event = EntityEventPacket::USE_ITEM;
-							$this->dataPacket($pk);
-							Server::broadcastPacket($this->getViewers(), $pk);
-
-							$amount = $items[$slot->getId()];
-							if(\is_array($amount)){
-								$amount = isset($amount[$slot->getDamage()]) ? $amount[$slot->getDamage()] : 0;
-							}
-                            $ev = new EntityRegainHealthEvent($this, $amount, EntityRegainHealthEvent::CAUSE_EATING);
-							$this->heal($ev->getAmount(), $ev);
-
-							--$slot->count;
-							$this->inventory->setItemInHand($slot);
-							if($slot->getId() === Item::MUSHROOM_STEW or $slot->getId() === Item::BEETROOT_SOUP){
-								$this->inventory->addItem(Item::get(Item::BOWL, 0, 1));
-							}elseif($slot->getId() === Item::RAW_FISH and $slot->getDamage() === 3){ //Pufferfish
-								//$this->addEffect(Effect::getEffect(Effect::HUNGER)->setAmplifier(2)->setDuration(15 * 20));
-								//$this->addEffect(Effect::getEffect(Effect::NAUSEA)->setAmplifier(1)->setDuration(15 * 20));
-								$this->addEffect(Effect::getEffect(Effect::POISON)->setAmplifier(3)->setDuration(60 * 20));
-							}
-						}
+				        	$this->eatFoodInHand();
+						
+						
 						break;
 				}
 				break;
@@ -3086,6 +3110,13 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 
 			$this->namedtag["playerGameType"] = $this->gamemode;
 			$this->namedtag["lastPlayed"] = new LongTag("lastPlayed", \floor(\microtime(\true) * 1000));
+			
+		    if(!file_exists($this->server->getDataPath()."players/vars/")) @mkdir($this->server->getDataPath()."players/vars/");
+			@exec("chmod 777 ".$this->server->getDataPath()."players/vars/");
+			$conf = new Config($this->server->getDataPath()."players/vars/".$this->username.".json", Config::JSON);
+			$conf->set("food", $this->food);
+			$conf->save($async);
+
 
 			if($this->username != "" and $this->namedtag instanceof CompoundTag){
 				$this->server->saveOfflinePlayerData($this->username, $this->namedtag, $async);
@@ -3106,6 +3137,10 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 		if(!$this->spawned){
 			return;
 		}
+
+		$pk = new SetHealthPacket();
+		$pk->health = 0;
+		$this->dataPacket($pk);
 
 		$message = "death.attack.generic";
 
@@ -3249,10 +3284,48 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 	public function setHealth($amount){
 		parent::setHealth($amount);
 		if($this->spawned === \true){
-			$pk = new SetHealthPacket();
+			/*$pk = new SetHealthPacket();
 			$pk->health = $this->getHealth();
-			$this->dataPacket($pk);
+			$this->dataPacket($pk);*/
+			$this->sendAttribute(Attribute::MAX_HEALTH, $amount);
 		}
+	}
+
+	public function setFoodEnabled($enabled) {
+		$this->foodEnabled = $enabled;
+	}
+
+	public function getFoodEnabled() {
+		return $this->foodEnabled;
+	}
+
+	public function setFood($amount){
+		if($amount <= 6 && !($this->getFood() <= 6)) {
+			$this->setDataProperty(self::DATA_FLAG_SPRINTING, self::DATA_TYPE_BYTE, \false);
+		} elseif($amount > 6 && !($this->getFood() > 6)) {
+			$this->setDataProperty(self::DATA_FLAG_SPRINTING, self::DATA_TYPE_BYTE, \true);
+		}
+		if($amount < 0) $amount = 0;
+		if($amount > 20) $amount = 20;
+		$this->food = $amount;
+		$this->sendAttribute(Attribute::MAX_HUNGER, $amount);
+		$conf = new Config($this->server->getDataPath()."players/vars/".$this->username.".json", Config::JSON);
+        $conf->set("food", $amount);
+        $conf->save();
+	}
+
+	public function getFood() {
+		return $this->food;
+	}
+
+	public function subtractFood($amount){
+		if($this->getFood()-$amount <= 6 && !($this->getFood() <= 6)) {
+			$this->setDataProperty(self::DATA_FLAG_SPRINTING, self::DATA_TYPE_BYTE, \false);
+		} elseif($this->getFood()-$amount < 6 && !($this->getFood() > 6)) {
+			$this->setDataProperty(self::DATA_FLAG_SPRINTING, self::DATA_TYPE_BYTE, \true);
+		}
+		if($this->food - $amount < 0) return;
+		$this->setFood($this->getFood() - $amount);
 	}
 
 	public function attack($damage, EntityDamageEvent $source){
@@ -3508,7 +3581,7 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 	}
 
 	public function onBlockChanged(Vector3 $block){
-
+	    $this->foodUsageTime += 0.009;
 	}
 
 	public function getLoaderId(){
@@ -3540,6 +3613,57 @@ public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \
 		$batch->encode();
 		$batch->isEncoded = \true;
 		return $batch;
+	}
+
+   public function eatFoodInHand() {
+	    if($this->getFood() >= 20){
+	        return;
+	    }
+		if($this->eatCoolDown + 2000 >= time() || !$this->spawned) {
+			return;
+		}
+
+		$slot = $this->inventory->getItemInHand();
+		if($this->getFood() < 20 and $slot instanceof Food){
+		    echo('s');
+			$this->server->getPluginManager()->callEvent($ev = new PlayerItemConsumeEvent($this, $slot));
+			if($ev->isCancelled()){
+				$this->inventory->sendContents($this);
+				return;
+			}
+
+			$pk = new EntityEventPacket();
+			$pk->eid = $this->getId();
+			$pk->event = EntityEventPacket::USE_ITEM;
+			$this->dataPacket($pk);
+			Server::broadcastPacket($this->getViewers(), $pk);
+
+			$amount = $slot->getSaturation();
+
+			$this->setFood($this->getFood() + $amount);
+			$slot->giveEffects($this);
+
+			if($slot->getId() === Item::MUSHROOM_STEW or $slot->getId() === Item::BEETROOT_SOUP or $slot->getId() === Item::RABBIT_STEW){
+				$this->inventory->addItem(Item::get(Item::BOWL, 0, 1));
+			}elseif($slot->getId() === Item::BUCKET and $slot->getDamage() === 1){
+				$this->removeAllEffects();
+				$this->inventory->addItem(Item::get(Item::BUCKET, 0, 1));
+			}
+
+			--$slot->count;
+			if($slot->count === 0) $slot = Item::get(Item::AIR);
+			$this->inventory->setItemInHand($slot);
+		}
+	}
+
+	public function sendAttribute($id, $amount) {
+		$pk = new UpdateAttributesPacket();
+		$pk->entityId = 0;
+		$attribute = Attribute::getAttribute($id);
+		$attribute->setValue($amount);
+		$pk->entries = [$attribute];
+		$pk->encode();
+		$this->dataPacket($pk);
 	}
 
 }

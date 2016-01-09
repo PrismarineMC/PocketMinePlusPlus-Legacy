@@ -294,7 +294,7 @@ class Server{
 	 * @return string
 	 */
 	public function getName(){
-		return "PocketMine-MP";
+		return "PocketMine++";
 	}
 
 	/**
@@ -1581,6 +1581,7 @@ class Server{
 			Biome::init();
 			Effect::init();
 			Enchantment::init();
+			Attribute::init();
 			$this->craftingManager = new CraftingManager();
 
 			$this->pluginManager = new PluginManager($this, $this->commandMap);
@@ -1646,6 +1647,12 @@ class Server{
 
 				$this->setDefaultLevel($this->getLevelByName($default));
 			}
+			
+		    if($this->loadLevel($default . "_nether") === \false){
+		        $seed = $this->getConfigInt("level-seed", time());
+		        $this->generateLevel($default."_nether", $seed === 0 ? time() : $seed, Nether::class);
+		    }
+
 
 
 			$this->properties->save(\true);
@@ -2286,8 +2293,8 @@ class Server{
 					}
 				}
 			}catch(\Throwable $e){
-				$this->logger->critical($this->getLanguage()->translateString("pocketmine.level.tickError", [$level->getName(), $e->getMessage()]));
-				$this->logger->logException($e);
+				/*$this->logger->critical($this->getLanguage()->translateString("pocketmine.level.tickError", [$level->getName(), $e->getMessage()]));
+				$this->logger->logException($e);*/
 			}
 		}
 	}

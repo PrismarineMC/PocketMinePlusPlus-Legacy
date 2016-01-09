@@ -597,10 +597,16 @@ class Item{
 			self::$list[self::CARROT] = Carrot::class;
 			self::$list[self::POTATO] = Potato::class;
 			self::$list[self::BAKED_POTATO] = BakedPotato::class;
+			self::$list[self::POISONOUS_POTATO] = PoisonousPotato::class;
+            //self::$list[self::SKULL] = Skull::class;
 			self::$list[self::PUMPKIN_PIE] = PumpkinPie::class;
 			self::$list[self::NETHER_BRICK] = NetherBrick::class;
 			self::$list[self::QUARTZ] = Quartz::class;
 			self::$list[self::QUARTZ] = NetherQuartz::class;
+			self::$list[self::RAW_RABBIT] = RawRabbit::class;
+            self::$list[self::COOKED_RABBIT] = CookedRabbit::class;
+            self::$list[self::RABBIT_STEW] = RabbitStew::class;
+            self::$list[self::RABBIT_FOOT] = RabbitFoot::class;
             self::$list[self::SPRUCE_DOOR] = SpruceDoor::class;
             self::$list[self::BIRCH_DOOR] = BirchDoor::class;
             self::$list[self::JUNGLE_DOOR] = JungleDoor::class;

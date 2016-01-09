@@ -8,7 +8,7 @@
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ |_    _|
  * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|      |__|   
  *
- * This program is free software: you can redistribute it and/or modify
+ * This program is free software: you can redistribute it and/or modify 
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -21,6 +21,7 @@ namespace pocketmine\block;
 
 use pocketmine\item\Item;
 use pocketmine\level\Level;
+use pocketmine\entity\Entity;
 use pocketmine\Player;
 use pocketmine\item\Tool;
 
@@ -32,25 +33,42 @@ class NetherPortal extends Flowable {
 		$this->meta = $meta;
 	}
 
-	public function getLightLevel(){
-		return 15;
-	}
-
 	public function getName(){
 		return "Nether Portal";
 	}
 
-	public function place(Item $item, Block $block, Block $target, $face, $fx, $fy, $fz, Player $player = \null){
-	  $this->getLevel()->setBlock($block, $this, \true, \true);
+	public function hasEntityCollision(){
+		return \true;
+	}
+
+	public function isSolid(){
 		return \false;
 	}
 
-	public function getDrops(Item $item){
-		return;
+	public function getHardness(){
+		return 0;
 	}
 
-    public function onBreak(Item $item){
-		$this->getLevel()->setBlock($this, new Air(), \true, \true);
-		return \true;
+	public function getLightLevel(){
+		return 15;
+	}
+
+	public function onEntityCollide(Entity $entity){
+		if($entity instanceof Player){
+			if(!isset($this->entities[$entity->getId()])) $this->entities[$entity->getId()] = 5;
+			--$this->entities[$entity->getId()];
+			if($this->entities[$entity->getId()] === 0) PortalUtils::teleportPlayer($entity);
+		}
+	}
+
+	public function onUpdate($type){
+		foreach($this->entities as $ent) if($ent->distance($this) >= 1) unset($this->entities[$ent->getId()]);
+
+		return \false;
+	}
+
+
+	public function getDrops(Item $item){
+		return [];
 	}
 }
