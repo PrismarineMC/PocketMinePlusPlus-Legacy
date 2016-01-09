@@ -8,7 +8,7 @@
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ |_    _|
  * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|      |__|   
  *
- * This program is free software: you can redistribute it and/or modify
+ * This program is free software: you can redistribute it and/or modify 
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -18,8 +18,6 @@
 */
 
 namespace pocketmine\network\protocol;
-
-use pocketmine\utils\Binary;
 
 use pocketmine\level\Level;
 
@@ -34,9 +32,8 @@ class SetTimePacket extends DataPacket{
 	}
 
 	public function encode(){
-		$this->buffer = \chr(self::NETWORK_ID); $this->offset = 0;;
-		$this->buffer .= \pack("N", (int) (($this->time / Level::TIME_FULL) * 19200));
-		$this->buffer .= \chr($this->started ? 1 : 0);
+		$this->reset();
+		$this->putInt($this->time);
+		$this->putByte($this->started ? 0x80 : 0x00);
 	}
-
 }

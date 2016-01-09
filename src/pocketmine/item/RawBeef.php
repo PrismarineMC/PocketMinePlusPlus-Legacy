@@ -8,7 +8,7 @@
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ |_    _|
  * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|      |__|   
  *
- * This program is free software: you can redistribute it and/or modify
+ * This program is free software: you can redistribute it and/or modify 
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -19,10 +19,10 @@
 
 namespace pocketmine\item;
 
-class RawBeef extends Item{
+class RawBeef extends Food{
+	public $saturation = 3;
+
 	public function __construct($meta = 0, $count = 1){
 		parent::__construct(self::RAW_BEEF, $meta, $count, "Raw Beef");
 	}
-
 }
-

@@ -8,7 +8,7 @@
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ |_    _|
  * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|      |__|   
  *
- * This program is free software: you can redistribute it and/or modify
+ * This program is free software: you can redistribute it and/or modify 
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -88,11 +88,10 @@ class Cake extends Transparent{
 	}
 
 	public function onActivate(Item $item, Player $player = \null){
-		if($player instanceof Player and $player->getHealth() < $player->getMaxHealth()){
+		if($player instanceof Player and $player->getFood() < 20){
 			++$this->meta;
 
-			$ev = new EntityRegainHealthEvent($player, 3, EntityRegainHealthEvent::CAUSE_EATING);
-			$player->heal($ev->getAmount(), $ev);
+			$player->setFood($player->getFood() + 2);
 
 			if($this->meta >= 0x06){
 				$this->getLevel()->setBlock($this, new Air(), \true);
