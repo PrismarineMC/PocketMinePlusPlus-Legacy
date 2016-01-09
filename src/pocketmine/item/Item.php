@@ -646,7 +646,6 @@ class Item{
 		self::addCreativeItem(Item::get(Item::WOODEN_PLANKS, 4));
 		self::addCreativeItem(Item::get(Item::WOODEN_PLANKS, 5));
 		self::addCreativeItem(Item::get(Item::BRICKS, 0));
-
 		self::addCreativeItem(Item::get(Item::STONE, 0));
 		self::addCreativeItem(Item::get(Item::STONE, 1));
 		self::addCreativeItem(Item::get(Item::STONE, 2));
@@ -705,7 +704,7 @@ class Item{
 		self::addCreativeItem(Item::get(Item::NETHER_BRICKS_STAIRS, 0));
 		self::addCreativeItem(Item::get(Item::QUARTZ_STAIRS, 0));
 		self::addCreativeItem(Item::get(Item::SLAB, 0));
-		self::addCreativeItem(Item::get(Item::SLAB, 1));
+		self::addCreativeItem(Item::get(Item::SLAB, 3));
 		self::addCreativeItem(Item::get(Item::WOODEN_SLAB, 0));
 		self::addCreativeItem(Item::get(Item::WOODEN_SLAB, 3));
 		self::addCreativeItem(Item::get(Item::WOODEN_SLAB, 2));
@@ -895,8 +894,8 @@ class Item{
 		self::addCreativeItem(Item::get(Item::COMPASS, 0));
 		self::addCreativeItem(Item::get(Item::MINECART, 0));;
 		for ($i = 0; $i <= 5; $i++){
-	       self::addCreativeItem(Item::get(Item::BOAT, $i));
-	    }
+		    self::addCreativeItem(Item::get(Item::BOAT, $i));
+		}
 		self::addCreativeItem(Item::get(Item::SPAWN_EGG, 15));
 		self::addCreativeItem(Item::get(Item::SPAWN_EGG, 10));
 		self::addCreativeItem(Item::get(Item::SPAWN_EGG, 11));
@@ -946,8 +945,8 @@ class Item{
         self::addCreativeItem(Item::get(Item::GOLD_PICKAXE, 0));
         self::addCreativeItem(Item::get(Item::GOLD_AXE, 0));
 		for ($i = 298; $i < 318; $i++){
-	       self::addCreativeItem(Item::get($i, 0));
-	    }
+		    self::addCreativeItem(Item::get($i, 0));
+	      }
 		self::addCreativeItem(Item::get(Item::LEVER, 0));
 		self::addCreativeItem(Item::get(Item::REDSTONE_LAMP, 0));
 		self::addCreativeItem(Item::get(Item::REDSTONE_TORCH, 0));
@@ -988,15 +987,16 @@ class Item{
 		self::addCreativeItem(Item::get(Item::PUMPKIN_SEEDS, 0));
 		self::addCreativeItem(Item::get(Item::MELON_SEEDS, 0)); 
 		self::addCreativeItem(Item::get(Item::BEETROOT_SEEDS, 0));
-		self::addCreativeItem(Item::get(Item::BEETROOT_BLOCK, 0));
 		self::addCreativeItem(Item::get(Item::APPLE, 0));
 		self::addCreativeItem(Item::get(Item::GOLDEN_APPLE, 0));
-		self::addCreativeItem(Item::get(Item::GOLDEN_APPLE, 1)); 
-		for ($i = 0; $i <= 3; $i++){
-		   self::addCreativeItem(Item::get(Item::RAW_FISH, $i));
-		}
+		self::addCreativeItem(Item::get(466, 0));//Enchantment Golden Apple
+		self::addCreativeItem(Item::get(Item::RAW_FISH, 0));
+		for ($i = 0; $i <= 2; $i++)
+		  {
+		   self::addCreativeItem(Item::get(460 + $i, 0));//All kinds of fish
+		  }
 		self::addCreativeItem(Item::get(Item::COOKED_FISH, 0));
-		self::addCreativeItem(Item::get(Item::COOKED_FISH, 1));
+		self::addCreativeItem(Item::get(463, 0));//Cooked Fish
 		self::addCreativeItem(Item::get(Item::ROTTEN_FLESH, 0));
 		self::addCreativeItem(Item::get(Item::MUSHROOM_STEW, 0));
 		self::addCreativeItem(Item::get(Item::BREAD, 0));
@@ -1049,11 +1049,11 @@ class Item{
 		self::addCreativeItem(Item::get(Item::DYE, 6));
 		self::addCreativeItem(Item::get(Item::BOTTLE, 0));
 		for ($i = 0; $i <= 35; $i++){
-	       self::addCreativeItem(Item::get(Item::POTION, $i));
-	    }
+		    self::addCreativeItem(Item::get(Item::POTION, $i));
+	      }
 	 	for ($i = 0; $i <= 35; $i++){
-	       self::addCreativeItem(Item::get(Item::SPLASH_POTION, $i));
-	    }
+	 	    self::addCreativeItem(Item::get(Item::SPLASH_POTION, $i));
+	      }
 	}
 
 	public static function clearCreativeItems(){
