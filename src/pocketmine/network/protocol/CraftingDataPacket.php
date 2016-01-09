@@ -21,16 +21,6 @@ namespace pocketmine\network\protocol;
 
 use pocketmine\utils\Binary;
 
-
-
-
-
-
-
-
-
-
-
 use pocketmine\inventory\FurnaceRecipe;
 use pocketmine\inventory\ShapedRecipe;
 use pocketmine\inventory\ShapelessRecipe;

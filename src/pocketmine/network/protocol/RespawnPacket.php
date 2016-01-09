@@ -21,16 +21,6 @@ namespace pocketmine\network\protocol;
 
 use pocketmine\utils\Binary;
 
-
-
-
-
-
-
-
-
-
-
 class RespawnPacket extends DataPacket{
 	const NETWORK_ID = Info::RESPAWN_PACKET;
 

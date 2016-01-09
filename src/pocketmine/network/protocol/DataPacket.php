@@ -21,17 +21,6 @@ namespace pocketmine\network\protocol;
 
 use pocketmine\utils\Binary;
 
-
-
-
-
-
-
-
-
-
-
-
 use pocketmine\utils\BinaryStream;
 use pocketmine\utils\Utils;
 

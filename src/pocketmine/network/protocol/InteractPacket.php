@@ -21,16 +21,6 @@ namespace pocketmine\network\protocol;
 
 use pocketmine\utils\Binary;
 
-
-
-
-
-
-
-
-
-
-
 class InteractPacket extends DataPacket{
 	const NETWORK_ID = Info::INTERACT_PACKET;
 

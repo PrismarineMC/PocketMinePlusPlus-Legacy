@@ -21,16 +21,6 @@ namespace pocketmine\network\protocol;
 
 use pocketmine\utils\Binary;
 
-
-
-
-
-
-
-
-
-
-
 class SetDifficultyPacket extends DataPacket{
 	const NETWORK_ID = Info::SET_DIFFICULTY_PACKET;
 

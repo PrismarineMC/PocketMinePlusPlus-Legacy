@@ -189,7 +189,7 @@ class RCONInstance extends Thread{
 	}
 
    public function kill(){
-		return true;//DO NOT WORKING
+		return \true;//DO NOT WORKING
 	}
 
 	public function getThreadName(){

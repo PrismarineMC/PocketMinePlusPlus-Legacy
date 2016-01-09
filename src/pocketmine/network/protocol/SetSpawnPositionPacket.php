@@ -21,16 +21,6 @@ namespace pocketmine\network\protocol;
 
 use pocketmine\utils\Binary;
 
-
-
-
-
-
-
-
-
-
-
 class SetSpawnPositionPacket extends DataPacket{
 	const NETWORK_ID = Info::SET_SPAWN_POSITION_PACKET;
 

@@ -21,16 +21,6 @@ namespace pocketmine\network\protocol;
 
 use pocketmine\utils\Binary;
 
-
-
-
-
-
-
-
-
-
-
 class DropItemPacket extends DataPacket{
 	const NETWORK_ID = Info::DROP_ITEM_PACKET;
 

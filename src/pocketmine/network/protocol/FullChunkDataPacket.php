@@ -21,16 +21,6 @@ namespace pocketmine\network\protocol;
 
 use pocketmine\utils\Binary;
 
-
-
-
-
-
-
-
-
-
-
 class FullChunkDataPacket extends DataPacket{
 	const NETWORK_ID = Info::FULL_CHUNK_DATA_PACKET;
 	

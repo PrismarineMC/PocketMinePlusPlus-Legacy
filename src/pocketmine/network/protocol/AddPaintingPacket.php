@@ -21,16 +21,6 @@ namespace pocketmine\network\protocol;
 
 use pocketmine\utils\Binary;
 
-
-
-
-
-
-
-
-
-
-
 class AddPaintingPacket extends DataPacket{
 	const NETWORK_ID = Info::ADD_PAINTING_PACKET;
 

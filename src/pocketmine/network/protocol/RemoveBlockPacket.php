@@ -21,16 +21,6 @@ namespace pocketmine\network\protocol;
 
 use pocketmine\utils\Binary;
 
-
-
-
-
-
-
-
-
-
-
 class RemoveBlockPacket extends DataPacket{
 	const NETWORK_ID = Info::REMOVE_BLOCK_PACKET;
 

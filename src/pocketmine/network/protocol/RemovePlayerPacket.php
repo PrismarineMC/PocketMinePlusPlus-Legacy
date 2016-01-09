@@ -21,16 +21,6 @@ namespace pocketmine\network\protocol;
 
 use pocketmine\utils\Binary;
 
-
-
-
-
-
-
-
-
-
-
 class RemovePlayerPacket extends DataPacket{
 	const NETWORK_ID = Info::REMOVE_PLAYER_PACKET;
 

@@ -21,16 +21,6 @@ namespace pocketmine\network\protocol;
 
 use pocketmine\utils\Binary;
 
-
-
-
-
-
-
-
-
-
-
 class ContainerOpenPacket extends DataPacket{
 	const NETWORK_ID = Info::CONTAINER_OPEN_PACKET;
 

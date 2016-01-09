@@ -21,16 +21,6 @@ namespace pocketmine\network\protocol;
 
 use pocketmine\utils\Binary;
 
-
-
-
-
-
-
-
-
-
-
 class ExplodePacket extends DataPacket{
 	const NETWORK_ID = Info::EXPLODE_PACKET;
 

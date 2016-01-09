@@ -168,7 +168,7 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 		parent::saveNBT();
 		$this->namedtag->Inventory = new ListTag("Inventory", []);
 		$this->namedtag->Inventory->setTagType(NBT::TAG_Compound);
-		if($this->inventory !== null){
+		if($this->inventory !== \null){
 			for($slot = 0; $slot < 9; ++$slot){
 				$hotbarSlot = $this->inventory->getHotbarSlotIndex($slot);
 				if($hotbarSlot !== -1){

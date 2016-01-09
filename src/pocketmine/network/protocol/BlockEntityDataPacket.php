@@ -21,16 +21,6 @@ namespace pocketmine\network\protocol;
 
 use pocketmine\utils\Binary;
 
-
-
-
-
-
-
-
-
-
-
 class BlockEntityDataPacket extends DataPacket{
 	const NETWORK_ID = Info::BLOCK_ENTITY_DATA_PACKET;
 

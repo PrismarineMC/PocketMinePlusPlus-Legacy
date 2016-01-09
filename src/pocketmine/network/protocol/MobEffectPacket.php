@@ -21,16 +21,6 @@ namespace pocketmine\network\protocol;
 
 use pocketmine\utils\Binary;
 
-
-
-
-
-
-
-
-
-
-
 class MobEffectPacket extends DataPacket{
 	const NETWORK_ID = Info::MOB_EFFECT_PACKET;
 
