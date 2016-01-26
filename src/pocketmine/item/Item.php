@@ -625,12 +625,12 @@ class Item
             }
         }
 
-        self::initCreativeItems();
+        //self::initCreativeItems();
     }
 
     private static $creative = [];
 
-    private static function initCreativeItems()
+    public static function initCreativeItems()
     {
         self::clearCreativeItems();
         //Building
