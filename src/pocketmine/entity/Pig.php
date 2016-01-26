@@ -20,52 +20,51 @@
 namespace pocketmine\entity;
 
 
-use pocketmine\event\entity\EntityDamageByEntityEvent;
+use pocketmine\item\Item as Dr;
 use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\Player;
-use pocketmine\network\Network;
-use pocketmine\network\protocol\MovePlayerPacket;
-use pocketmine\math\AxisAlignedBB;
-use pocketmine\math\Vector3;
-use pocketmine\item\Item as Dr;
 
-class Pig extends Animal implements Rideable{
-	const NETWORK_ID=12;
-	public $width = 0.650;
-	public $length = 1.3;
-	public $height = 0.875;
-	public $stepHeight = 0.2;
+class Pig extends Animal implements Rideable
+{
+    const NETWORK_ID = 12;
+    public $width = 0.650;
+    public $length = 1.3;
+    public $height = 0.875;
+    public $stepHeight = 0.2;
 
-	public function getName(){
-		return "Pig";
-	}
-	public static $range = 16;
-	public static $speed = 0.5;
-	public static $jump = 2.5;
-	public static $mindist = 3;
+    public function getName()
+    {
+        return "Pig";
+    }
 
-	 public function spawnTo(Player $player){
-		$pk = new AddEntityPacket();
-		$pk->eid = $this->getId();
-		$pk->type = Pig::NETWORK_ID;
-		$pk->x = $this->x;
-		$pk->y = $this->y;
-		$pk->z = $this->z;
-		$pk->speedX = $this->motionX;
-		$pk->speedY = $this->motionY;
-		$pk->speedZ = $this->motionZ;
-		$pk->yaw = $this->yaw;
-		$pk->pitch = $this->pitch;
-		$pk->metadata = $this->dataProperties;
-		$player->dataPacket($pk);
+    public static $range = 16;
+    public static $speed = 0.5;
+    public static $jump = 2.5;
+    public static $mindist = 3;
 
-		parent::spawnTo($player);
-	}
+    public function spawnTo(Player $player)
+    {
+        $pk = new AddEntityPacket();
+        $pk->eid = $this->getId();
+        $pk->type = Pig::NETWORK_ID;
+        $pk->x = $this->x;
+        $pk->y = $this->y;
+        $pk->z = $this->z;
+        $pk->speedX = $this->motionX;
+        $pk->speedY = $this->motionY;
+        $pk->speedZ = $this->motionZ;
+        $pk->yaw = $this->yaw;
+        $pk->pitch = $this->pitch;
+        $pk->metadata = $this->dataProperties;
+        $player->dataPacket($pk);
 
-	public function getDrops(){
-		return  [Dr::get($this->fireTicks > 0 ? Dr::COOKED_PORKCHOP : Dr::RAW_PORKCHOP, 0, mt_rand(1, 5))];
-	}
+        parent::spawnTo($player);
+    }
 
-	 
+    public function getDrops()
+    {
+        return [Dr::get($this->fireTicks > 0 ? Dr::COOKED_PORKCHOP : Dr::RAW_PORKCHOP, 0, mt_rand(1, 5))];
+    }
+
 
 }

@@ -19,56 +19,64 @@
 
 namespace pocketmine\block;
 
-use pocketmine\item\Item;
-use pocketmine\level\Level;
 use pocketmine\entity\Entity;
+use pocketmine\item\Item;
 use pocketmine\Player;
-use pocketmine\item\Tool;
 
-class NetherPortal extends Flowable {
+class NetherPortal extends Flowable
+{
 
-	protected $id = self::NETHER_PORTAL;
+    protected $id = self::NETHER_PORTAL;
 
-	public function __construct($meta = 0){
-		$this->meta = $meta;
-	}
+    public function __construct($meta = 0)
+    {
+        $this->meta = $meta;
+    }
 
-	public function getName(){
-		return "Nether Portal";
-	}
+    public function getName()
+    {
+        return "Nether Portal";
+    }
 
-	public function hasEntityCollision(){
-		return \true;
-	}
+    public function hasEntityCollision()
+    {
+        return \true;
+    }
 
-	public function isSolid(){
-		return \false;
-	}
+    public function isSolid()
+    {
+        return \false;
+    }
 
-	public function getHardness(){
-		return 0;
-	}
+    public function getHardness()
+    {
+        return 0;
+    }
 
-	public function getLightLevel(){
-		return 15;
-	}
+    public function getLightLevel()
+    {
+        return 15;
+    }
 
-	public function onEntityCollide(Entity $entity){
-		if($entity instanceof Player){
-			if(!isset($this->entities[$entity->getId()])) $this->entities[$entity->getId()] = 5;
-			--$this->entities[$entity->getId()];
-			if($this->entities[$entity->getId()] === 0) PortalUtils::teleportPlayer($entity);
-		}
-	}
+    public function onEntityCollide(Entity $entity)
+    {
+        if ($entity instanceof Player) {
+            if (!isset($this->entities[$entity->getId()])) $this->entities[$entity->getId()] = 5;
+            --$this->entities[$entity->getId()];
+            if ($this->entities[$entity->getId()] === 0) PortalUtils::teleportPlayer($entity);
+        }
+    }
 
-	public function onUpdate($type){
-		foreach($this->entities as $ent) if($ent->distance($this) >= 1) unset($this->entities[$ent->getId()]);
+    public function onUpdate($type)
+    {
+        foreach ($this->entities as $ent) if ($ent->distance($this) >= 1) unset($this->entities[$ent->getId()]);
 
-		return \false;
-	}
+        return \false;
+    }
 
 
-	public function getDrops(Item $item){
-		return [];
-	}
+    public function getDrops(Item $item)
+    {
+        return [];
+    }
 }

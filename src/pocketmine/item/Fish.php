@@ -20,11 +20,13 @@
 namespace pocketmine\item;
 
 
-class Fish extends Food{
-  public $saturation = 2;
- 
+class Fish extends Food
+{
+    public $saturation = 2;
 
-	public function __construct($meta = 0, $count = 1){
-		parent::__construct(self::RAW_FISH, $meta, $count, "Raw Fish");
-	}
+
+    public function __construct($meta = 0, $count = 1)
+    {
+        parent::__construct(self::RAW_FISH, $meta, $count, "Raw Fish");
+    }
 }

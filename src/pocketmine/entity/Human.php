@@ -22,7 +22,6 @@ namespace pocketmine\entity;
 use pocketmine\inventory\InventoryHolder;
 use pocketmine\inventory\PlayerInventory;
 use pocketmine\item\Item as ItemItem;
-use pocketmine\utils\UUID;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
@@ -33,249 +32,267 @@ use pocketmine\network\NetworkTag;
 use pocketmine\network\protocol\AddPlayerPacket;
 use pocketmine\network\protocol\RemovePlayerPacket;
 use pocketmine\Player;
+use pocketmine\utils\UUID;
 
-class Human extends Creature implements ProjectileSource, InventoryHolder{
+class Human extends Creature implements ProjectileSource, InventoryHolder
+{
 
-	const DATA_PLAYER_FLAG_SLEEP = 1;
-	const DATA_PLAYER_FLAG_DEAD = 2;
+    const DATA_PLAYER_FLAG_SLEEP = 1;
+    const DATA_PLAYER_FLAG_DEAD = 2;
 
-	const DATA_PLAYER_FLAGS = 16;
-	const DATA_PLAYER_BED_POSITION = 17;
+    const DATA_PLAYER_FLAGS = 16;
+    const DATA_PLAYER_BED_POSITION = 17;
 
-	/** @var PlayerInventory */
-	protected $inventory;
-
-
-	/** @var UUID */
-	protected $uuid;
-	protected $rawUUID;
-
-	public $width = 0.6;
-	public $length = 0.6;
-	public $height = 1.8;
-	public $eyeHeight = 1.62;
-
-	protected $skin;
-	protected $skinname;
-	protected $isOldClient;
-	protected $isSlim = \false;
-	protected $isTransparent = \false;
-
-	public function getSkinData(){
-		return $this->skin;
-	}
-
-	public function getSkinName(){
-		return $this->skinname;
-	}
-
-	public function isOldClient(){
-		return $this->isOldClient;
-	}
-
-	public function isSkinTransparent(){
-		return $this->isTransparent;
-	}
-
-	public function isSkinSlim(){
-		return $this->isSlim;
-	}
-
-	/**
-	 * @return UUID|null
-	 */
-	public function getUniqueId(){
-		return $this->uuid;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getRawUniqueId(){
-		return $this->rawUUID;
-	}
-
-	/**
-	 * @param string $str
-	 * @param bool   $isSlim
-	 */
-	public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \false, $isTransparent = \null){
-		$this->skin = $str;
-		$this->skinname = $skinname;
-		$this->isOldClient = (bool) $isOldClient;
-		$this->isTransparent = (bool) $isTransparent;
-		$this->isSlim = (bool) $isSlim;
-	}
-
-	public function getInventory(){
-		return $this->inventory;
-	}
-
-	protected function initEntity(){
-
-		$this->setDataFlag(self::DATA_PLAYER_FLAGS, self::DATA_PLAYER_FLAG_SLEEP, \false);
-		$this->setDataProperty(self::DATA_PLAYER_BED_POSITION, self::DATA_TYPE_POS, [0, 0, 0]);
-
-		$this->inventory = new PlayerInventory($this);
-		if($this instanceof Player){
-			$this->addWindow($this->inventory, 0);
-		}
+    /** @var PlayerInventory */
+    protected $inventory;
 
 
-		if(!($this instanceof Player)){
-			if(isset($this->namedtag->NameTag)){
-				$this->setNameTag($this->namedtag["NameTag"]);
-			}
+    /** @var UUID */
+    protected $uuid;
+    protected $rawUUID;
 
-			if(isset($this->namedtag->Skin) and $this->namedtag->Skin instanceof CompoundTag){
-				$this->setSkin($this->namedtag->Skin["Data"], $this->namedtag->Skin["Slim"] > 0, $this->namedtag->Skin["Transparent"] > 0);
-			}
+    public $width = 0.6;
+    public $length = 0.6;
+    public $height = 1.8;
+    public $eyeHeight = 1.62;
 
-			$this->uuid = UUID::fromData($this->getId(), $this->getSkinData(), $this->getNameTag());
-		}
+    protected $skin;
+    protected $skinname;
+    protected $isOldClient;
+    protected $isSlim = \false;
+    protected $isTransparent = \false;
 
-		if(isset($this->namedtag->Inventory) and $this->namedtag->Inventory instanceof ListTag){
-			foreach($this->namedtag->Inventory as $item){
-				if($item["Slot"] >= 0 and $item["Slot"] < 9){ //Hotbar
-					$this->inventory->setHotbarSlotIndex($item["Slot"], isset($item["TrueSlot"]) ? $item["TrueSlot"] : -1);
-				}elseif($item["Slot"] >= 100 and $item["Slot"] < 104){ //Armor
-					$this->inventory->setItem($this->inventory->getSize() + $item["Slot"] - 100, NBT::getItemHelper($item));
-				}else{
-					$this->inventory->setItem($item["Slot"] - 9, NBT::getItemHelper($item));
-				}
-			}
-		}
+    public function getSkinData()
+    {
+        return $this->skin;
+    }
 
-		parent::initEntity();
-	}
+    public function getSkinName()
+    {
+        return $this->skinname;
+    }
 
-	public function getName(){
-		return $this->getNameTag();
-	}
+    public function isOldClient()
+    {
+        return $this->isOldClient;
+    }
 
-	public function getDrops(){
-		$drops = [];
-		if($this->inventory !== \null){
-			foreach($this->inventory->getContents() as $item){
-				$drops[] = $item;
-			}
-		}
+    public function isSkinTransparent()
+    {
+        return $this->isTransparent;
+    }
 
-		return $drops;
-	}
+    public function isSkinSlim()
+    {
+        return $this->isSlim;
+    }
 
-	public function saveNBT(){
-		parent::saveNBT();
-		$this->namedtag->Inventory = new ListTag("Inventory", []);
-		$this->namedtag->Inventory->setTagType(NBT::TAG_Compound);
-		if($this->inventory !== \null){
-			for($slot = 0; $slot < 9; ++$slot){
-				$hotbarSlot = $this->inventory->getHotbarSlotIndex($slot);
-				if($hotbarSlot !== -1){
-					$item = $this->inventory->getItem($hotbarSlot);
-					if($item->getId() !== 0 and $item->getCount() > 0){
-						$tag = NBT::putItemHelper($item, $slot);
-						$tag->TrueSlot = new ByteTag("TrueSlot", $hotbarSlot);
-						$this->namedtag->Inventory[$slot] = $tag;
+    /**
+     * @return UUID|null
+     */
+    public function getUniqueId()
+    {
+        return $this->uuid;
+    }
 
-						continue;
-					}
-				}
+    /**
+     * @return string
+     */
+    public function getRawUniqueId()
+    {
+        return $this->rawUUID;
+    }
 
-				$this->namedtag->Inventory[$slot] = new CompoundTag("", [
-					new ByteTag("Count", 0),
-					new ShortTag("Damage", 0),
-					new ByteTag("Slot", $slot),
-					new ByteTag("TrueSlot", -1),
-					new ShortTag("id", 0),
-				]);
-			}
+    /**
+     * @param string $str
+     * @param bool $isSlim
+     */
+    public function setSkin($str, $skinname = "", $isOldClient = \false, $isSlim = \false, $isTransparent = \null)
+    {
+        $this->skin = $str;
+        $this->skinname = $skinname;
+        $this->isOldClient = (bool)$isOldClient;
+        $this->isTransparent = (bool)$isTransparent;
+        $this->isSlim = (bool)$isSlim;
+    }
 
-			//Normal inventory
-			$slotCount = Player::SURVIVAL_SLOTS + 9;
-			//$slotCount = (($this instanceof Player and ($this->gamemode & 0x01) === 1) ? Player::CREATIVE_SLOTS : Player::SURVIVAL_SLOTS) + 9;
-			for($slot = 9; $slot < $slotCount; ++$slot){
-				$item = $this->inventory->getItem($slot - 9);
-				$this->namedtag->Inventory[$slot] = NBT::putItemHelper($item, $slot);
-			}
+    public function getInventory()
+    {
+        return $this->inventory;
+    }
 
-			//Armor
-			for($slot = 100; $slot < 104; ++$slot){
-				$item = $this->inventory->getItem($this->inventory->getSize() + $slot - 100);
-				if($item instanceof ItemItem and $item->getId() !== ItemItem::AIR){
-					$this->namedtag->Inventory[$slot] = NBT::putItemHelper($item, $slot);
-				}
-			}
-		}
+    protected function initEntity()
+    {
 
-		if(strlen($this->getSkinData()) > 0){
-			$this->namedtag->Skin = new CompoundTag("Skin", [
-				"Data" => new StringTag("Data", $this->getSkinData()),
-				"Name" => new StringTag("Name", $this->getSkinName()),
-				"Client" => new ByteTag("Clinet", $this->isOldClient() ? 1 : 0),
-				"Slim" => new ByteTag("Slim", $this->isSkinSlim() ? 1 : 0),
-				"Transparent" => new ByteTag("Transparent", $this->isSkinTransparent() ? 1 : 0)
-			]);
-		}
-	}
+        $this->setDataFlag(self::DATA_PLAYER_FLAGS, self::DATA_PLAYER_FLAG_SLEEP, \false);
+        $this->setDataProperty(self::DATA_PLAYER_BED_POSITION, self::DATA_TYPE_POS, [0, 0, 0]);
 
-	public function spawnTo(Player $player){
-		if($player !== $this and !isset($this->hasSpawned[$player->getLoaderId()])){
-			$this->hasSpawned[$player->getLoaderId()] = $player;
-
-			if(strlen($this->skin) < 64 * 32 * 4){
-				throw new \InvalidStateException((new \ReflectionClass($this))->getShortName() . " must have a valid skin set");
-			}
+        $this->inventory = new PlayerInventory($this);
+        if ($this instanceof Player) {
+            $this->addWindow($this->inventory, 0);
+        }
 
 
-			if($this instanceof Player){
-				$this->server->updatePlayerListData($this->getUniqueId(), $this->getId(), $this->getName(), $this->isSlim, $this->skin, [$player], $this->isTransparent, $this->skinname);
-			}
+        if (!($this instanceof Player)) {
+            if (isset($this->namedtag->NameTag)) {
+                $this->setNameTag($this->namedtag["NameTag"]);
+            }
 
-			$pk = new AddPlayerPacket();
-			$pk->uuid = $this->getUniqueId();
-			$pk->username = $this->getName();
-			$pk->eid = $this->getId();
-			$pk->x = $this->x;
-			$pk->y = $this->y;
-			$pk->z = $this->z;
-			$pk->speedX = $this->motionX;
-			$pk->speedY = $this->motionY;
-			$pk->speedZ = $this->motionZ;
-			$pk->yaw = $this->yaw;
-			$pk->pitch = $this->pitch;
-			$pk->item = $this->getInventory()->getItemInHand();
-			$pk->metadata = $this->dataProperties;
-			$player->dataPacket($pk);
+            if (isset($this->namedtag->Skin) and $this->namedtag->Skin instanceof CompoundTag) {
+                $this->setSkin($this->namedtag->Skin["Data"], $this->namedtag->Skin["Slim"] > 0, $this->namedtag->Skin["Transparent"] > 0);
+            }
 
-			$this->inventory->sendArmorContents($player);
-		}
-	}
+            $this->uuid = UUID::fromData($this->getId(), $this->getSkinData(), $this->getNameTag());
+        }
 
-	public function despawnFrom(Player $player){
-		if(isset($this->hasSpawned[$player->getLoaderId()])){
+        if (isset($this->namedtag->Inventory) and $this->namedtag->Inventory instanceof ListTag) {
+            foreach ($this->namedtag->Inventory as $item) {
+                if ($item["Slot"] >= 0 and $item["Slot"] < 9) { //Hotbar
+                    $this->inventory->setHotbarSlotIndex($item["Slot"], isset($item["TrueSlot"]) ? $item["TrueSlot"] : -1);
+                } elseif ($item["Slot"] >= 100 and $item["Slot"] < 104) { //Armor
+                    $this->inventory->setItem($this->inventory->getSize() + $item["Slot"] - 100, NBT::getItemHelper($item));
+                } else {
+                    $this->inventory->setItem($item["Slot"] - 9, NBT::getItemHelper($item));
+                }
+            }
+        }
 
-			if($this instanceof Player){
-				$this->server->removePlayerListData($this->getUniqueId(), [$player]);
-			}
+        parent::initEntity();
+    }
 
-			$pk = new RemovePlayerPacket();
-			$pk->eid = $this->getId();
-			$pk->clientId = $this->getUniqueId();
-			$player->dataPacket($pk);
-			unset($this->hasSpawned[$player->getLoaderId()]);
-		}
-	}
+    public function getName()
+    {
+        return $this->getNameTag();
+    }
 
-	public function close(){
-		if(!$this->closed){
-			if(!($this instanceof Player) or $this->loggedIn){
-				foreach($this->inventory->getViewers() as $viewer){
-					$viewer->removeWindow($this->inventory);
-				}
-			}
-			parent::close();
-		}
-	}
+    public function getDrops()
+    {
+        $drops = [];
+        if ($this->inventory !== \null) {
+            foreach ($this->inventory->getContents() as $item) {
+                $drops[] = $item;
+            }
+        }
+
+        return $drops;
+    }
+
+    public function saveNBT()
+    {
+        parent::saveNBT();
+        $this->namedtag->Inventory = new ListTag("Inventory", []);
+        $this->namedtag->Inventory->setTagType(NBT::TAG_Compound);
+        if ($this->inventory !== \null) {
+            for ($slot = 0; $slot < 9; ++$slot) {
+                $hotbarSlot = $this->inventory->getHotbarSlotIndex($slot);
+                if ($hotbarSlot !== -1) {
+                    $item = $this->inventory->getItem($hotbarSlot);
+                    if ($item->getId() !== 0 and $item->getCount() > 0) {
+                        $tag = NBT::putItemHelper($item, $slot);
+                        $tag->TrueSlot = new ByteTag("TrueSlot", $hotbarSlot);
+                        $this->namedtag->Inventory[$slot] = $tag;
+
+                        continue;
+                    }
+                }
+
+                $this->namedtag->Inventory[$slot] = new CompoundTag("", [
+                    new ByteTag("Count", 0),
+                    new ShortTag("Damage", 0),
+                    new ByteTag("Slot", $slot),
+                    new ByteTag("TrueSlot", -1),
+                    new ShortTag("id", 0),
+                ]);
+            }
+
+            //Normal inventory
+            $slotCount = Player::SURVIVAL_SLOTS + 9;
+            //$slotCount = (($this instanceof Player and ($this->gamemode & 0x01) === 1) ? Player::CREATIVE_SLOTS : Player::SURVIVAL_SLOTS) + 9;
+            for ($slot = 9; $slot < $slotCount; ++$slot) {
+                $item = $this->inventory->getItem($slot - 9);
+                $this->namedtag->Inventory[$slot] = NBT::putItemHelper($item, $slot);
+            }
+
+            //Armor
+            for ($slot = 100; $slot < 104; ++$slot) {
+                $item = $this->inventory->getItem($this->inventory->getSize() + $slot - 100);
+                if ($item instanceof ItemItem and $item->getId() !== ItemItem::AIR) {
+                    $this->namedtag->Inventory[$slot] = NBT::putItemHelper($item, $slot);
+                }
+            }
+        }
+
+        if (strlen($this->getSkinData()) > 0) {
+            $this->namedtag->Skin = new CompoundTag("Skin", [
+                "Data" => new StringTag("Data", $this->getSkinData()),
+                "Name" => new StringTag("Name", $this->getSkinName()),
+                "Client" => new ByteTag("Clinet", $this->isOldClient() ? 1 : 0),
+                "Slim" => new ByteTag("Slim", $this->isSkinSlim() ? 1 : 0),
+                "Transparent" => new ByteTag("Transparent", $this->isSkinTransparent() ? 1 : 0)
+            ]);
+        }
+    }
+
+    public function spawnTo(Player $player)
+    {
+        if ($player !== $this and !isset($this->hasSpawned[$player->getLoaderId()])) {
+            $this->hasSpawned[$player->getLoaderId()] = $player;
+
+            if (strlen($this->skin) < 64 * 32 * 4) {
+                throw new \InvalidStateException((new \ReflectionClass($this))->getShortName() . " must have a valid skin set");
+            }
+
+
+            if ($this instanceof Player) {
+                $this->server->updatePlayerListData($this->getUniqueId(), $this->getId(), $this->getName(), $this->isSlim, $this->skin, [$player], $this->isTransparent, $this->skinname);
+            }
+
+            $pk = new AddPlayerPacket();
+            $pk->uuid = $this->getUniqueId();
+            $pk->username = $this->getName();
+            $pk->eid = $this->getId();
+            $pk->x = $this->x;
+            $pk->y = $this->y;
+            $pk->z = $this->z;
+            $pk->speedX = $this->motionX;
+            $pk->speedY = $this->motionY;
+            $pk->speedZ = $this->motionZ;
+            $pk->yaw = $this->yaw;
+            $pk->pitch = $this->pitch;
+            $pk->item = $this->getInventory()->getItemInHand();
+            $pk->metadata = $this->dataProperties;
+            $player->dataPacket($pk);
+
+            $this->inventory->sendArmorContents($player);
+        }
+    }
+
+    public function despawnFrom(Player $player)
+    {
+        if (isset($this->hasSpawned[$player->getLoaderId()])) {
+
+            if ($this instanceof Player) {
+                $this->server->removePlayerListData($this->getUniqueId(), [$player]);
+            }
+
+            $pk = new RemovePlayerPacket();
+            $pk->eid = $this->getId();
+            $pk->clientId = $this->getUniqueId();
+            $player->dataPacket($pk);
+            unset($this->hasSpawned[$player->getLoaderId()]);
+        }
+    }
+
+    public function close()
+    {
+        if (!$this->closed) {
+            if (!($this instanceof Player) or $this->loggedIn) {
+                foreach ($this->inventory->getViewers() as $viewer) {
+                    $viewer->removeWindow($this->inventory);
+                }
+            }
+            parent::close();
+        }
+    }
 
 }

@@ -33,26 +33,32 @@ class NoteBlock extends Solid
     protected $id = self::NOTE_BLOCK;
     public $note = -1;
 
-    public function __construct(){
+    public function __construct()
+    {
     }
 
-    public function canBeActivated(){
+    public function canBeActivated()
+    {
         return \true;
     }
 
-    public function getHardness(){
+    public function getHardness()
+    {
         return 0.8;
     }
 
-    public function getResistance(){
+    public function getResistance()
+    {
         return 8;
     }
 
-    public function getToolType(){
+    public function getToolType()
+    {
         return Tool::TYPE_AXE;
     }
 
-    public function isBreakable(Item $item){
+    public function isBreakable(Item $item)
+    {
         return \true;
     }
 
@@ -60,7 +66,8 @@ class NoteBlock extends Solid
      * @param $data
      * @param $pl
      */
-    public function PlaySound($data, $pl){
+    public function PlaySound($data, $pl)
+    {
         $pk = new LevelEventPacket;
         $pk->evid = 1000;
         $pk->data = $data;
@@ -76,7 +83,8 @@ class NoteBlock extends Solid
      * @param Player|null $player
      * @return bool
      */
-    public function onActivate(Item $item, Player $player = \null){
+    public function onActivate(Item $item, Player $player = \null)
+    {
         $this->note++;
         if ($this->note > 24) $this->note = 0;
         $particle = new NoteParticle (new Vector3 ($this->x + 0.5, $this->y + 1, $this->z + 0.5));
@@ -85,11 +93,13 @@ class NoteBlock extends Solid
         return \true;
     }
 
-    public function getName(){
+    public function getName()
+    {
         return "Note Block";
     }
 
-    public function getDrops(Item $item){
+    public function getDrops(Item $item)
+    {
         return [
             [Item::NOTE_BLOCK, 0, 1],
         ];

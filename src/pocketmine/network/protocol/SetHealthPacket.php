@@ -19,20 +19,22 @@
 
 namespace pocketmine\network\protocol;
 
-use pocketmine\utils\Binary;
+class SetHealthPacket extends DataPacket
+{
+    const NETWORK_ID = Info::SET_HEALTH_PACKET;
 
-class SetHealthPacket extends DataPacket{
-	const NETWORK_ID = Info::SET_HEALTH_PACKET;
+    public $health;
 
-	public $health;
+    public function decode()
+    {
+        $this->health = (\PHP_INT_SIZE === 8 ? \unpack("N", $this->get(4))[1] << 32 >> 32 : \unpack("N", $this->get(4))[1]);
+    }
 
-	public function decode(){
-		$this->health = (\PHP_INT_SIZE === 8 ? \unpack("N", $this->get(4))[1] << 32 >> 32 : \unpack("N", $this->get(4))[1]);
-	}
-
-	public function encode(){
-		$this->buffer = \chr(self::NETWORK_ID); $this->offset = 0;;
-		$this->buffer .= \pack("N", $this->health);
-	}
+    public function encode()
+    {
+        $this->buffer = \chr(self::NETWORK_ID);
+        $this->offset = 0;;
+        $this->buffer .= \pack("N", $this->health);
+    }
 
 }

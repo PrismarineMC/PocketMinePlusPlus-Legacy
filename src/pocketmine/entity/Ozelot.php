@@ -19,51 +19,48 @@
 
 namespace pocketmine\entity;
 
-use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\Player;
-use pocketmine\entity\Tameable;
-use pocketmine\nbt\tag\StringTag;
-use pocketmine\math\AxisAlignedBB;
-use pocketmine\network\protocol\MovePlayerPacket;
-use pocketmine\network\Network;
-use pocketmine\item\Item as Dr;
 
-class Ozelot extends Animal implements Tameable{
-  const NETWORK_ID=22;
-	public static $speed = 0.2;
-	public static $jump = 2;
-	public static $dist = 4;
-	public $width = 0.625;
-	public $length = 1.4375;
-	public $height = 1.25;
-	public $owner = \null;
+class Ozelot extends Animal implements Tameable
+{
+    const NETWORK_ID = 22;
+    public static $speed = 0.2;
+    public static $jump = 2;
+    public static $dist = 4;
+    public $width = 0.625;
+    public $length = 1.4375;
+    public $height = 1.25;
+    public $owner = \null;
 
-	public function getName(){
-		return "Ozelot";
-	}
+    public function getName()
+    {
+        return "Ozelot";
+    }
 
-	 public function spawnTo(Player $player){
-		$pk = new AddEntityPacket();
-		$pk->eid = $this->getId();
-		$pk->type = Ozelot::NETWORK_ID;
-		$pk->x = $this->x;
-		$pk->y = $this->y;
-		$pk->z = $this->z;
-		$pk->speedX = $this->motionX;
-		$pk->speedY = $this->motionY;
-		$pk->speedZ = $this->motionZ;
-		$pk->yaw = $this->yaw;
-		$pk->pitch = $this->pitch;
-		$pk->metadata = $this->dataProperties;
-		$player->dataPacket($pk);
+    public function spawnTo(Player $player)
+    {
+        $pk = new AddEntityPacket();
+        $pk->eid = $this->getId();
+        $pk->type = Ozelot::NETWORK_ID;
+        $pk->x = $this->x;
+        $pk->y = $this->y;
+        $pk->z = $this->z;
+        $pk->speedX = $this->motionX;
+        $pk->speedY = $this->motionY;
+        $pk->speedZ = $this->motionZ;
+        $pk->yaw = $this->yaw;
+        $pk->pitch = $this->pitch;
+        $pk->metadata = $this->dataProperties;
+        $player->dataPacket($pk);
 
-		parent::spawnTo($player);
-	}
-	
-	public function getDrops(){
-	$drops = [];
-		return $drops;
-	}
+        parent::spawnTo($player);
+    }
 
- }
+    public function getDrops()
+    {
+        $drops = [];
+        return $drops;
+    }
+
+}

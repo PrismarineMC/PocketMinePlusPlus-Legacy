@@ -22,23 +22,28 @@ namespace pocketmine\block;
 
 use pocketmine\item\Tool;
 
-class EndStone extends Solid{
+class EndStone extends Solid
+{
 
-	protected $id = self::END_STONE;
+    protected $id = self::END_STONE;
 
-	public function __construct(){
+    public function __construct()
+    {
 
-	}
+    }
 
-	public function getName(){
-		return "EndTag Stone";
-	}
+    public function getName()
+    {
+        return "EndTag Stone";
+    }
 
-	public function getToolType(){
-		return Tool::TYPE_PICKAXE;
-	}
+    public function getToolType()
+    {
+        return Tool::TYPE_PICKAXE;
+    }
 
-	public function getHardness(){
-		return 3;
-	}
+    public function getHardness()
+    {
+        return 3;
+    }
 }

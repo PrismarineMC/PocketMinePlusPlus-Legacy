@@ -19,38 +19,39 @@
 
 namespace pocketmine\network\protocol;
 
-use pocketmine\utils\Binary;
-
 use pocketmine\item\Item;
 
-class ContainerSetSlotPacket extends DataPacket{
-	const NETWORK_ID = Info::CONTAINER_SET_SLOT_PACKET;
+class ContainerSetSlotPacket extends DataPacket
+{
+    const NETWORK_ID = Info::CONTAINER_SET_SLOT_PACKET;
 
-	public $windowid;
-	public $slot;
-	public $hotbarSlot;
-	/** @var Item */
-	public $item;
+    public $windowid;
+    public $slot;
+    public $hotbarSlot;
+    /** @var Item */
+    public $item;
 
-    public function decode(){
- 		$this->windowid = $this->getByte();
- 		$this->slot = $this->getShort();
-		$this->hotbarSlot = $this->getShort();
-		if($this->feof()){
-			$this->item = Item::get(Item::AIR);
-			return;
-		}
- 		$this->item = $this->getSlot();
- 	}
+    public function decode()
+    {
+        $this->windowid = $this->getByte();
+        $this->slot = $this->getShort();
+        $this->hotbarSlot = $this->getShort();
+        if ($this->feof()) {
+            $this->item = Item::get(Item::AIR);
+            return;
+        }
+        $this->item = $this->getSlot();
+    }
 
-	public function encode(){
-		$this->reset();
- 		$this->putByte($this->windowid);
- 		$this->putShort($this->slot);
-		$this->putShort($this->hotbarSlot);
-		if($this->item instanceof Item){
-			$this->putSlot($this->item);
-		}
-	}
+    public function encode()
+    {
+        $this->reset();
+        $this->putByte($this->windowid);
+        $this->putShort($this->slot);
+        $this->putShort($this->hotbarSlot);
+        if ($this->item instanceof Item) {
+            $this->putSlot($this->item);
+        }
+    }
 
 }

@@ -20,15 +20,18 @@
 namespace pocketmine\block;
 
 
-class WallSign extends SignPost{
+class WallSign extends SignPost
+{
 
-	protected $id = self::WALL_SIGN;
+    protected $id = self::WALL_SIGN;
 
-	public function getName(){
-		return "Wall Sign";
-	}
+    public function getName()
+    {
+        return "Wall Sign";
+    }
 
-	public function onUpdate($type){
-		return \false;
-	}
+    public function onUpdate($type)
+    {
+        return \false;
+    }
 }

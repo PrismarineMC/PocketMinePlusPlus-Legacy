@@ -22,33 +22,39 @@ namespace pocketmine\block;
 use pocketmine\item\Item;
 use pocketmine\item\Tool;
 
-class EmeraldOre extends Solid{
+class EmeraldOre extends Solid
+{
 
-	protected $id = self::EMERALD_ORE;
+    protected $id = self::EMERALD_ORE;
 
-	public function __construct(){
+    public function __construct()
+    {
 
-	}
+    }
 
-	public function getName(){
-		return "Emerald Ore";
-	}
+    public function getName()
+    {
+        return "Emerald Ore";
+    }
 
-	public function getToolType(){
-		return Tool::TYPE_PICKAXE;
-	}
+    public function getToolType()
+    {
+        return Tool::TYPE_PICKAXE;
+    }
 
-	public function getHardness(){
-		return 3;
-	}
+    public function getHardness()
+    {
+        return 3;
+    }
 
-	public function getDrops(Item $item){
-		if($item->isPickaxe() >= 4){
-			return [
-				[Item::EMERALD, 0, 1],
-			];
-		}else{
-			return [];
-		}
-	}
+    public function getDrops(Item $item)
+    {
+        if ($item->isPickaxe() >= 4) {
+            return [
+                [Item::EMERALD, 0, 1],
+            ];
+        } else {
+            return [];
+        }
+    }
 }

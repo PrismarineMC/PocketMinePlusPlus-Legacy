@@ -22,27 +22,34 @@ namespace pocketmine\block;
 use pocketmine\item\Item;
 use pocketmine\item\Tool;
 
-class RedstoneLamp extends Solid{
+class RedstoneLamp extends Solid
+{
 
-	protected $id = self::REDSTONE_LAMP;
+    protected $id = self::REDSTONE_LAMP;
 
-	public function __construct(){
+    public function __construct()
+    {
 
-	}
+    }
 
-	public function getToolType(){
-		return Tool::TYPE_PICKAXE;
-	}
+    public function getToolType()
+    {
+        return Tool::TYPE_PICKAXE;
+    }
 
-	public function getName(){
-		return "Redstone Lamp";
-	}
+    public function getName()
+    {
+        return "Redstone Lamp";
+    }
 
-	public function getHardness(){
-		return 0.3;
-	}
-	public function getDrops(Item $item){
-			$drops[] = [Item::REDSTONE_LAMP, 0, 1];
-		return $drops;
-	}
+    public function getHardness()
+    {
+        return 0.3;
+    }
+
+    public function getDrops(Item $item)
+    {
+        $drops[] = [Item::REDSTONE_LAMP, 0, 1];
+        return $drops;
+    }
 }

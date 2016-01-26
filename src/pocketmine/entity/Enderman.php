@@ -19,43 +19,44 @@
 
 namespace pocketmine\entity;
 
-use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\Player;
-use pocketmine\inventory\InventoryHolder;
-use pocketmine\network\Network;
-use pocketmine\item\Item as Dr;
 
-class Enderman extends Monster{
-	const NETWORK_ID = 38;
-	public $width = 0.625;
-	public $length = 1.4375;
-	public $height = 1.25;
-	public function getName(){
-		return "Enderman";
-	}
+class Enderman extends Monster
+{
+    const NETWORK_ID = 38;
+    public $width = 0.625;
+    public $length = 1.4375;
+    public $height = 1.25;
 
-	 public function spawnTo(Player $player){
-		$pk = new AddEntityPacket();
-		$pk->eid = $this->getId();
-		$pk->type = Enderman::NETWORK_ID;
-		$pk->x = $this->x;
-		$pk->y = $this->y;
-		$pk->z = $this->z;
-		$pk->speedX = $this->motionX;
-		$pk->speedY = $this->motionY;
-		$pk->speedZ = $this->motionZ;
-		$pk->yaw = $this->yaw;
-		$pk->pitch = $this->pitch;
-		$pk->metadata = $this->dataProperties;
-		$player->dataPacket($pk);
+    public function getName()
+    {
+        return "Enderman";
+    }
 
-		parent::spawnTo($player);
-	}
+    public function spawnTo(Player $player)
+    {
+        $pk = new AddEntityPacket();
+        $pk->eid = $this->getId();
+        $pk->type = Enderman::NETWORK_ID;
+        $pk->x = $this->x;
+        $pk->y = $this->y;
+        $pk->z = $this->z;
+        $pk->speedX = $this->motionX;
+        $pk->speedY = $this->motionY;
+        $pk->speedZ = $this->motionZ;
+        $pk->yaw = $this->yaw;
+        $pk->pitch = $this->pitch;
+        $pk->metadata = $this->dataProperties;
+        $player->dataPacket($pk);
 
-		public function getDrops(){
-		$drops = [];
-		return $drops;
-	}
-	
+        parent::spawnTo($player);
+    }
+
+    public function getDrops()
+    {
+        $drops = [];
+        return $drops;
+    }
+
 }

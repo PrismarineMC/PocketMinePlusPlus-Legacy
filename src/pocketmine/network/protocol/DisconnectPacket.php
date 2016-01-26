@@ -19,20 +19,22 @@
 
 namespace pocketmine\network\protocol;
 
-use pocketmine\utils\Binary;
+class DisconnectPacket extends DataPacket
+{
+    const NETWORK_ID = Info::DISCONNECT_PACKET;
 
-class DisconnectPacket extends DataPacket{
-	const NETWORK_ID = Info::DISCONNECT_PACKET;
+    public $message;
 
-	public $message;
+    public function decode()
+    {
+        $this->message = $this->getString();
+    }
 
-	public function decode(){
-		$this->message = $this->getString();
-	}
-
-	public function encode(){
-		$this->buffer = \chr(self::NETWORK_ID); $this->offset = 0;;
-		$this->putString($this->message);
-	}
+    public function encode()
+    {
+        $this->buffer = \chr(self::NETWORK_ID);
+        $this->offset = 0;;
+        $this->putString($this->message);
+    }
 
 }

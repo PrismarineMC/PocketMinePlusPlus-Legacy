@@ -19,45 +19,40 @@
 
 namespace pocketmine\entity;
 
-use pocketmine\event\entity\EntityDamageByEntityEvent;
-use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\network\protocol\AddEntityPacket;
-use pocketmine\network\protocol\MovePlayerPacket;
-use pocketmine\network\protocol\MoveEntityPacket;
-use pocketmine\math\AxisAlignedBB;
 use pocketmine\Player;
-use pocketmine\entity\Entity;
-use pocketmine\math\Vector3;
-use pocketmine\network\Network;
-use pocketmine\item\Item as Dr;
 
-class Blaze extends Monster{
-	const NETWORK_ID = 43;
+class Blaze extends Monster
+{
+    const NETWORK_ID = 43;
 
-	public function getName(){
-	   return "Blaze";
- 	}
+    public function getName()
+    {
+        return "Blaze";
+    }
 
-    public function spawnTo(Player $player){
-		$pk = new AddEntityPacket();
-		$pk->eid = $this->getId();
-		$pk->type = Blaze::NETWORK_ID;
-		$pk->x = $this->x;
-		$pk->y = $this->y;
-		$pk->z = $this->z;
-		$pk->speedX = $this->motionX;
-		$pk->speedY = $this->motionY;
-		$pk->speedZ = $this->motionZ;
-		$pk->yaw = $this->yaw;
-		$pk->pitch = $this->pitch;
-		$pk->metadata = $this->dataProperties;
-		$player->dataPacket($pk);
+    public function spawnTo(Player $player)
+    {
+        $pk = new AddEntityPacket();
+        $pk->eid = $this->getId();
+        $pk->type = Blaze::NETWORK_ID;
+        $pk->x = $this->x;
+        $pk->y = $this->y;
+        $pk->z = $this->z;
+        $pk->speedX = $this->motionX;
+        $pk->speedY = $this->motionY;
+        $pk->speedZ = $this->motionZ;
+        $pk->yaw = $this->yaw;
+        $pk->pitch = $this->pitch;
+        $pk->metadata = $this->dataProperties;
+        $player->dataPacket($pk);
 
-		parent::spawnTo($player);
-	}
-	
-	public function getDrops(){
-		$drops = [];
-		return $drops;
-	}
+        parent::spawnTo($player);
+    }
+
+    public function getDrops()
+    {
+        $drops = [];
+        return $drops;
+    }
 }
