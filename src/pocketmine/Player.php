@@ -2602,7 +2602,10 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
                         }
                         break;
                     }
-                    $target->foodUsageTime += 0.02;
+                    if ($target instanceof Player)
+                     {
+                         $target->foodUsageTime += 0.02;
+                     }
 
                     if ($item->isTool() and $this->isSurvival()) {
                         if ($item->useOn($target) and $item->getDamage() >= $item->getMaxDurability()) {
