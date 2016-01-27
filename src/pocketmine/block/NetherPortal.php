@@ -60,16 +60,16 @@ class NetherPortal extends Flowable
 
     public function onEntityCollide(Entity $entity)
     {
-        if ($entity instanceof Player) {
+        /*if ($entity instanceof Player) {
             if (!isset($this->entities[$entity->getId()])) $this->entities[$entity->getId()] = 5;
             --$this->entities[$entity->getId()];
             if ($this->entities[$entity->getId()] === 0) PortalUtils::teleportPlayer($entity);
-        }
+        }*/
     }
 
     public function onUpdate($type)
     {
-        foreach ($this->entities as $ent) if ($ent->distance($this) >= 1) unset($this->entities[$ent->getId()]);
+        //foreach ($this->entities as $ent) if ($ent->distance($this) >= 1) unset($this->entities[$ent->getId()]);
 
         return \false;
     }
