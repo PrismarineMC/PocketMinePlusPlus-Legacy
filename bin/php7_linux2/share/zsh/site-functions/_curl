@@ -1,0 +1,14 @@
+#compdef curl
+
+# curl zsh completion
+
+local curcontext="$curcontext" state state_descr line
+typeset -A opt_args
+
+local rc=1
+
+_arguments -C -S \
+
+  '*:URL:_urls' && rc=0
+
+return rc
