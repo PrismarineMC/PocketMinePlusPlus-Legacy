@@ -23,25 +23,28 @@ namespace pocketmine\event\server;
 
 use pocketmine\event;
 use pocketmine\event\Cancellable;
-use pocketmine\network\protocol\DataPacket;
 use pocketmine\Player;
 
-class PacketReceivePreprocessEvent extends ServerEvent implements Cancellable{
+class PacketReceivePreprocessEvent extends ServerEvent implements Cancellable
+{
     public static $handlerList = \null;
 
-	private $buffer;
-	private $player;
+    private $buffer;
+    private $player;
 
-	public function __construct(Player $player, $buffer){
-		$this->buffer = $buffer;
-		$this->player = $player;
-	}
+    public function __construct(Player $player, $buffer)
+    {
+        $this->buffer = $buffer;
+        $this->player = $player;
+    }
 
-	public function getBuffer(){
-		return $this->buffer;
-	}
+    public function getBuffer()
+    {
+        return $this->buffer;
+    }
 
-	public function getPlayer(){
-		return $this->player;
-	}
+    public function getPlayer()
+    {
+        return $this->player;
+    }
 }

@@ -19,49 +19,45 @@
 
 namespace pocketmine\entity;
 
-use pocketmine\event\entity\EntityDamageByEntityEvent;
-use pocketmine\event\entity\EntityDamageEvent;
-use pocketmine\network\protocol\AddEntityPacket;
-use pocketmine\network\protocol\MovePlayerPacket;
-use pocketmine\network\protocol\MoveEntityPacket;
-use pocketmine\math\AxisAlignedBB;
-use pocketmine\Player;
-use pocketmine\entity\Entity;
-use pocketmine\math\Vector3;
-use pocketmine\network\Network;
 use pocketmine\item\Item as Dr;
+use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\Player;
 
-class PigZombie extends Monster{
-	const NETWORK_ID = 36;
+class PigZombie extends Monster
+{
+    const NETWORK_ID = 36;
 
-	public function getName(){
-		return "Zombie Pigman";
- 	}
+    public function getName()
+    {
+        return "Zombie Pigman";
+    }
 
-	 public function spawnTo(Player $player){
-		$pk = new AddEntityPacket();
-		$pk->eid = $this->getId();
-		$pk->type = PigZombie::NETWORK_ID;
-		$pk->x = $this->x;
-		$pk->y = $this->y;
-		$pk->z = $this->z;
-		$pk->speedX = $this->motionX;
-		$pk->speedY = $this->motionY;
-		$pk->speedZ = $this->motionZ;
-		$pk->yaw = $this->yaw;
-		$pk->pitch = $this->pitch;
-		$pk->metadata = $this->dataProperties;
-		$player->dataPacket($pk);
+    public function spawnTo(Player $player)
+    {
+        $pk = new AddEntityPacket();
+        $pk->eid = $this->getId();
+        $pk->type = PigZombie::NETWORK_ID;
+        $pk->x = $this->x;
+        $pk->y = $this->y;
+        $pk->z = $this->z;
+        $pk->speedX = $this->motionX;
+        $pk->speedY = $this->motionY;
+        $pk->speedZ = $this->motionZ;
+        $pk->yaw = $this->yaw;
+        $pk->pitch = $this->pitch;
+        $pk->metadata = $this->dataProperties;
+        $player->dataPacket($pk);
 
-		parent::spawnTo($player);
-	}
-	
-	public function getDrops(){
-		$drops = [];
-		$rand = mt_rand(0, 5);
-		if($rand){
-			$drops[] = Dr::get(Dr::GOLD_INGOT, 0, $rand);
-		}
-		return $drops;
-	}
+        parent::spawnTo($player);
+    }
+
+    public function getDrops()
+    {
+        $drops = [];
+        $rand = mt_rand(0, 5);
+        if ($rand) {
+            $drops[] = Dr::get(Dr::GOLD_INGOT, 0, $rand);
+        }
+        return $drops;
+    }
 }

@@ -19,21 +19,22 @@
 
 namespace pocketmine\network\protocol;
 
-use pocketmine\level\Level;
+class SetTimePacket extends DataPacket
+{
+    const NETWORK_ID = Info::SET_TIME_PACKET;
 
-class SetTimePacket extends DataPacket{
-	const NETWORK_ID = Info::SET_TIME_PACKET;
+    public $time;
+    public $started = \true;
 
-	public $time;
-	public $started = \true;
+    public function decode()
+    {
 
-	public function decode(){
+    }
 
-	}
-
-	public function encode(){
-		$this->reset();
-		$this->putInt($this->time);
-		$this->putByte($this->started ? 0x80 : 0x00);
-	}
+    public function encode()
+    {
+        $this->reset();
+        $this->putInt($this->time);
+        $this->putByte($this->started ? 0x80 : 0x00);
+    }
 }

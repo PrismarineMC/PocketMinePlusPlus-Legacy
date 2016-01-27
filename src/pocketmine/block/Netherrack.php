@@ -22,33 +22,39 @@ namespace pocketmine\block;
 use pocketmine\item\Item;
 use pocketmine\item\Tool;
 
-class Netherrack extends Solid{
+class Netherrack extends Solid
+{
 
-	protected $id = self::NETHERRACK;
+    protected $id = self::NETHERRACK;
 
-	public function __construct(){
+    public function __construct()
+    {
 
-	}
+    }
 
-	public function getName(){
-		return "Netherrack";
-	}
+    public function getName()
+    {
+        return "Netherrack";
+    }
 
-	public function getHardness(){
-		return 2;
-	}
+    public function getHardness()
+    {
+        return 2;
+    }
 
-	public function getToolType(){
-		return Tool::TYPE_PICKAXE;
-	}
+    public function getToolType()
+    {
+        return Tool::TYPE_PICKAXE;
+    }
 
-	public function getDrops(Item $item){
-		if($item->isPickaxe() >= 1){
-			return [
-				[Item::NETHERRACK, 0, 1],
-			];
-		}else{
-			return [];
-		}
-	}
+    public function getDrops(Item $item)
+    {
+        if ($item->isPickaxe() >= 1) {
+            return [
+                [Item::NETHERRACK, 0, 1],
+            ];
+        } else {
+            return [];
+        }
+    }
 }

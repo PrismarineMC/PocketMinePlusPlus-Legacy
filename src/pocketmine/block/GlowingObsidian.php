@@ -20,20 +20,24 @@
 namespace pocketmine\block;
 
 
-class GlowingObsidian extends Solid{
+class GlowingObsidian extends Solid
+{
 
-	protected $id = self::GLOWING_OBSIDIAN;
+    protected $id = self::GLOWING_OBSIDIAN;
 
-	public function __construct($meta = 0){
-		$this->meta = $meta;
-	}
+    public function __construct($meta = 0)
+    {
+        $this->meta = $meta;
+    }
 
-	public function getName(){
-		return "Glowing Obsidian";
-	}
+    public function getName()
+    {
+        return "Glowing Obsidian";
+    }
 
-	public function getLightLevel(){
-		return 12;
-	}
+    public function getLightLevel()
+    {
+        return 12;
+    }
 
 }

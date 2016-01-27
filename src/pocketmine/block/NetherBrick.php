@@ -22,33 +22,39 @@ namespace pocketmine\block;
 use pocketmine\item\Item;
 use pocketmine\item\Tool;
 
-class NetherBrick extends Solid{
+class NetherBrick extends Solid
+{
 
-	protected $id = self::NETHER_BRICKS;
+    protected $id = self::NETHER_BRICKS;
 
-	public function __construct(){
+    public function __construct()
+    {
 
-	}
+    }
 
-	public function getToolType(){
-		return Tool::TYPE_PICKAXE;
-	}
+    public function getToolType()
+    {
+        return Tool::TYPE_PICKAXE;
+    }
 
-	public function getName(){
-		return "Nether Bricks";
-	}
+    public function getName()
+    {
+        return "Nether Bricks";
+    }
 
-	public function getHardness(){
-		return 2;
-	}
+    public function getHardness()
+    {
+        return 2;
+    }
 
-	public function getDrops(Item $item){
-		if($item->isPickaxe() >= 1){
-			return [
-				[Item::NETHER_BRICKS, 0, 1],
-			];
-		}else{
-			return [];
-		}
-	}
+    public function getDrops(Item $item)
+    {
+        if ($item->isPickaxe() >= 1) {
+            return [
+                [Item::NETHER_BRICKS, 0, 1],
+            ];
+        } else {
+            return [];
+        }
+    }
 }

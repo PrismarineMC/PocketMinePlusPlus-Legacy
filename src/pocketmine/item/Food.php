@@ -20,48 +20,55 @@
 namespace pocketmine\item;
 
 use pocketmine\Player;
-abstract class Food extends Item{
-	public $saturation = 0;
 
-	public function getSaturation(){
-		return $this->saturation;
-	}
+abstract class Food extends Item
+{
+    public $saturation = 0;
 
-	/**
-	 *
-	 * @param
-	 *        	saturation (float) $float
-	 */
-	public function setSaturation($float){
-		return $this->saturation = $float;
-	}
+    public function getSaturation()
+    {
+        return $this->saturation;
+    }
 
-	/**
-	 *
-	 * @param
-	 *        	array([Effect, chance])
-	 */
-	public function getEffects(){
-		return [];
-	}
+    /**
+     *
+     * @param
+     *            saturation (float) $float
+     */
+    public function setSaturation($float)
+    {
+        return $this->saturation = $float;
+    }
 
-	/**
-	 *
-	 * @param
-	 *        	Effects (array) $effects
-	 */
-	public function setEffects($effects){
-		return $this->effects = $effects;
-	}
+    /**
+     *
+     * @param
+     *            array([Effect, chance])
+     */
+    public function getEffects()
+    {
+        return [];
+    }
 
-	/**
-	 *
-	 * @param Player $player        	
-	 */
-	public function giveEffects(Player $player){
-		$effects = $this->getEffects();
-		foreach ($effects as $effect){
-			$player->addEffect($effect);
-		}
-	}
+    /**
+     *
+     * @param
+     *            Effects (array) $effects
+     */
+    public function setEffects($effects)
+    {
+        return $this->effects = $effects;
+    }
+
+    /**
+     *
+     * @param Player $player
+     */
+    public function giveEffects(Player $player)
+    {
+        $effects = $this->getEffects();
+        foreach ($effects as $effect) {
+            $player->addEffect($effect);
+        }
+    }
 }

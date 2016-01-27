@@ -20,6 +20,7 @@
 namespace pocketmine\entity;
 
 
-class Minecart extends Vehicle{
+class Minecart extends Vehicle
+{
 
 }

@@ -23,15 +23,18 @@
 namespace pocketmine\math;
 
 
-abstract class Math{
+abstract class Math
+{
 
-	public static function floorFloat($n){
-		$i = (int) $n;
-		return $n >= $i ? $i : $i - 1;
-	}
+    public static function floorFloat($n)
+    {
+        $i = (int)$n;
+        return $n >= $i ? $i : $i - 1;
+    }
 
-	public static function ceilFloat($n){
-		$i = (int) ($n + 1);
-		return $n >= $i ? $i : $i - 1;
-	}
+    public static function ceilFloat($n)
+    {
+        $i = (int)($n + 1);
+        return $n >= $i ? $i : $i - 1;
+    }
 }

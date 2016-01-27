@@ -24,57 +24,67 @@ use pocketmine\item\Item;
 use pocketmine\item\Tool;
 use pocketmine\Player;
 
-class Anvil extends Fallable{
+class Anvil extends Fallable
+{
 
-	protected $id = self::ANVIL;
+    protected $id = self::ANVIL;
 
-	public function isSolid(){
-		return \false;
-	}
+    public function isSolid()
+    {
+        return \false;
+    }
 
-	public function __construct($meta = 0){
-		$this->meta = $meta;
-	}
+    public function __construct($meta = 0)
+    {
+        $this->meta = $meta;
+    }
 
-	public function canBeActivated(){
-		return \true;
-	}
+    public function canBeActivated()
+    {
+        return \true;
+    }
 
-	public function getHardness(){
-		return 5;
-	}
+    public function getHardness()
+    {
+        return 5;
+    }
 
-	public function getResistance(){
-		return 6000;
-	}
+    public function getResistance()
+    {
+        return 6000;
+    }
 
-	public function getName(){
-		return "Anvil";
-	}
+    public function getName()
+    {
+        return "Anvil";
+    }
 
-	public function getToolType(){
-		return Tool::TYPE_PICKAXE;
-	}
+    public function getToolType()
+    {
+        return Tool::TYPE_PICKAXE;
+    }
 
-	public function onActivate(Item $item, Player $player = \null){
-		if($player instanceof Player){
-			if($player->isCreative()){
-				return \true;
-			}
+    public function onActivate(Item $item, Player $player = \null)
+    {
+        if ($player instanceof Player) {
+            if ($player->isCreative()) {
+                return \true;
+            }
 
-			$player->addWindow(new AnvilInventory($this));
-		}
+            $player->addWindow(new AnvilInventory($this));
+        }
 
-		return \true;
-	}
+        return \true;
+    }
 
-	public function getDrops(Item $item){
-		if($item->isPickaxe() >= Tool::TIER_WOODEN){
-			return [
-				[$this->id, 0, 1], //TODO break level
-			];
-		}else{
-			return [];
-		}
-	}
+    public function getDrops(Item $item)
+    {
+        if ($item->isPickaxe() >= Tool::TIER_WOODEN) {
+            return [
+                [$this->id, 0, 1], //TODO break level
+            ];
+        } else {
+            return [];
+        }
+    }
 }

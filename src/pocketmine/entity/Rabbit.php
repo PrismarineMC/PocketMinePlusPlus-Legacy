@@ -19,42 +19,44 @@
 
 namespace pocketmine\entity;
 
-use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\Player;
-use pocketmine\network\Network;
-use pocketmine\item\Item as Dr;
 
-class Rabbit extends Animal{
-	const NETWORK_ID=18;
-	public $width = 0.625;
-	public $length = 1.5;
-	public $height = 1.6875;
-	public function getName(){
-		return "Rabbit";
-	}
+class Rabbit extends Animal
+{
+    const NETWORK_ID = 18;
+    public $width = 0.625;
+    public $length = 1.5;
+    public $height = 1.6875;
 
-	 public function spawnTo(Player $player){
-		$pk = new AddEntityPacket();
-		$pk->eid = $this->getId();
-		$pk->type = Rabbit::NETWORK_ID;
-		$pk->x = $this->x;
-		$pk->y = $this->y;
-		$pk->z = $this->z;
-		$pk->speedX = $this->motionX;
-		$pk->speedY = $this->motionY;
-		$pk->speedZ = $this->motionZ;
-		$pk->yaw = $this->yaw;
-		$pk->pitch = $this->pitch;
-		$pk->metadata = $this->dataProperties;
-		$player->dataPacket($pk);
+    public function getName()
+    {
+        return "Rabbit";
+    }
 
-		parent::spawnTo($player);
-	}
+    public function spawnTo(Player $player)
+    {
+        $pk = new AddEntityPacket();
+        $pk->eid = $this->getId();
+        $pk->type = Rabbit::NETWORK_ID;
+        $pk->x = $this->x;
+        $pk->y = $this->y;
+        $pk->z = $this->z;
+        $pk->speedX = $this->motionX;
+        $pk->speedY = $this->motionY;
+        $pk->speedZ = $this->motionZ;
+        $pk->yaw = $this->yaw;
+        $pk->pitch = $this->pitch;
+        $pk->metadata = $this->dataProperties;
+        $player->dataPacket($pk);
 
-	public function getDrops(){
-		$drops = [];
-		return $drops;
-	}
+        parent::spawnTo($player);
+    }
+
+    public function getDrops()
+    {
+        $drops = [];
+        return $drops;
+    }
 
 }

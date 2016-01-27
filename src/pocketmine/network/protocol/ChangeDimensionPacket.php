@@ -19,21 +19,24 @@
 
 namespace pocketmine\network\protocol;
 
-use pocketmine\utils\Binary;
+class ChangeDimensionPacket extends DataPacket
+{
+    const NETWORK_ID = Info::CHANGE_DIMENSION_PACKET;
+    public $eid;
+    public $dimensionId;
 
-class ChangeDimensionPacket extends DataPacket{
-	const NETWORK_ID = Info::CHANGE_DIMENSION_PACKET;
-	public $eid;
-	public $dimensionId;
-	public function decode() {
-		$this->dimensionId = (PHP_INT_SIZE === 8 ? \unpack("N", $this->get(4))[1] << 32 >> 32 : \unpack("N", $this->get(4))[1]);
-	}
-	public function encode() {
-		$this->buffer = \chr(self::NETWORK_ID);
-		$this->offset = 0;
-		//$this->buffer .= \pack("NN", $this->eid >> 32, $this->eid & 0xFFFFFFFF);
-		//$this->buffer .= Binary::writeLong($this->eid);
-		//$this->buffer .= \chr($this->dimensionId);
-		$this->buffer .= \pack("N", $this->dimensionId);
-	}
+    public function decode()
+    {
+        $this->dimensionId = (PHP_INT_SIZE === 8 ? \unpack("N", $this->get(4))[1] << 32 >> 32 : \unpack("N", $this->get(4))[1]);
+    }
+
+    public function encode()
+    {
+        $this->buffer = \chr(self::NETWORK_ID);
+        $this->offset = 0;
+        //$this->buffer .= \pack("NN", $this->eid >> 32, $this->eid & 0xFFFFFFFF);
+        //$this->buffer .= Binary::writeLong($this->eid);
+        //$this->buffer .= \chr($this->dimensionId);
+        $this->buffer .= \pack("N", $this->dimensionId);
+    }
 }

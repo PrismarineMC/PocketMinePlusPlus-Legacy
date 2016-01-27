@@ -22,34 +22,40 @@ namespace pocketmine\block;
 use pocketmine\item\Item;
 use pocketmine\item\Tool;
 
-class CoalOre extends Solid{
+class CoalOre extends Solid
+{
 
-	protected $id = self::COAL_ORE;
+    protected $id = self::COAL_ORE;
 
-	public function __construct(){
+    public function __construct()
+    {
 
-	}
+    }
 
-	public function getHardness(){
-		return 3;
-	}
+    public function getHardness()
+    {
+        return 3;
+    }
 
-	public function getToolType(){
-		return Tool::TYPE_PICKAXE;
-	}
+    public function getToolType()
+    {
+        return Tool::TYPE_PICKAXE;
+    }
 
-	public function getName(){
-		return "Coal Ore";
-	}
+    public function getName()
+    {
+        return "Coal Ore";
+    }
 
-	public function getDrops(Item $item){
-		if($item->isPickaxe() >= 1){
-			return [
-				[Item::COAL, 0, 1],
-			];
-		}else{
-			return [];
-		}
-	}
+    public function getDrops(Item $item)
+    {
+        if ($item->isPickaxe() >= 1) {
+            return [
+                [Item::COAL, 0, 1],
+            ];
+        } else {
+            return [];
+        }
+    }
 
 }

@@ -59,22 +59,28 @@
  */
 \define('PTHREADS_ALLOW_GLOBALS', 0x10000000);
 
-class Collectable extends Threaded{
+class Collectable extends Threaded
+{
 
     protected $garbage;
 
-	/**
-	 * @return bool
-	 */
-	public function isGarbage(){}
+    /**
+     * @return bool
+     */
+    public function isGarbage()
+    {
+    }
 
-	/**
-	 * @return void
-	 */
-	public function setGarbage(){}
+    /**
+     * @return void
+     */
+    public function setGarbage()
+    {
+    }
 }
 
-class Volatile extends Threaded{
+class Volatile extends Threaded
+{
 
 }
 
@@ -91,12 +97,14 @@ class Volatile extends Threaded{
  * @link  http://www.php.net/manual/en/class.threaded.php
  * @since 2.0.0
  */
-class Threaded implements Traversable, Countable, ArrayAccess{
+class Threaded implements Traversable, Countable, ArrayAccess
+{
 
     /**
      * @param object $obj
      */
-    public static function extend($obj){
+    public static function extend($obj)
+    {
 
     }
 
@@ -108,13 +116,15 @@ class Threaded implements Traversable, Countable, ArrayAccess{
      * @link http://www.php.net/manual/en/threaded.chunk.php
      * @return array An array of items from the objects member table
      */
-    public function chunk($size){
+    public function chunk($size)
+    {
     }
 
     /**
      * {@inheritdoc}
      */
-    public function count(){
+    public function count()
+    {
     }
 
     /**
@@ -123,7 +133,8 @@ class Threaded implements Traversable, Countable, ArrayAccess{
      * @link http://www.php.net/manual/en/threaded.isrunning.php
      * @return bool A boolean indication of state
      */
-    public function isRunning(){
+    public function isRunning()
+    {
     }
 
     /**
@@ -132,19 +143,21 @@ class Threaded implements Traversable, Countable, ArrayAccess{
      * @link http://www.php.net/manual/en/threaded.isterminated.php
      * @return bool A boolean indication of state
      */
-    public function isTerminated(){
+    public function isTerminated()
+    {
     }
 
     /**
      * Merges data into the current object
      *
-     * @param mixed $from      The data to merge
-     * @param bool  $overwrite Overwrite existing keys flag, by default true
+     * @param mixed $from The data to merge
+     * @param bool $overwrite Overwrite existing keys flag, by default true
      *
      * @link http://www.php.net/manual/en/threaded.merge.php
      * @return bool A boolean indication of success
      */
-    public function merge($from, $overwrite = \true){
+    public function merge($from, $overwrite = \true)
+    {
     }
 
     /**
@@ -153,31 +166,36 @@ class Threaded implements Traversable, Countable, ArrayAccess{
      * @link http://www.php.net/manual/en/threaded.notify.php
      * @return bool A boolean indication of success
      */
-    public function notify(){
+    public function notify()
+    {
     }
 
     /**
      * {@inheritdoc}
      */
-    public function offsetGet($offset){
+    public function offsetGet($offset)
+    {
     }
 
     /**
      * {@inheritdoc}
      */
-    public function offsetSet($offset, $value){
+    public function offsetSet($offset, $value)
+    {
     }
 
     /**
      * {@inheritdoc}
      */
-    public function offsetExists($offset){
+    public function offsetExists($offset)
+    {
     }
 
     /**
      * {@inheritdoc}
      */
-    public function offsetUnset($offset){
+    public function offsetUnset($offset)
+    {
     }
 
     /**
@@ -186,7 +204,8 @@ class Threaded implements Traversable, Countable, ArrayAccess{
      * @link http://www.php.net/manual/en/threaded.pop.php
      * @return mixed The last item from the objects properties table
      */
-    public function pop(){
+    public function pop()
+    {
     }
 
     /**
@@ -195,7 +214,8 @@ class Threaded implements Traversable, Countable, ArrayAccess{
      * @link http://www.php.net/manual/en/threaded.run.php
      * @return void The methods return value, if used, will be ignored
      */
-    public function run(){
+    public function run()
+    {
     }
 
     /**
@@ -204,19 +224,21 @@ class Threaded implements Traversable, Countable, ArrayAccess{
      * @link http://www.php.net/manual/en/threaded.shift.php
      * @return mixed The first item from the objects properties table
      */
-    public function shift(){
+    public function shift()
+    {
     }
 
     /**
      * Executes the block while retaining the synchronization lock for the current context.
      *
      * @param \Closure $function The block of code to execute
-     * @param mixed    $args     ... Variable length list of arguments to use as function arguments to the block
+     * @param mixed $args ... Variable length list of arguments to use as function arguments to the block
      *
      * @link http://www.php.net/manual/en/threaded.synchronized.php
      * @return mixed The return value from the block
      */
-    public function synchronized(\Closure $function, $args = \null){
+    public function synchronized(\Closure $function, $args = \null)
+    {
     }
 
     /**
@@ -227,19 +249,23 @@ class Threaded implements Traversable, Countable, ArrayAccess{
      * @link http://www.php.net/manual/en/threaded.wait.php
      * @return bool A boolean indication of success
      */
-    public function wait($timeout){
+    public function wait($timeout)
+    {
     }
 
     /**
      * @return int
      */
-    public function getRefCount(){
+    public function getRefCount()
+    {
     }
 
-    public function addRef(){
+    public function addRef()
+    {
     }
 
-    public function delRef(){
+    public function delRef()
+    {
     }
 }
 
@@ -251,7 +277,8 @@ class Threaded implements Traversable, Countable, ArrayAccess{
  *
  * @link http://www.php.net/manual/en/class.thread.php
  */
-class Thread extends Threaded{
+class Thread extends Threaded
+{
 
     /**
      * Will return the identity of the Thread that created the referenced Thread
@@ -259,7 +286,8 @@ class Thread extends Threaded{
      * @link http://www.php.net/manual/en/thread.getcreatorid.php
      * @return int A numeric identity
      */
-    public function getCreatorId(){
+    public function getCreatorId()
+    {
     }
 
     /**
@@ -267,7 +295,8 @@ class Thread extends Threaded{
      *
      * @return static
      */
-    public static function getCurrentThread(){
+    public static function getCurrentThread()
+    {
     }
 
     /**
@@ -276,7 +305,8 @@ class Thread extends Threaded{
      * @link http://www.php.net/manual/en/thread.getcurrentthreadid.php
      * @return int
      */
-    public static function getCurrentThreadId(){
+    public static function getCurrentThreadId()
+    {
     }
 
     /**
@@ -285,7 +315,8 @@ class Thread extends Threaded{
      * @link http://www.php.net/manual/en/thread.getthreadid.php
      * @return int
      */
-    public function getThreadId(){
+    public function getThreadId()
+    {
     }
 
     /**
@@ -294,7 +325,8 @@ class Thread extends Threaded{
      * @link http://www.php.net/manual/en/thread.isjoined.php
      * @return bool A boolean indication of state
      */
-    public function isJoined(){
+    public function isJoined()
+    {
     }
 
     /**
@@ -303,7 +335,8 @@ class Thread extends Threaded{
      * @link http://www.php.net/manual/en/thread.isstarted.php
      * @return bool A boolean indication of state
      */
-    public function isStarted(){
+    public function isStarted()
+    {
     }
 
     /**
@@ -312,10 +345,12 @@ class Thread extends Threaded{
      * @link http://www.php.net/manual/en/thread.join.php
      * @return bool A boolean indication of state
      */
-    public function join(){
+    public function join()
+    {
     }
 
-    public function __destruct(){
+    public function __destruct()
+    {
 
     }
 
@@ -327,7 +362,8 @@ class Thread extends Threaded{
      * @link http://www.php.net/manual/en/thread.start.php
      * @return bool A boolean indication of success
      */
-    public function start(int $options = PTHREADS_INHERIT_ALL){
+    public function start(int $options = PTHREADS_INHERIT_ALL)
+    {
     }
 }
 
@@ -346,18 +382,21 @@ class Thread extends Threaded{
  *
  * @link http://www.php.net/manual/en/class.worker.php
  */
-class Worker extends Thread{
+class Worker extends Thread
+{
 
     /**
      * @return int
      */
-    public function getThreadId(){
+    public function getThreadId()
+    {
     }
 
     /**
      * @return int
      */
-    public function getCreatorId(){
+    public function getCreatorId()
+    {
     }
 
 
@@ -367,7 +406,8 @@ class Worker extends Thread{
      * @link http://www.php.net/manual/en/worker.getstacked.php
      * @return int An integral value
      */
-    public function getStacked(){
+    public function getStacked()
+    {
     }
 
     /**
@@ -376,7 +416,8 @@ class Worker extends Thread{
      * @link http://www.php.net/manual/en/worker.isshutdown.php
      * @return bool A boolean indication of state
      */
-    public function isShutdown(){
+    public function isShutdown()
+    {
     }
 
     /**
@@ -385,7 +426,8 @@ class Worker extends Thread{
      * @link http://www.php.net/manual/en/worker.isworking.php
      * @return bool A boolean indication of state
      */
-    public function isWorking(){
+    public function isWorking()
+    {
     }
 
     /**
@@ -394,7 +436,8 @@ class Worker extends Thread{
      * @link http://www.php.net/manual/en/worker.shutdown.php
      * @return bool A boolean indication of success
      */
-    public function shutdown(){
+    public function shutdown()
+    {
     }
 
     /**
@@ -405,7 +448,8 @@ class Worker extends Thread{
      * @link http://www.php.net/manual/en/worker.stack.php
      * @return int The new length of the stack
      */
-    public function stack(Collectable &$work){
+    public function stack(Collectable &$work)
+    {
     }
 
     /**
@@ -414,7 +458,8 @@ class Worker extends Thread{
      * @link http://www.php.net/manual/en/worker.unstack.php
      * @return int The new length of the stack
      */
-    public function unstack(){
+    public function unstack()
+    {
     }
 
     /**
@@ -425,7 +470,8 @@ class Worker extends Thread{
      * @link http://www.php.net/manual/en/worker.collect.php
      * @return void
      */
-    public function collect(callable $function){
+    public function collect(callable $function)
+    {
     }
 }
 
@@ -438,7 +484,8 @@ class Worker extends Thread{
  *
  * @link http://www.php.net/manual/en/class.pool.php
  */
-class Pool{
+class Pool
+{
     /**
      * The maximum number of Worker threads allowed in this Pool
      *
@@ -477,13 +524,14 @@ class Pool{
     /**
      * Construct a new Pool of Workers
      *
-     * @param integer $size  The maximum number of Workers this Pool can create
-     * @param string  $class The class for new Workers
-     * @param array   $ctor  An array of arguments to be passed to new Workers
+     * @param integer $size The maximum number of Workers this Pool can create
+     * @param string $class The class for new Workers
+     * @param array $ctor An array of arguments to be passed to new Workers
      *
      * @link http://www.php.net/manual/en/pool.__construct.php
      */
-    public function __construct($size, $class, array $ctor = []){
+    public function __construct($size, $class, array $ctor = [])
+    {
     }
 
     /**
@@ -491,7 +539,8 @@ class Pool{
      *
      * @link http://www.php.net/manual/en/pool.__destruct.php
      */
-    public function __destruct(){
+    public function __destruct()
+    {
     }
 
     /**
@@ -503,7 +552,8 @@ class Pool{
      *
      * @link http://www.php.net/manual/en/pool.collect.php
      */
-    public function collect(callable $collector){
+    public function collect(callable $collector)
+    {
     }
 
     /**
@@ -513,7 +563,8 @@ class Pool{
      *
      * @link http://www.php.net/manual/en/pool.resize.php
      */
-    public function resize($size){
+    public function resize($size)
+    {
     }
 
     /**
@@ -521,7 +572,8 @@ class Pool{
      *
      * @link http://www.php.net/manual/en/pool.shutdown.php
      */
-    public function shutdown(){
+    public function shutdown()
+    {
     }
 
     /**
@@ -531,17 +583,19 @@ class Pool{
      *
      * @return int the identifier of the Worker executing the object
      */
-    public function submit(Threaded $task){
+    public function submit(Threaded $task)
+    {
     }
 
     /**
      * Submit the task to the specific Worker in the Pool
      *
-     * @param int      $worker The worker for execution
-     * @param Threaded $task   The task for execution
+     * @param int $worker The worker for execution
+     * @param Threaded $task The task for execution
      *
      * @return int the identifier of the Worker that accepted the object
      */
-    public function submitTo($worker, Threaded $task){
+    public function submitTo($worker, Threaded $task)
+    {
     }
 }

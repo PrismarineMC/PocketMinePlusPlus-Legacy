@@ -22,34 +22,40 @@ namespace pocketmine\block;
 use pocketmine\item\Item;
 use pocketmine\item\Tool;
 
-class QuartzOre extends Solid{
+class QuartzOre extends Solid
+{
 
-	protected $id = self::QUARTZ_ORE;
+    protected $id = self::QUARTZ_ORE;
 
-	public function __construct(){
+    public function __construct()
+    {
 
-	}
+    }
 
-	public function getHardness(){
-		return 3;
-	}
+    public function getHardness()
+    {
+        return 3;
+    }
 
-	public function getToolType(){
-		return Tool::TYPE_PICKAXE;
-	}
+    public function getToolType()
+    {
+        return Tool::TYPE_PICKAXE;
+    }
 
-	public function getName(){
-		return "Quartz Ore";
-	}
+    public function getName()
+    {
+        return "Quartz Ore";
+    }
 
-	public function getDrops(Item $item){
-		if($item->isPickaxe() >= Tool::TIER_WOODEN){
-			return [
-				[Item::QUARTZ, 0, 1],
-			];
-		}else{
-			return [];
-		}
-	}
+    public function getDrops(Item $item)
+    {
+        if ($item->isPickaxe() >= Tool::TIER_WOODEN) {
+            return [
+                [Item::QUARTZ, 0, 1],
+            ];
+        } else {
+            return [];
+        }
+    }
 
 }

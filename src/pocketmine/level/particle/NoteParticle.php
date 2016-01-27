@@ -21,8 +21,10 @@ namespace pocketmine\level\particle;
 
 use pocketmine\math\Vector3;
 
-class NoteParticle extends GenericParticle{
-	public function __construct(Vector3 $pos, $lifetime = 1){
-		parent::__construct($pos, Particle::TYPE_NOTE, $lifetime);
-	}
+class NoteParticle extends GenericParticle
+{
+    public function __construct(Vector3 $pos, $lifetime = 1)
+    {
+        parent::__construct($pos, Particle::TYPE_NOTE, $lifetime);
+    }
 }

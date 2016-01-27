@@ -22,33 +22,39 @@ namespace pocketmine\block;
 use pocketmine\item\Item;
 use pocketmine\item\Tool;
 
-class Cobblestone extends Solid{
+class Cobblestone extends Solid
+{
 
-	protected $id = self::COBBLESTONE;
+    protected $id = self::COBBLESTONE;
 
-	public function __construct(){
+    public function __construct()
+    {
 
-	}
+    }
 
-	public function getToolType(){
-		return Tool::TYPE_PICKAXE;
-	}
+    public function getToolType()
+    {
+        return Tool::TYPE_PICKAXE;
+    }
 
-	public function getName(){
-		return "Cobblestone";
-	}
+    public function getName()
+    {
+        return "Cobblestone";
+    }
 
-	public function getHardness(){
-		return 2;
-	}
+    public function getHardness()
+    {
+        return 2;
+    }
 
-	public function getDrops(Item $item){
-		if($item->isPickaxe() >= 1){
-			return [
-				[Item::COBBLESTONE, 0, 1],
-			];
-		}else{
-			return [];
-		}
-	}
+    public function getDrops(Item $item)
+    {
+        if ($item->isPickaxe() >= 1) {
+            return [
+                [Item::COBBLESTONE, 0, 1],
+            ];
+        } else {
+            return [];
+        }
+    }
 }

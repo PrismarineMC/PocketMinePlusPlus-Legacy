@@ -22,24 +22,29 @@ namespace pocketmine\block;
 
 use pocketmine\item\Tool;
 
-class Snow extends Solid{
+class Snow extends Solid
+{
 
-	protected $id = self::SNOW_BLOCK;
+    protected $id = self::SNOW_BLOCK;
 
-	public function __construct(){
+    public function __construct()
+    {
 
-	}
+    }
 
-	public function getHardness(){
-		return 0.2;
-	}
+    public function getHardness()
+    {
+        return 0.2;
+    }
 
-	public function getToolType(){
-		return Tool::TYPE_SHOVEL;
-	}
+    public function getToolType()
+    {
+        return Tool::TYPE_SHOVEL;
+    }
 
-	public function getName(){
-		return "Snow Block";
-	}
+    public function getName()
+    {
+        return "Snow Block";
+    }
 
 }

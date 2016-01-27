@@ -21,28 +21,34 @@ namespace pocketmine\block;
 
 use pocketmine\item\Item;
 
-class InvisibleBedrock extends Solid{
+class InvisibleBedrock extends Solid
+{
 
-	protected $id = self::INVISIBLE_BEDROCK;
+    protected $id = self::INVISIBLE_BEDROCK;
 
-	public function __construct(){
+    public function __construct()
+    {
 
-	}
+    }
 
-	public function getName(){
-		return "Invisible Bedrock";
-	}
+    public function getName()
+    {
+        return "Invisible Bedrock";
+    }
 
-	public function getHardness(){
-		return -1;
-	}
+    public function getHardness()
+    {
+        return -1;
+    }
 
-	public function getResistance(){
-		return 18000000;
-	}
+    public function getResistance()
+    {
+        return 18000000;
+    }
 
-	public function isBreakable(Item $item){
-		return \false;
-	}
+    public function isBreakable(Item $item)
+    {
+        return \false;
+    }
 
 }

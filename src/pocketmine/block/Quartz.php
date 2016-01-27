@@ -22,39 +22,45 @@ namespace pocketmine\block;
 use pocketmine\item\Item;
 use pocketmine\item\Tool;
 
-class Quartz extends Solid{
+class Quartz extends Solid
+{
 
-	protected $id = self::QUARTZ_BLOCK;
+    protected $id = self::QUARTZ_BLOCK;
 
-	public function __construct($meta = 0){
-		$this->meta = $meta;
-	}
+    public function __construct($meta = 0)
+    {
+        $this->meta = $meta;
+    }
 
-	public function getHardness(){
-		return 0.8;
-	}
+    public function getHardness()
+    {
+        return 0.8;
+    }
 
-	public function getName(){
-		static $names = [
-			0 => "Quartz Block",
-			1 => "Chiseled Quartz Block",
-			2 => "Quartz Pillar",
-			3 => "Quartz Pillar",
-		];
-		return $names[$this->meta & 0x03];
-	}
+    public function getName()
+    {
+        static $names = [
+            0 => "Quartz Block",
+            1 => "Chiseled Quartz Block",
+            2 => "Quartz Pillar",
+            3 => "Quartz Pillar",
+        ];
+        return $names[$this->meta & 0x03];
+    }
 
-	public function getToolType(){
-		return Tool::TYPE_PICKAXE;
-	}
+    public function getToolType()
+    {
+        return Tool::TYPE_PICKAXE;
+    }
 
-	public function getDrops(Item $item){
-		if($item->isPickaxe() >= 1){
-			return [
-				[Item::QUARTZ_BLOCK, $this->meta & 0x03, 1],
-			];
-		}else{
-			return [];
-		}
-	}
+    public function getDrops(Item $item)
+    {
+        if ($item->isPickaxe() >= 1) {
+            return [
+                [Item::QUARTZ_BLOCK, $this->meta & 0x03, 1],
+            ];
+        } else {
+            return [];
+        }
+    }
 }

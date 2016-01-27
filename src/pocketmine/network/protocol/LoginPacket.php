@@ -19,70 +19,73 @@
 
 namespace pocketmine\network\protocol;
 
-class LoginPacket extends DataPacket{
-	const NETWORK_ID = Info::LOGIN_PACKET;
+class LoginPacket extends DataPacket
+{
+    const NETWORK_ID = Info::LOGIN_PACKET;
 
-	public $username;
-	public $protocol1;
-	public $protocol2;
-	public $clientId;
+    public $username;
+    public $protocol1;
+    public $protocol2;
+    public $clientId;
 
-	public $clientUUID;
-	public $serverAddress;
-	public $clientSecret;
+    public $clientUUID;
+    public $serverAddress;
+    public $clientSecret;
 
-	public $slim = \false;
-	public $transparent = \false;
-	public $skinname = "Standard_Custom";
-	public $oldclient = \false;
-	public $skin = \null;
+    public $slim = \false;
+    public $transparent = \false;
+    public $skinname = "Standard_Custom";
+    public $oldclient = \false;
+    public $skin = \null;
 
-	public function decode(){
-		$this->username = $this->getString();
-		$this->protocol1 = $this->getInt();
-		$this->protocol2 = $this->getInt();
-		if($this->protocol1 < Info::CURRENT_PROTOCOL){
-			$this->setBuffer(\null, 0);
-			return;
-		}
-		$this->clientId = $this->getLong();
-		$this->clientUUID = $this->getUUID();
-		$this->serverAddress = $this->getString();
-		$this->clientSecret = $this->getString();
+    public function decode()
+    {
+        $this->username = $this->getString();
+        $this->protocol1 = $this->getInt();
+        $this->protocol2 = $this->getInt();
+        if ($this->protocol1 < Info::CURRENT_PROTOCOL) {
+            $this->setBuffer(\null, 0);
+            return;
+        }
+        $this->clientId = $this->getLong();
+        $this->clientUUID = $this->getUUID();
+        $this->serverAddress = $this->getString();
+        $this->clientSecret = $this->getString();
 
-		$extrasize1 = strlen($this->buffer) - ($this->offset + 64 * 32 * 4 + 2);
-    $extrasize2 = strlen($this->buffer) - ($this->offset + 64 * 64 * 4 + 2);
+        $extrasize1 = strlen($this->buffer) - ($this->offset + 64 * 32 * 4 + 2);
+        $extrasize2 = strlen($this->buffer) - ($this->offset + 64 * 64 * 4 + 2);
 
-    if($extrasize1 > $extrasize2){
-      $extrasize1 = $extrasize2;
+        if ($extrasize1 > $extrasize2) {
+            $extrasize1 = $extrasize2;
+        }
+
+        if ($extrasize1 === 2) {
+            $this->oldclient = \true;
+            $this->slim = $this->getByte() > 0;
+            $this->transparent = $this->getByte() > 0;
+            if ($this->slim) {
+                $this->skinname = "Standard_CustomSlim";
+            } else {
+                $this->skinname = "Standard_Custom";
+            }
+            if ($this->transparent) {
+                $this->skinname = "PvPWarriors_TundraStray";
+            }
+        } else {
+            $this->skinname = $this->getString();
+            if (strpos($this->skinname, "Slim") !== \false or strpos($this->skinname, "Alex") !== \false) {
+                $this->slim = \true;
+            }
+            if ($this->skinname === "PvPWarriors_TundraStray") {
+                $this->transparent = \true;
+            }
+        }
+        $this->skin = $this->getString();
     }
 
-    if($extrasize1 === 2){
-      $this->oldclient = \true;
-      $this->slim = $this->getByte() > 0;
-      $this->transparent = $this->getByte() > 0;
-			if($this->slim){
-				$this->skinname = "Standard_CustomSlim";
-			}else{
-				$this->skinname = "Standard_Custom";
-			}
-			if($this->transparent){
-				$this->skinname = "PvPWarriors_TundraStray";
-			}
-    }else{
-      $this->skinname = $this->getString();
-      if(strpos($this->skinname, "Slim") !== \false or strpos($this->skinname, "Alex") !== \false){
-        $this->slim = \true;
-      }
-      if($this->skinname === "PvPWarriors_TundraStray"){
-        $this->transparent = \true;
-      }
+    public function encode()
+    {
+
     }
-    $this->skin = $this->getString();
-	}
-
-	public function encode(){
-
-	}
 
 }
