@@ -47,8 +47,8 @@ use pocketmine\network\protocol\EntityEventPacket;
 use pocketmine\network\protocol\ExplodePacket;
 use pocketmine\network\protocol\FullChunkDataPacket;
 use pocketmine\network\protocol\HurtArmorPacket;
-use pocketmine\network\protocol\Info as ProtocolInfo;
 use pocketmine\network\protocol\Info;
+use pocketmine\network\protocol\Info as ProtocolInfo;
 use pocketmine\network\protocol\InteractPacket;
 use pocketmine\network\protocol\LevelEventPacket;
 use pocketmine\network\protocol\LoginPacket;
@@ -234,12 +234,12 @@ class Network
                 $buf = \substr($str, $offset, $pkLen);
                 $offset += $pkLen;
 
-                if (($pk = $this->getPacket(\ord($buf{0}))) !== \null) {
+                if (($pk = $this->getPacket(\ord($buf{1}))) !== \null) {
                     if ($pk::NETWORK_ID === Info::BATCH_PACKET) {
                         throw new \InvalidStateException("Invalid BatchPacket inside BatchPacket");
                     }
 
-                    $pk->setBuffer($buf, 1);
+                    $pk->setBuffer($buf, 2);
 
                     $this->server->getPluginManager()->callEvent(($ev = new PacketReceivePreprocessEvent($p, $buf)));
                     if ($ev->isCancelled()) return;

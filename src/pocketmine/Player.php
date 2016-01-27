@@ -835,6 +835,11 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
             $this->server->broadcastMessage($ev->getJoinMessage());
         }
 
+        if ($this->gamemode === Player::CREATIVE) {
+            $this->setGamemode(0);
+            $this->setGamemode(1);
+        }
+
         if (!file_exists($this->server->getDataPath() . "players/vars/")) @mkdir($this->server->getDataPath() . "players/vars/");
         $conf = new Config($this->server->getDataPath() . "players/vars/" . $this->username . ".json", Config::JSON);
         if (($conf->get("food") == \null) || ($conf->get("food") == \false)) {
@@ -1646,7 +1651,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
                 }
             }
 
-            if ($this->server->configuration->get("hungred-enabled", true) == true) {
+            if ($this->server->configuration->get("hungred-enabled", \true) == \true) {
 
 
                 if ($this->starvationTick >= 20) {
