@@ -3,7 +3,7 @@ Advanced server core based on PocketMine.
 
 # The list of what to do (English)
 
-> = 0.13.0 Support [30%]
+> = 0.14.0 Support [30%]
 
 > = Reduce Lag [0%]
 
@@ -33,7 +33,7 @@ Advanced server core based on PocketMine.
 
 # Lista de do que foi adicionado (Portuguese)
 
-> = 0.13.0 Suporte [30%]
+> = 0.14.0 Suporte [30%]
 
 > = Lag Reduzido [0%]
 
@@ -63,7 +63,7 @@ Advanced server core based on PocketMine.
 
 # Список того, что нужно сделать (Русский язык)
 
-> = Поддержку 0.13.0 [30%]
+> = Поддержку 0.14.0 [30%]
 
 > = Убирание лагов [0%]
 
@@ -91,7 +91,7 @@ Advanced server core based on PocketMine.
 
 # 今後することの一覧 (日本語)
 
-> = 0.13.0への対応 [30%]
+> = 0.14.0への対応 [30%]
 
 > = ラグの解消 [0%]
 
