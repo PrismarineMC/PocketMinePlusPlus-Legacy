@@ -31,7 +31,7 @@ Advanced server core based on PocketMine.
 
 > = Enchantments [44%]
 
-# Lista de do que foi adicionado (Portuguese)
+# Lista do que foi adicionado (Português)
 
 > = 0.14.0 Suporte [30%]
 
