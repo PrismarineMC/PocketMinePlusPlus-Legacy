@@ -1,8 +1,6 @@
 # PocketMinePlusPlus
 Advanced server core based on PocketMine.
 
-[the new pocketminplusplus click my](www.github.com/pocketmineplusplus/pocketminplusplus-legacy)
-
 # The list of what to do (English)
 
 > = 0.14.0 Support [30%]
